@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<http.Response> fetchData(inputUser) {
-  return http.get(Uri.parse('http://15.235.156.254:5111/api/v1/bots/qbotflutter/input?input=$inputUser&client=islambot&apikey=uxwMtiFW63oPC0QD'));
+  return http.get(Uri.parse('http://15.235.156.254:5111/api/v1/bots/islambot/input?input=$inputUser&client=islambot&apikey=uxwMtiFW63oPC0QD'));
 }
 
 toAPI(inputUser) async {
