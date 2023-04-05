@@ -1,39 +1,44 @@
 {
   "project_info": {
-    "project_number": "347976604232",
-    "firebase_url": "https://flutterchatdemo.firebaseio.com",
-    "project_id": "flutterchatdemo",
-    "storage_bucket": "flutterchatdemo.appspot.com"
+    "project_number": "128774640548",
+    "project_id": "islambot-1e08a",
+    "storage_bucket": "islambot-1e08a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:347976604232:android:5e864cb592d93aaa",
+        "mobilesdk_app_id": "1:128774640548:android:b176c5b03b560df8306731",
         "android_client_info": {
-          "package_name": "com.dfa.flutterchatdemo"
+          "package_name": "com.islambot.android"
         }
       },
       "oauth_client": [
         {
-          "client_id": "347976604232-k6p3475tsg23qhdgtdjqlb952udl5p9g.apps.googleusercontent.com",
+          "client_id": "128774640548-gmrrr310ki14dqpe4gqp0dv6b88f4ijq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.islambot.android",
+            "certificate_hash": "68d1e342084f8874f20f0c8c4848bddc57a5af53"
+          }
+        },
+        {
+          "client_id": "128774640548-6gtpinrgdfp19tnlqc50hv40162ohca0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBoAoZZDb5Mzf8C8WUU6r9WHZvFWmusGN8"
+          "current_key": "AIzaSyBCne7K7QPVtqmrTjVM2XhZf7CoTSVUJeo"
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128774640548-6gtpinrgdfp19tnlqc50hv40162ohca0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

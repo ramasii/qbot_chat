@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:IslamBot/utils/teksSpeech.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_demo/constants/color_constants.dart';
-import 'package:flutter_chat_demo/constants/constants.dart';
-import 'package:flutter_chat_demo/models/models.dart';
-import 'package:flutter_chat_demo/providers/providers.dart';
+import '../constants/color_constants.dart';
+import '../constants/constants.dart';
+import '../models/models.dart';
+import '../providers/providers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -187,14 +188,14 @@ class ChatPageState extends State<ChatPage> {
     pesanArray = [
       {
         "pesan":
-            "Assalamualaikum... **QuraniBot** siap menjawab sejumlah pertanyaan terkait Al-Quran. Silahkan ketik pertanyaan sesuai format yang ada. Ketik bantuan jika perlu bantuan atau ada kesulitan.\n \n*QuraniBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
+            "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Al-Quran. Silahkan ketik pertanyaan sesuai format yang ada. Ketik bantuan jika perlu bantuan atau ada kesulitan.\n \n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
         "fromUser": false,
         "urut": 0,
         "time": ""
       },
       {
         "pesan":
-            "**QuraniBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Al-Quran\n \nSilahkan kirim chat ke nomor ini dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*QuraniBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
+            "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Al-Quran\n \nSilahkan kirim chat ke nomor ini dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
         "fromUser": false,
         "urut": 1,
         "time": ""
@@ -652,9 +653,17 @@ class ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 58, 86, 100),
-        title: Text(
-          this.widget.arguments.peerNickname,
-          style: TextStyle(color: Colors.white),
+        title: Row(
+          children: [
+            ConstrainedBox(constraints: BoxConstraints(
+              maxHeight:40,
+              minHeight: 10
+            ),child: Image.asset('images/app_icon.png')),
+            Text(
+              this.widget.arguments.peerNickname,
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -925,7 +934,7 @@ class ChatPageState extends State<ChatPage> {
                 ),
               ),
               TextSpan(
-                  text: " Menu QuraniBot",
+                  text: " Menu IslamBot",
                   style: TextStyle(fontSize: 17, color: Colors.blue)),
             ],
           ),
@@ -947,7 +956,7 @@ class ChatPageState extends State<ChatPage> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Menu QuraniBot',
+                        'Menu IslamBot',
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                       ))),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_demo/constants/app_constants.dart';
-import 'package:flutter_chat_demo/constants/color_constants.dart';
+import '../constants/app_constants.dart';
+import '../constants/color_constants.dart';
 import 'package:photo_view/photo_view.dart';
 
 class FullPhotoPage extends StatelessWidget {

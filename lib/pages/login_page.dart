@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_demo/constants/app_constants.dart';
-import 'package:flutter_chat_demo/constants/color_constants.dart';
-import 'package:flutter_chat_demo/providers/auth_provider.dart';
+import '../constants/app_constants.dart';
+import '../constants/color_constants.dart';
+import '../providers/auth_provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -54,7 +54,7 @@ class LoginPageState extends State<LoginPage> {
                             arguments: ChatPageArguments(
                               peerId: '111',
                               peerAvatar: 'images/app_icon.png',
-                              peerNickname: 'QBot',
+                              peerNickname: 'IslamBot',
                             ),
                           ),
                         ),
@@ -72,7 +72,8 @@ class LoginPageState extends State<LoginPage> {
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.resolveWith<Color>(
                     (Set<MaterialState> states) {
-                      if (states.contains(MaterialState.pressed)) return Color(0xffdd4b39).withOpacity(0.8);
+                      if (states.contains(MaterialState.pressed))
+                        return Color(0xffdd4b39).withOpacity(0.8);
                       return Color(0xffdd4b39);
                     },
                   ),
@@ -85,7 +86,9 @@ class LoginPageState extends State<LoginPage> {
             ),
             // Loading
             Positioned(
-              child: authProvider.status == Status.authenticating ? LoadingView() : SizedBox.shrink(),
+              child: authProvider.status == Status.authenticating
+                  ? LoadingView()
+                  : SizedBox.shrink(),
             ),
           ],
         ));

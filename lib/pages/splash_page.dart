@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_demo/constants/color_constants.dart';
-import 'package:flutter_chat_demo/providers/auth_provider.dart';
+import '../constants/color_constants.dart';
+import '../providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'pages.dart';
@@ -32,7 +32,7 @@ class SplashPageState extends State<SplashPage> {
           arguments: ChatPageArguments(
             peerId: '111',
             peerAvatar: 'images/app_icon.png',
-            peerNickname: 'QBot',
+            peerNickname: 'IslamBot',
           ),
         ),),
       );

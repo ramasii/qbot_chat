@@ -1,4 +1,4 @@
-package com.dfa.flutterchatdemo;
+package com.islambot.android;
 
 import io.flutter.embedding.android.FlutterActivity;
 

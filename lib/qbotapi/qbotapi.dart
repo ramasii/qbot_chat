@@ -22,7 +22,7 @@ toAPI(inputUser) async {
 }
 
 tipsPLaceholder(){
-  var tips = ['Coba "garputala"','Coba "ayat acak"','Coba "cari surga"','Coba "cari surga#2"','Coba "Al-ma\'un:1"','Coba "tafsir Al-fatihah:1"','Coba "An-naba\' ayat 1"','Coba "bantuan"'];
+  var tips = ['Coba "garputala"','Coba "ayat acak"','Coba "cari surga"','Coba "cari surga:2"','Coba "Al-ma\'un:1"','Coba "tafsir Al-fatihah:1"','Coba "An-naba\' ayat 1"','Coba "bantuan"'];
   var index = Random().nextInt(tips.length);
   return tips[index];
 }
