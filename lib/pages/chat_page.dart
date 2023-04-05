@@ -653,18 +653,11 @@ class ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 58, 86, 100),
-        title: Row(
-          children: [
-            ConstrainedBox(constraints: BoxConstraints(
-              maxHeight:40,
-              minHeight: 10
-            ),child: Image.asset('images/app_icon.png')),
+        title: 
             Text(
               this.widget.arguments.peerNickname,
               style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
+            )
       ),
       body: Container(
         // background
