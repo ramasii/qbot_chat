@@ -770,7 +770,7 @@ class ChatPageState extends State<ChatPage> {
                     pakaiTeks ? Icons.send : Icons.mic,
                     color: Colors.white,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     String newTeks = textEditingController.text
                         .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
 
@@ -801,15 +801,16 @@ class ChatPageState extends State<ChatPage> {
                     }
 
                     ;
-                    if (pakaiTeks) qbot();
+                    
+                    listScrollController.jumpTo(
+                        listScrollController.position.maxScrollExtent + 50);
+                    if (pakaiTeks) await qbot();
 
-                    Future.delayed(const Duration(milliseconds: 1000), () {
-                      // scroll ke bawah
-                      listScrollController.animateTo(
-                          listScrollController.position.maxScrollExtent + 150,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeIn);
-                    });
+                    // scroll ke bawah
+                    listScrollController.animateTo(
+                        listScrollController.position.maxScrollExtent + 420,
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.easeIn);
 
                     setState(() {
                       pakaiTeks = false;
@@ -1005,7 +1006,7 @@ class ChatPageState extends State<ChatPage> {
                           // scroll ke bawah
                           listScrollController.animateTo(
                               listScrollController.position.maxScrollExtent +
-                                  450,
+                                  420,
                               duration: Duration(milliseconds: 500),
                               curve: Curves.easeIn);
                         },

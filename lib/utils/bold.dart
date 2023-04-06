@@ -20,9 +20,9 @@ class _BoldAsterisState extends State<BoldAsteris> {
     super.initState();
 
     // pisah teks
-    if (widget.text.length > 550 && isExpanded == false) {
-      bagian1 = widget.text.substring(0, 550).replaceAll(RegExp(r'.{4}$'), "...");
-      bagian2 = widget.text.substring(551, widget.text.length);
+    if (widget.text.length > 396 && isExpanded == false) {
+      bagian1 = widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "...");
+      bagian2 = widget.text.substring(397, widget.text.length);
     } else {
       bagian1 = widget.text;
       bagian2 = "";
