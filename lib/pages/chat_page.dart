@@ -183,6 +183,16 @@ class ChatPageState extends State<ChatPage> {
         ],
         "isSpeaking": false,
         "useSpeaker": false
+      },
+      {
+        "jmlItem": 3,
+        "actions": [
+          {"action": "Acak Ayat"},
+          {"action": "Share Acak"},
+          {"action": "Bantuan"}
+        ],
+        "isSpeaking": false,
+        "useSpeaker": false
       }
     ];
     pesanArray = [
@@ -190,6 +200,7 @@ class ChatPageState extends State<ChatPage> {
         "pesan":
             "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik bantuan jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
         "fromUser": false,
+        "share": false,
         "urut": 0,
         "time": ""
       },
@@ -197,7 +208,17 @@ class ChatPageState extends State<ChatPage> {
         "pesan":
             "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
         "fromUser": false,
+        "share": false,
         "urut": 1,
+        "time": ""
+      },
+      {
+        "pesan": "**IslamBot**",
+        "share": true,
+        "imgUrl":
+            "http://15.235.156.254:5111/api/v1/bots/islambot/share/1/1?input=share%20albaqarah%20ayat%202&client=islambot&apikey=uxwMtiFW63oPC0QD",
+        "fromUser": false,
+        "urut": 2,
         "time": ""
       }
     ];
@@ -209,12 +230,22 @@ class ChatPageState extends State<ChatPage> {
     readLocal();
   }
 
-  pushPesanArray(String pesan, {bool fromUser = true}) {
+  pushPesanArray(String pesan,
+      {bool fromUser = true, bool isShare = false, String suratAyat = ""}) {
+    String imgUrl = isShare
+        ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?input=share%20albaqarah%20ayat%202&client=islambot&apikey=uxwMtiFW63oPC0QD"
+        : "";
     DateTime waktu = DateTime.now();
     int urut = fromUser ? 0 : menuArray.length;
     setState(() {
-      pesanArray.add(
-          {"pesan": pesan, "fromUser": fromUser, "urut": urut, "time": waktu});
+      pesanArray.add({
+        "pesan": pesan,
+        "fromUser": fromUser,
+        "urut": urut,
+        "time": waktu,
+        "share": isShare,
+        "imgUrl": imgUrl
+      });
     });
     print('pushPesanArray, isinya $pesanArray');
   }
@@ -780,6 +811,8 @@ class ChatPageState extends State<ChatPage> {
 
                     // QBot balas pesan
                     qbot() async {
+                      bool isShare = newTeks.contains(
+                          RegExp(r'^(share|bagi(kan|))', caseSensitive: false));
                       Map resQBot = await toAPI(newTeks);
                       String jawabQBot = resQBot['answer'];
                       List listMenu = resQBot['actions'] == null
@@ -789,7 +822,10 @@ class ChatPageState extends State<ChatPage> {
                               {"action": "Bantuan"}
                             ]
                           : resQBot['actions'];
-                      await pushPesanArray(jawabQBot, fromUser: false);
+                      await pushPesanArray(jawabQBot,
+                          fromUser: false,
+                          isShare: isShare,
+                          suratAyat: jawabQBot);
                       setState(() {
                         menuArray.add({
                           "jmlItem": listMenu.length,
@@ -801,7 +837,7 @@ class ChatPageState extends State<ChatPage> {
                     }
 
                     ;
-                    
+
                     listScrollController.jumpTo(
                         listScrollController.position.maxScrollExtent + 50);
                     if (pakaiTeks) await qbot();
@@ -872,24 +908,38 @@ class ChatPageState extends State<ChatPage> {
               ? BoldAsteris(text: pesan['pesan'])
               : Column(
                   children: [
-                    BoldAsteris(text: pesan['pesan']),
+                    // cek apakah share ayat?
+                    pesan['share']
+                        ? Image.network(pesan['imgUrl'])
+                        : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       height: 1,
                       color: Colors.black12,
                     ),
                     Row(
-                      children: [
-                        Expanded(flex: 3, child: listButton(pesan['urut'])),
-                        Container(
-                          width: 1,
-                          height: 30,
-                          color: Colors.grey[300],
-                        ),
-                        Expanded(
-                            flex: 2,
-                            child: buttonTts(pesan['pesan'], pesan['urut']))
-                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: pesan['share']
+                          // button untuk pesan share
+                          ? [
+                              Center(
+                                child: listButton(pesan['urut']),
+                              )
+                            ]
+                          // button untuk pesan teks
+                          : [
+                              Expanded(
+                                  flex: 3, child: listButton(pesan['urut'])),
+                              Container(
+                                width: 1,
+                                height: 30,
+                                color: Colors.grey[300],
+                              ),
+                              Expanded(
+                                  flex: 2,
+                                  child:
+                                      buttonTts(pesan['pesan'], pesan['urut']))
+                            ],
                     )
                   ],
                 ),
@@ -927,7 +977,10 @@ class ChatPageState extends State<ChatPage> {
               ),
               TextSpan(
                   text: " Menu IslamBot",
-                  style: TextStyle(fontSize: 17, color: Colors.blue)),
+                  style: TextStyle(
+                    fontSize: 17,
+                    color: Colors.blue,
+                  )),
             ],
           ),
         ),
@@ -982,11 +1035,18 @@ class ChatPageState extends State<ChatPage> {
 
                           // QBot balas pesan
                           qbot() async {
+                            bool isShare = menuArray[urut]['actions'][index]
+                                    ['action']
+                                .contains(RegExp(r'^(share|bagi(kan|))',
+                                    caseSensitive: false));
                             Map resQBot = await toAPI(
                                 menuArray[urut]['actions'][index]['action']);
                             String jawabQBot = resQBot['answer'];
                             List listMenu = resQBot['actions'];
-                            await pushPesanArray(jawabQBot, fromUser: false);
+                            await pushPesanArray(jawabQBot,
+                                fromUser: false,
+                                isShare: isShare,
+                                suratAyat: jawabQBot);
                             setState(() {
                               menuArray.add({
                                 "jmlItem": listMenu.length,
