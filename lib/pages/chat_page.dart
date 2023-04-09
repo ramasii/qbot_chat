@@ -183,22 +183,12 @@ class ChatPageState extends State<ChatPage> {
         ],
         "isSpeaking": false,
         "useSpeaker": false
-      },
-      {
-        "jmlItem": 3,
-        "actions": [
-          {"action": "Acak Ayat"},
-          {"action": "Share Acak"},
-          {"action": "Bantuan"}
-        ],
-        "isSpeaking": false,
-        "useSpeaker": false
       }
     ];
     pesanArray = [
       {
         "pesan":
-            "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik bantuan jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
+            "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
         "fromUser": false,
         "share": false,
         "urut": 0,
@@ -210,15 +200,6 @@ class ChatPageState extends State<ChatPage> {
         "fromUser": false,
         "share": false,
         "urut": 1,
-        "time": ""
-      },
-      {
-        "pesan": "**IslamBot**",
-        "share": true,
-        "imgUrl":
-            "http://15.235.156.254:5111/api/v1/bots/islambot/share/1/1?input=share%20albaqarah%20ayat%202&client=islambot&apikey=uxwMtiFW63oPC0QD",
-        "fromUser": false,
-        "urut": 2,
         "time": ""
       }
     ];
@@ -233,7 +214,7 @@ class ChatPageState extends State<ChatPage> {
   pushPesanArray(String pesan,
       {bool fromUser = true, bool isShare = false, String suratAyat = ""}) {
     String imgUrl = isShare
-        ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?input=share%20albaqarah%20ayat%202&client=islambot&apikey=uxwMtiFW63oPC0QD"
+        ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "";
     DateTime waktu = DateTime.now();
     int urut = fromUser ? 0 : menuArray.length;

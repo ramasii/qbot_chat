@@ -11,11 +11,7 @@ qbotSpeak(String answer) async {
 
   //replace beberapa kata supaya enak dibaca TTS
   String speakThis = answer
-      .replaceAll(RegExp(r'\*'), '')
-      .replaceAll(RegExp(r'(?<=\d):(?=\d)'), ' ayat ')
-      .replaceAll(RegExp(r' (?=\d+\sayat\s\d+)'), ' surat ke ')
       .replaceAll(RegExp(r'QS.'), ' Qur\'an surat ')
-      .replaceAll(RegExp(r' (?=\d+\sayat\s\d+)'), ' ayat ')
       .replaceAll(RegExp(r'(?<!-)\[(?=\d)'), '[ayat ')
       .replaceAll(RegExp(r'(?<=\])-(?=\[)'), ' sampai ');
 
@@ -23,10 +19,12 @@ qbotSpeak(String answer) async {
 }
 
 Future<dynamic> qbotStop() async {
+  print('tekap stop');
   await flutterTts.stop();
 }
 
 Future<dynamic> qbotPause() async {
+  print('tekan pause');
   await flutterTts.pause();
 }
 
