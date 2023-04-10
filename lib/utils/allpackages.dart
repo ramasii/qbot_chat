@@ -1,0 +1,10 @@
+export 'package:share_plus/share_plus.dart';
+export 'package:path_provider/path_provider.dart';
+export 'package:IslamBot/utils/teksSpeech.dart';
+export 'package:cloud_firestore/cloud_firestore.dart';
+export 'package:firebase_storage/firebase_storage.dart';
+export 'package:flutter/material.dart';
+export 'package:fluttertoast/fluttertoast.dart';
+export 'package:image_picker/image_picker.dart';
+export 'package:provider/provider.dart';
+export 'package:readmore/readmore.dart';

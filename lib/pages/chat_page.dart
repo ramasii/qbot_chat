@@ -1,20 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:IslamBot/utils/teksSpeech.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+
+// masukkan packages lewat allpackages.dart
+import '../utils/allpackages.dart';
 import '../constants/color_constants.dart';
 import '../constants/constants.dart';
 import '../models/models.dart';
 import '../providers/providers.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:readmore/readmore.dart';
-
 import '../widgets/widgets.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
@@ -643,23 +638,6 @@ class ChatPageState extends State<ChatPage> {
     }
   }
 
-  Future<bool> onBackPress() {
-    if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
-      });
-    } else {
-      chatProvider.updateDataFirestore(
-        FirestoreConstants.pathUserCollection,
-        currentUserId,
-        {FirestoreConstants.chattingWith: null},
-      );
-      Navigator.pop(context);
-    }
-
-    return Future.value(false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -891,23 +869,52 @@ class ChatPageState extends State<ChatPage> {
                   children: [
                     // cek apakah share ayat?
                     pesan['share']
-                        ? Image.network(
-                            pesan['imgUrl'],
-                            // INI LOADING INDIKATOORRR
-                            // loadingBuilder: (BuildContext context, Widget child,
-                            //     ImageChunkEvent? loadingProgress) {
-                            //   if (loadingProgress == null) return child;
-                            //   return Center(
-                            //     child: CircularProgressIndicator(
-                            //       color: Colors.teal[900],
-                            //       value: loadingProgress.expectedTotalBytes !=
-                            //               null
-                            //           ? loadingProgress.cumulativeBytesLoaded /
-                            //               loadingProgress.expectedTotalBytes!
-                            //           : null,
-                            //     ),
-                            //   );
-                            // },
+                        ? InkWell(
+                            child: Image.network(
+                              pesan['imgUrl'],
+                              // INI LOADING INDIKATOORRR
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.teal[900],
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                            ),
+
+                            // INI SHARE GAMBAR KE APP LAIN
+                            onTap: () async {
+                              showDialog(
+                                context: context,
+                                builder: (_) => Center(
+                                  child: CircularProgressIndicator(color: Colors.white,),
+                                ),
+                              );
+                              try {
+                                final url = Uri.parse(pesan['imgUrl']);
+                                final response = await http.get(url);
+                                final bytes = response.bodyBytes;
+
+                                final temp = await getTemporaryDirectory();
+                                final path = '${temp.path}/image.jpg';
+                                File(path).writeAsBytesSync(bytes);
+
+                                await Share.shareFiles([path], text: 'Gunakan IslamBot untuk membuat share seperti ini.');
+                              } catch (e) {
+                                // handle error
+                              } finally {
+                                Navigator.of(context).pop();
+                              }
+                            },
                           )
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
