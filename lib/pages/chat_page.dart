@@ -891,7 +891,24 @@ class ChatPageState extends State<ChatPage> {
                   children: [
                     // cek apakah share ayat?
                     pesan['share']
-                        ? Image.network(pesan['imgUrl'])
+                        ? Image.network(
+                            pesan['imgUrl'],
+                            // INI LOADING INDIKATOORRR
+                            // loadingBuilder: (BuildContext context, Widget child,
+                            //     ImageChunkEvent? loadingProgress) {
+                            //   if (loadingProgress == null) return child;
+                            //   return Center(
+                            //     child: CircularProgressIndicator(
+                            //       color: Colors.teal[900],
+                            //       value: loadingProgress.expectedTotalBytes !=
+                            //               null
+                            //           ? loadingProgress.cumulativeBytesLoaded /
+                            //               loadingProgress.expectedTotalBytes!
+                            //           : null,
+                            //     ),
+                            //   );
+                            // },
+                          )
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
