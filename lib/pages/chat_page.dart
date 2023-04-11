@@ -785,12 +785,13 @@ class ChatPageState extends State<ChatPage> {
                           fromUser: false,
                           isShare: isShare,
                           suratAyat: jawabQBot);
+                      qbotSpeak(jawabQBot);
                       setState(() {
                         menuArray.add({
                           "jmlItem": listMenu.length,
                           "actions": listMenu,
-                          "isSpeaking": false,
-                          "useSpeaker": false
+                          "isSpeaking": true,
+                          "useSpeaker": true
                         });
                       });
                     }
@@ -896,7 +897,9 @@ class ChatPageState extends State<ChatPage> {
                               showDialog(
                                 context: context,
                                 builder: (_) => Center(
-                                  child: CircularProgressIndicator(color: Colors.white,),
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               );
                               try {
@@ -908,7 +911,9 @@ class ChatPageState extends State<ChatPage> {
                                 final path = '${temp.path}/image.jpg';
                                 File(path).writeAsBytesSync(bytes);
 
-                                await Share.shareFiles([path], text: 'Gunakan IslamBot untuk membuat share seperti ini.');
+                                await Share.shareFiles([path],
+                                    text:
+                                        'Gunakan IslamBot untuk membuat share seperti ini.');
                               } catch (e) {
                                 // handle error
                               } finally {
@@ -1052,12 +1057,13 @@ class ChatPageState extends State<ChatPage> {
                                 fromUser: false,
                                 isShare: isShare,
                                 suratAyat: jawabQBot);
+                            qbotSpeak(jawabQBot);
                             setState(() {
                               menuArray.add({
                                 "jmlItem": listMenu.length,
                                 "actions": listMenu,
-                                "isSpeaking": false,
-                                "useSpeaker": false
+                                "isSpeaking": true,
+                                "useSpeaker": true
                               });
                             });
                           }
