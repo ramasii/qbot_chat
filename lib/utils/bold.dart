@@ -38,10 +38,10 @@ class _BoldAsterisState extends State<BoldAsteris> {
       if (index.isOdd) {
         return TextSpan(
           text: words[index],
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.w700, fontFamily: "IslamBot"),
         );
       } else {
-        return TextSpan(text: words[index]);
+        return TextSpan(text: words[index], style: TextStyle(fontFamily: "IslamBot"));
       }
     });
 
