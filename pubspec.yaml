@@ -37,8 +37,8 @@ flutter:
   fonts:
     - family: IslamBot
       fonts:
-        - asset: fonts/NotoNaskhArabic-Regular.ttf
-        - asset: fonts/NotoNaskhArabic-Bold.ttf
+        - asset: fonts/Inter-Regular.ttf
+        - asset: fonts/Inter-Bold.ttf
           weight: 700
     - family: LPMQ
       fonts:

@@ -14,6 +14,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
   late bool isExpanded = false;
   late String bagian1;
   late String bagian2;
+  RegExp arabicRegex =
+      RegExp(r'[\u0600-\u06FF]'); // regex untuk mendeteksi bahasa arab
 
   @override
   void initState() {
@@ -21,7 +23,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
 
     // pisah teks
     if (widget.text.length > 396 && isExpanded == false) {
-      bagian1 = widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "...");
+      bagian1 =
+          widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "...");
       bagian2 = widget.text.substring(397, widget.text.length);
     } else {
       bagian1 = widget.text;
@@ -31,17 +34,46 @@ class _BoldAsterisState extends State<BoldAsteris> {
 
   @override
   Widget build(BuildContext context) {
-    // bold text
+    //replace asteris double
     String ubahAsteris = bagian1.replaceAll(RegExp(r'\*\*'), "*");
-    List<String> words = ubahAsteris.split('*');
+
+    // split berdasarkan asteris
+    List<String> words = ubahAsteris.split(RegExp(r'\*'));
+
     List<TextSpan> spans = List<TextSpan>.generate(words.length, (index) {
       if (index.isOdd) {
+        // ini untuk teks bold
         return TextSpan(
           text: words[index],
           style: TextStyle(fontWeight: FontWeight.w700),
         );
       } else {
-        return TextSpan(text: words[index], style: TextStyle(fontFamily: "LPMQ", fontSize: 21, height: 1.6));
+        // ini untuk deteksi arab
+        List katas = words[index].split(
+            RegExp(r'|\n \n(?=[\u0600-\u06FF])|(?<=[\u0600-\u06FF]|∞)\n \n'));
+
+        // generate list(array) berisi textspan
+        List<TextSpan> kataSpans =
+            List<TextSpan>.generate(katas.length, (index) {
+          
+          // jika ini adalah teks arab
+          if (arabicRegex.hasMatch(katas[index])) {
+            return TextSpan(
+                text: katas[index],
+                style:
+                    TextStyle(fontFamily: "LPMQ", fontSize: 28, height: 2.3));
+          } 
+          // jika bukan teks arab
+          else {
+            return TextSpan(
+                text: katas[index],
+                style: TextStyle(
+                    fontFamily: "IslamBot", fontSize: 18, height: 1.5));
+          }
+        });
+
+        // ingat, ini bagian else, jadi return nilai array yang mendeteksi teks arab berupa textSpan
+        return TextSpan(children: kataSpans);
       }
     });
 
