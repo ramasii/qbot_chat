@@ -38,10 +38,10 @@ class _BoldAsterisState extends State<BoldAsteris> {
       if (index.isOdd) {
         return TextSpan(
           text: words[index],
-          style: TextStyle(fontWeight: FontWeight.w700, fontFamily: "IslamBot"),
+          style: TextStyle(fontWeight: FontWeight.w700),
         );
       } else {
-        return TextSpan(text: words[index], style: TextStyle(fontFamily: "IslamBot"));
+        return TextSpan(text: words[index], style: TextStyle(fontFamily: "LPMQ", fontSize: 21, height: 1.6));
       }
     });
 

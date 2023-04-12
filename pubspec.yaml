@@ -40,6 +40,9 @@ flutter:
         - asset: fonts/NotoNaskhArabic-Regular.ttf
         - asset: fonts/NotoNaskhArabic-Bold.ttf
           weight: 700
+    - family: LPMQ
+      fonts:
+        - asset: fonts/LPMQ.ttf                                                  
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
