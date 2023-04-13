@@ -18,8 +18,6 @@ class ChatPage extends StatefulWidget {
   ChatPageState createState() => ChatPageState();
 }
 
-late List menuArray;
-
 class ChatPageState extends State<ChatPage> {
   late String currentUserId;
 
@@ -36,7 +34,151 @@ class ChatPageState extends State<ChatPage> {
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
   final FocusNode focusNode = FocusNode();
-  late List pesanArray;
+  late List menuArray = [
+    {
+      "jmlItem": 3,
+      "actions": [
+        {"action": "Acak Ayat"},
+        {"action": "Share Acak"},
+        {"action": "Bantuan"}
+      ],
+      "isSpeaking": false,
+      "useSpeaker": false
+    },
+    {
+      "jmlItem": 36,
+      "actions": [
+        {
+          "action": "Al-Baqarah:183",
+        },
+        {
+          "action": "Al-Baqarah ayat 183",
+        },
+        {
+          "action": "2:183",
+        },
+        {
+          "action": "2 ayat 183",
+        },
+        {
+          "action": "Al-Baqarah:183-185",
+        },
+        {
+          "action": "Al-Baqarah ayat 183-185",
+        },
+        {
+          "action": "Al-Baqarah ayat 183 sampai 185",
+        },
+        {
+          "action": "2:183-185",
+        },
+        {
+          "action": "2 ayat 183-185",
+        },
+        {
+          "action": "2:183 sampai 185",
+        },
+        {
+          "action": "2 ayat 183 sampai 185",
+        },
+        {
+          "action": "Tafsir 2:183",
+        },
+        {
+          "action": "Tafsir Al-Baqarah:183",
+        },
+        {
+          "action": "Tafsir Al-Baqarah ayat 183",
+        },
+        {
+          "action": "Al-Baqarah surat ke berapa?",
+        },
+        {
+          "action": "Surat ke 2 surat apa?",
+        },
+        {
+          "action": "Al-Baqarah",
+        },
+        {
+          "action": "Tentang Al-Baqarah",
+        },
+        {
+          "action": "Tentang surat Al-Baqarah",
+        },
+        {
+          "action": "Acak",
+        },
+        {
+          "action": "Share Acak",
+        },
+        {
+          "action": "Share Al-Baqarah:183",
+        },
+        {
+          "action": "Share Al-Baqarah ayat 183",
+        },
+        {
+          "action": "Share 2:183",
+        },
+        {
+          "action": "Share 2 ayat 183",
+        },
+        {
+          "action": "cari surga",
+        },
+        {
+          "action": "cari surga#2",
+        },
+        {
+          "action": "Set terjemahan melayu",
+        },
+        {
+          "action": "Set tafsir kemenag",
+        },
+        {
+          "action": "Ayat terpendek",
+        },
+        {
+          "action": "Ayat terpanjang",
+        },
+        {
+          "action": "Surat terpendek",
+        },
+        {
+          "action": "Surat terpanjang",
+        },
+        {
+          "action": "Surat makiyah",
+        },
+        {
+          "action": "Surat madaniyah",
+        },
+        {
+          "action": "Surat makiyah dan madaniyah",
+        }
+      ],
+      "isSpeaking": false,
+      "useSpeaker": false
+    }
+  ];
+  late List pesanArray = [
+    {
+      "pesan":
+          "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
+      "fromUser": false,
+      "share": false,
+      "urut": 0,
+      "time": ""
+    },
+    {
+      "pesan":
+          "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
+      "fromUser": false,
+      "share": false,
+      "urut": 1,
+      "time": ""
+    }
+  ];
   late int urutJawabBot;
   late bool qbotSpeaking;
 
@@ -48,151 +190,8 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
     urutJawabBot = 2;
     qbotSpeaking = false;
-    menuArray = [
-      {
-        "jmlItem": 3,
-        "actions": [
-          {"action": "Acak Ayat"},
-          {"action": "Share Acak"},
-          {"action": "Bantuan"}
-        ],
-        "isSpeaking": false,
-        "useSpeaker": false
-      },
-      {
-        "jmlItem": 36,
-        "actions": [
-          {
-            "action": "Al-Baqarah:183",
-          },
-          {
-            "action": "Al-Baqarah ayat 183",
-          },
-          {
-            "action": "2:183",
-          },
-          {
-            "action": "2 ayat 183",
-          },
-          {
-            "action": "Al-Baqarah:183-185",
-          },
-          {
-            "action": "Al-Baqarah ayat 183-185",
-          },
-          {
-            "action": "Al-Baqarah ayat 183 sampai 185",
-          },
-          {
-            "action": "2:183-185",
-          },
-          {
-            "action": "2 ayat 183-185",
-          },
-          {
-            "action": "2:183 sampai 185",
-          },
-          {
-            "action": "2 ayat 183 sampai 185",
-          },
-          {
-            "action": "Tafsir 2:183",
-          },
-          {
-            "action": "Tafsir Al-Baqarah:183",
-          },
-          {
-            "action": "Tafsir Al-Baqarah ayat 183",
-          },
-          {
-            "action": "Al-Baqarah surat ke berapa?",
-          },
-          {
-            "action": "Surat ke 2 surat apa?",
-          },
-          {
-            "action": "Al-Baqarah",
-          },
-          {
-            "action": "Tentang Al-Baqarah",
-          },
-          {
-            "action": "Tentang surat Al-Baqarah",
-          },
-          {
-            "action": "Acak",
-          },
-          {
-            "action": "Share Acak",
-          },
-          {
-            "action": "Share Al-Baqarah:183",
-          },
-          {
-            "action": "Share Al-Baqarah ayat 183",
-          },
-          {
-            "action": "Share 2:183",
-          },
-          {
-            "action": "Share 2 ayat 183",
-          },
-          {
-            "action": "cari surga",
-          },
-          {
-            "action": "cari surga#2",
-          },
-          {
-            "action": "Set terjemahan melayu",
-          },
-          {
-            "action": "Set tafsir kemenag",
-          },
-          {
-            "action": "Ayat terpendek",
-          },
-          {
-            "action": "Ayat terpanjang",
-          },
-          {
-            "action": "Surat terpendek",
-          },
-          {
-            "action": "Surat terpanjang",
-          },
-          {
-            "action": "Surat makiyah",
-          },
-          {
-            "action": "Surat madaniyah",
-          },
-          {
-            "action": "Surat makiyah dan madaniyah",
-          }
-        ],
-        "isSpeaking": false,
-        "useSpeaker": false
-      }
-    ];
-    pesanArray = [
-      {
-        "pesan":
-            "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
-        "fromUser": false,
-        "share": false,
-        "urut": 0,
-        "time": ""
-      },
-      {
-        "pesan":
-            "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
-        "fromUser": false,
-        "share": false,
-        "urut": 1,
-        "time": ""
-      }
-    ];
+    menuArray;
+    pesanArray;
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
 
@@ -200,7 +199,9 @@ class ChatPageState extends State<ChatPage> {
   }
 
   pushPesanArray(String pesan,
-      {bool fromUser = true, bool isShare = false, String suratAyat = ""}) {
+      {bool fromUser = true,
+      bool isShare = false,
+      String suratAyat = ""}) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "";
@@ -216,7 +217,7 @@ class ChatPageState extends State<ChatPage> {
         "imgUrl": imgUrl
       });
     });
-    print('pushPesanArray, isinya $pesanArray');
+    print('---------- pushPesanArray');
   }
 
   void readLocal() {
@@ -413,7 +414,9 @@ class ChatPageState extends State<ChatPage> {
                       child: TextField(
                         cursorColor: Colors.teal,
                         style: TextStyle(
-                            color: ColorConstants.primaryColor, fontFamily: "IslamBot", fontSize: 18),
+                            color: ColorConstants.primaryColor,
+                            fontFamily: "IslamBot",
+                            fontSize: 18),
                         controller: textEditingController,
                         onChanged: (text) {
                           setState(() {
@@ -422,7 +425,10 @@ class ChatPageState extends State<ChatPage> {
                         },
                         decoration: InputDecoration.collapsed(
                           hintText: tipsPLaceholder(),
-                          hintStyle: TextStyle(color: ColorConstants.greyColor,fontFamily: "IslamBot", fontSize: 18),
+                          hintStyle: TextStyle(
+                              color: ColorConstants.greyColor,
+                              fontFamily: "IslamBot",
+                              fontSize: 18),
                         ),
                         focusNode: focusNode,
                         autofocus: true,
@@ -459,8 +465,11 @@ class ChatPageState extends State<ChatPage> {
                         .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
 
                     // user kirim pesan
-                    pakaiTeks ? pushPesanArray(newTeks) : print('teks kosong');
+                    pakaiTeks
+                        ? await pushPesanArray(newTeks)
+                        : print('teks kosong');
                     textEditingController.clear();
+                    await qbotStop();
 
                     // IslamBot balas pesan
                     qbot() async {
@@ -479,18 +488,25 @@ class ChatPageState extends State<ChatPage> {
                           fromUser: false,
                           isShare: isShare,
                           suratAyat: jawabQBot);
-                      Future.delayed(Duration(milliseconds: 1500), () async {
-                        setState(() {
-                          menuArray[menuArray.length - 1]["isSpeaking"] = true;
-                          menuArray[menuArray.length - 1]["useSpeaker"] = true;
-                        });
-                        await qbotSpeak(jawabQBot);
-                        print('uda speking via KIRIM TEKS');
-                        setState(() {
-                          menuArray[menuArray.length - 1]["isSpeaking"] = false;
-                          menuArray[menuArray.length - 1]["useSpeaker"] = false;
-                        });
-                      });
+                      isShare
+                          ? print('SHARE AYAT, tanpa TTS')
+                          : Future.delayed(Duration(milliseconds: 1500),
+                              () async {
+                              setState(() {
+                                menuArray[menuArray.length - 1]["isSpeaking"] =
+                                    true;
+                                menuArray[menuArray.length - 1]["useSpeaker"] =
+                                    true;
+                              });
+                              await qbotSpeak(jawabQBot);
+                              print('uda speking via KIRIM TEKS');
+                              setState(() {
+                                menuArray[menuArray.length - 1]["isSpeaking"] =
+                                    false;
+                                menuArray[menuArray.length - 1]["useSpeaker"] =
+                                    false;
+                              });
+                            });
                       setState(() {
                         menuArray.add({
                           "jmlItem": listMenu.length,
@@ -711,8 +727,9 @@ class ChatPageState extends State<ChatPage> {
                             )),
                         onTap: () async {
                           //user kirim pesan
-                          pushPesanArray(
+                          await pushPesanArray(
                               menuArray[urut]['actions'][index]['action']);
+                          await qbotStop();
 
                           // IslamBot balas pesan
                           qbot() async {
@@ -728,18 +745,25 @@ class ChatPageState extends State<ChatPage> {
                                 fromUser: false,
                                 isShare: isShare,
                                 suratAyat: jawabQBot);
-                            Future.delayed(Duration(milliseconds: 1500), () async {
-                              setState(() {
-                                menuArray[menuArray.length - 1]["isSpeaking"] = true;
-                                menuArray[menuArray.length - 1]["useSpeaker"] = true;
-                              });
-                              await qbotSpeak(jawabQBot);
-                              print('uda speking via MENU BUTTON');
-                              setState(() {
-                                menuArray[menuArray.length - 1]["isSpeaking"] = false;
-                                menuArray[menuArray.length - 1]["useSpeaker"] = false;
-                              });
-                            });
+                            isShare
+                                ? print('SHARE AYAT, tanpa TTS')
+                                : Future.delayed(Duration(milliseconds: 1500),
+                                    () async {
+                                    setState(() {
+                                      menuArray[menuArray.length - 1]
+                                          ["isSpeaking"] = true;
+                                      menuArray[menuArray.length - 1]
+                                          ["useSpeaker"] = true;
+                                    });
+                                    await qbotSpeak(jawabQBot);
+                                    print('uda speking via MENU BUTTON');
+                                    setState(() {
+                                      menuArray[menuArray.length - 1]
+                                          ["isSpeaking"] = false;
+                                      menuArray[menuArray.length - 1]
+                                          ["useSpeaker"] = false;
+                                    });
+                                  });
                             setState(() {
                               menuArray.add({
                                 "jmlItem": listMenu.length,
@@ -872,8 +896,7 @@ class ChatPageState extends State<ChatPage> {
       ),
     );
   }
-} 
-
+}
 
 class ChatPageArguments {
   final String peerId;
