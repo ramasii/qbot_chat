@@ -823,7 +823,7 @@ class ChatPageState extends State<ChatPage> {
                       size: 40,
                       color: Colors.green,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         menuArray[urut]['isSpeaking']
                             ? menuArray[urut]['isSpeaking'] = false
@@ -833,9 +833,15 @@ class ChatPageState extends State<ChatPage> {
                           ? print('speaking')
                           : print('stop steapking');
                       ;
-                      menuArray[urut]['isSpeaking']
-                          ? qbotSpeak(teks)
-                          : qbotPause();
+                      if (menuArray[urut]['isSpeaking']) {
+                        await qbotSpeak(teks);
+                        setState(() {
+                          menuArray[urut]['isSpeaking'] = false;
+                          menuArray[urut]['useSpeaker'] = false;
+                        });
+                      } else {
+                        qbotPause();
+                      }
                     },
                   )),
                   Expanded(
