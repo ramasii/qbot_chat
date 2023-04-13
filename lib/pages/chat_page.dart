@@ -30,6 +30,7 @@ class ChatPageState extends State<ChatPage> {
   bool isLoading = false;
   String imageUrl = "";
   bool pakaiTeks = false;
+  bool isFirstRun = true;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -192,6 +193,7 @@ class ChatPageState extends State<ChatPage> {
     qbotSpeaking = false;
     menuArray;
     pesanArray;
+    checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
 
@@ -895,6 +897,28 @@ class ChatPageState extends State<ChatPage> {
         reverse: false,
       ),
     );
+  }
+
+  // cek pertama kali dibuka
+  Future<void> checkFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (isFirstRun) {
+      setState(() {
+        menuArray[0]['isSpeaking'] = true;
+        menuArray[0]['useSpeaker'] = true;
+      });
+      await qbotSpeak(pesanArray[0]['pesan']);
+      setState(() {
+        menuArray[0]['isSpeaking'] = false;
+        menuArray[0]['useSpeaker'] = false;
+      });
+    }
+    setState(() {
+      isFirstRun = prefs.getBool('isFirstRun') ?? true;
+      if (isFirstRun) {
+        prefs.setBool('isFirstRun', false);
+      }
+    });
   }
 }
 
