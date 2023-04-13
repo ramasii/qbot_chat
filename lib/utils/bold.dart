@@ -24,7 +24,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
     // pisah teks
     if (widget.text.length > 396 && isExpanded == false) {
       bagian1 =
-          widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "...");
+          widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "..."); // diakhiri titik-titik (...)
       bagian2 = widget.text.substring(397, widget.text.length);
     } else {
       bagian1 = widget.text;
@@ -61,7 +61,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
             return TextSpan(
                 text: katas[index],
                 style:
-                    TextStyle(fontFamily: "LPMQ", fontSize: 28, height: 2.3));
+                    TextStyle(fontFamily: "LPMQ", fontSize: 24, height: 2.3));
           } 
           // jika bukan teks arab
           else {
@@ -87,7 +87,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
           : InkWell(
               child: Text(
                 'Baca selengkapnya',
-                style: TextStyle(color: Colors.blue, fontSize: 15),
+                style: TextStyle(color: Colors.blue, fontSize: 15, fontFamily: "IslamBot"),
               ),
               onTap: () {
                 print('object');

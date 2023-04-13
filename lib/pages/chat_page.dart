@@ -6,11 +6,6 @@ import 'package:http/http.dart' as http;
 
 // masukkan packages lewat allpackages.dart
 import '../utils/allpackages.dart';
-import '../constants/color_constants.dart';
-import '../constants/constants.dart';
-import '../models/models.dart';
-import '../providers/providers.dart';
-import '../widgets/widgets.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
@@ -23,133 +18,7 @@ class ChatPage extends StatefulWidget {
   ChatPageState createState() => ChatPageState();
 }
 
-late List menuArray = [
-  {
-    "jmlItem": 3,
-    "actions": [
-      {"action": "Acak Ayat"},
-      {"action": "Share Acak"},
-      {"action": "Bantuan"}
-    ],
-    "isSpeaking": false,
-    "useSpeaker": false
-  },
-  {
-    "jmlItem": 36,
-    "actions": [
-      {
-        "action": "Al-Baqarah:183",
-      },
-      {
-        "action": "Al-Baqarah ayat 183",
-      },
-      {
-        "action": "2:183",
-      },
-      {
-        "action": "2 ayat 183",
-      },
-      {
-        "action": "Al-Baqarah:183-185",
-      },
-      {
-        "action": "Al-Baqarah ayat 183-185",
-      },
-      {
-        "action": "Al-Baqarah ayat 183 sampai 185",
-      },
-      {
-        "action": "2:183-185",
-      },
-      {
-        "action": "2 ayat 183-185",
-      },
-      {
-        "action": "2:183 sampai 185",
-      },
-      {
-        "action": "2 ayat 183 sampai 185",
-      },
-      {
-        "action": "Tafsir 2:183",
-      },
-      {
-        "action": "Tafsir Al-Baqarah:183",
-      },
-      {
-        "action": "Tafsir Al-Baqarah ayat 183",
-      },
-      {
-        "action": "Al-Baqarah surat ke berapa?",
-      },
-      {
-        "action": "Surat ke 2 surat apa?",
-      },
-      {
-        "action": "Al-Baqarah",
-      },
-      {
-        "action": "Tentang Al-Baqarah",
-      },
-      {
-        "action": "Tentang surat Al-Baqarah",
-      },
-      {
-        "action": "Acak",
-      },
-      {
-        "action": "Share Acak",
-      },
-      {
-        "action": "Share Al-Baqarah:183",
-      },
-      {
-        "action": "Share Al-Baqarah ayat 183",
-      },
-      {
-        "action": "Share 2:183",
-      },
-      {
-        "action": "Share 2 ayat 183",
-      },
-      {
-        "action": "cari surga",
-      },
-      {
-        "action": "cari surga#2",
-      },
-      {
-        "action": "Set terjemahan melayu",
-      },
-      {
-        "action": "Set tafsir kemenag",
-      },
-      {
-        "action": "Ayat terpendek",
-      },
-      {
-        "action": "Ayat terpanjang",
-      },
-      {
-        "action": "Surat terpendek",
-      },
-      {
-        "action": "Surat terpanjang",
-      },
-      {
-        "action": "Surat makiyah",
-      },
-      {
-        "action": "Surat madaniyah",
-      },
-      {
-        "action": "Surat makiyah dan madaniyah",
-      }
-    ],
-    "isSpeaking": false,
-    "useSpeaker": false
-  }
-];
+late List menuArray;
 
 class ChatPageState extends State<ChatPage> {
   late String currentUserId;
@@ -179,7 +48,133 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
     urutJawabBot = 2;
     qbotSpeaking = false;
-    menuArray = menuArray;
+    menuArray = [
+      {
+        "jmlItem": 3,
+        "actions": [
+          {"action": "Acak Ayat"},
+          {"action": "Share Acak"},
+          {"action": "Bantuan"}
+        ],
+        "isSpeaking": false,
+        "useSpeaker": false
+      },
+      {
+        "jmlItem": 36,
+        "actions": [
+          {
+            "action": "Al-Baqarah:183",
+          },
+          {
+            "action": "Al-Baqarah ayat 183",
+          },
+          {
+            "action": "2:183",
+          },
+          {
+            "action": "2 ayat 183",
+          },
+          {
+            "action": "Al-Baqarah:183-185",
+          },
+          {
+            "action": "Al-Baqarah ayat 183-185",
+          },
+          {
+            "action": "Al-Baqarah ayat 183 sampai 185",
+          },
+          {
+            "action": "2:183-185",
+          },
+          {
+            "action": "2 ayat 183-185",
+          },
+          {
+            "action": "2:183 sampai 185",
+          },
+          {
+            "action": "2 ayat 183 sampai 185",
+          },
+          {
+            "action": "Tafsir 2:183",
+          },
+          {
+            "action": "Tafsir Al-Baqarah:183",
+          },
+          {
+            "action": "Tafsir Al-Baqarah ayat 183",
+          },
+          {
+            "action": "Al-Baqarah surat ke berapa?",
+          },
+          {
+            "action": "Surat ke 2 surat apa?",
+          },
+          {
+            "action": "Al-Baqarah",
+          },
+          {
+            "action": "Tentang Al-Baqarah",
+          },
+          {
+            "action": "Tentang surat Al-Baqarah",
+          },
+          {
+            "action": "Acak",
+          },
+          {
+            "action": "Share Acak",
+          },
+          {
+            "action": "Share Al-Baqarah:183",
+          },
+          {
+            "action": "Share Al-Baqarah ayat 183",
+          },
+          {
+            "action": "Share 2:183",
+          },
+          {
+            "action": "Share 2 ayat 183",
+          },
+          {
+            "action": "cari surga",
+          },
+          {
+            "action": "cari surga#2",
+          },
+          {
+            "action": "Set terjemahan melayu",
+          },
+          {
+            "action": "Set tafsir kemenag",
+          },
+          {
+            "action": "Ayat terpendek",
+          },
+          {
+            "action": "Ayat terpanjang",
+          },
+          {
+            "action": "Surat terpendek",
+          },
+          {
+            "action": "Surat terpanjang",
+          },
+          {
+            "action": "Surat makiyah",
+          },
+          {
+            "action": "Surat madaniyah",
+          },
+          {
+            "action": "Surat makiyah dan madaniyah",
+          }
+        ],
+        "isSpeaking": false,
+        "useSpeaker": false
+      }
+    ];
     pesanArray = [
       {
         "pesan":
@@ -411,13 +406,14 @@ class ChatPageState extends State<ChatPage> {
                     ),
                   ),
 
-                  // Edit text
+                  // Edit text | inputan teks
                   Expanded(
                     flex: 5,
                     child: Container(
                       child: TextField(
+                        cursorColor: Colors.teal,
                         style: TextStyle(
-                            color: ColorConstants.primaryColor, fontSize: 15),
+                            color: ColorConstants.primaryColor, fontFamily: "IslamBot", fontSize: 18),
                         controller: textEditingController,
                         onChanged: (text) {
                           setState(() {
@@ -426,7 +422,7 @@ class ChatPageState extends State<ChatPage> {
                         },
                         decoration: InputDecoration.collapsed(
                           hintText: tipsPLaceholder(),
-                          hintStyle: TextStyle(color: ColorConstants.greyColor),
+                          hintStyle: TextStyle(color: ColorConstants.greyColor,fontFamily: "IslamBot", fontSize: 18),
                         ),
                         focusNode: focusNode,
                         autofocus: true,
@@ -484,6 +480,10 @@ class ChatPageState extends State<ChatPage> {
                           isShare: isShare,
                           suratAyat: jawabQBot);
                       Future.delayed(Duration(milliseconds: 1500), () async {
+                        setState(() {
+                          menuArray[menuArray.length - 1]["isSpeaking"] = true;
+                          menuArray[menuArray.length - 1]["useSpeaker"] = true;
+                        });
                         await qbotSpeak(jawabQBot);
                         print('uda speking via KIRIM TEKS');
                         setState(() {
@@ -495,8 +495,8 @@ class ChatPageState extends State<ChatPage> {
                         menuArray.add({
                           "jmlItem": listMenu.length,
                           "actions": listMenu,
-                          "isSpeaking": true,
-                          "useSpeaker": true
+                          "isSpeaking": false,
+                          "useSpeaker": false
                         });
                         menuArray[menuArray.length - 2]["isSpeaking"] = false;
                         menuArray[menuArray.length - 2]["useSpeaker"] = false;
@@ -511,7 +511,7 @@ class ChatPageState extends State<ChatPage> {
 
                     // scroll ke bawah
                     listScrollController.animateTo(
-                        listScrollController.position.maxScrollExtent + 420,
+                        listScrollController.position.maxScrollExtent + 600,
                         duration: Duration(milliseconds: 500),
                         curve: Curves.easeIn);
 
@@ -728,23 +728,24 @@ class ChatPageState extends State<ChatPage> {
                                 fromUser: false,
                                 isShare: isShare,
                                 suratAyat: jawabQBot);
-                            Future.delayed(Duration(milliseconds: 1500),
-                                () async {
+                            Future.delayed(Duration(milliseconds: 1500), () async {
+                              setState(() {
+                                menuArray[menuArray.length - 1]["isSpeaking"] = true;
+                                menuArray[menuArray.length - 1]["useSpeaker"] = true;
+                              });
                               await qbotSpeak(jawabQBot);
                               print('uda speking via MENU BUTTON');
                               setState(() {
-                                menuArray[menuArray.length - 1]["isSpeaking"] =
-                                    false;
-                                menuArray[menuArray.length - 1]["useSpeaker"] =
-                                    false;
+                                menuArray[menuArray.length - 1]["isSpeaking"] = false;
+                                menuArray[menuArray.length - 1]["useSpeaker"] = false;
                               });
                             });
                             setState(() {
                               menuArray.add({
                                 "jmlItem": listMenu.length,
                                 "actions": listMenu,
-                                "isSpeaking": true,
-                                "useSpeaker": true
+                                "isSpeaking": false,
+                                "useSpeaker": false
                               });
                               menuArray[menuArray.length - 2]["isSpeaking"] =
                                   false;
@@ -762,7 +763,7 @@ class ChatPageState extends State<ChatPage> {
                           // scroll ke bawah
                           listScrollController.animateTo(
                               listScrollController.position.maxScrollExtent +
-                                  420,
+                                  600,
                               duration: Duration(milliseconds: 500),
                               curve: Curves.easeIn);
                         },
@@ -835,15 +836,18 @@ class ChatPageState extends State<ChatPage> {
                               menuArray[urut]['useSpeaker']
                                   ? print('off')
                                   : print('on');
-                              menuArray[urut]['isSpeaking'] = true; // ketika ditekan langsung speaking
+                              menuArray[urut]['isSpeaking'] =
+                                  true; // ketika ditekan langsung speaking
                               setState(() {
                                 menuArray[urut]['useSpeaker']
                                     ? menuArray[urut]['useSpeaker'] = false
                                     : menuArray[urut]['useSpeaker'] = true;
                               });
-                              await qbotSpeak(teks); // menunggu selesai speaking
+                              await qbotSpeak(
+                                  teks); // menunggu selesai speaking
                               setState(() {
-                                menuArray[urut]['isSpeaking'] = false; // ketika selesai speaking, button kembali ke play
+                                menuArray[urut]['isSpeaking'] =
+                                    false; // ketika selesai speaking, button kembali ke play
                               });
                             },
                             icon: Icon(
@@ -856,6 +860,7 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
+  // buat list pesan, berisi item dari fungsi buatItem()
   Widget buatListPesan() {
     return Flexible(
       child: ListView.builder(
@@ -867,7 +872,8 @@ class ChatPageState extends State<ChatPage> {
       ),
     );
   }
-}
+} 
+
 
 class ChatPageArguments {
   final String peerId;
