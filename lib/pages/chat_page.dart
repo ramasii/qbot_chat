@@ -383,10 +383,10 @@ class ChatPageState extends State<ChatPage> {
         children: [
           // Button send image
           Expanded(
-            flex: 10,
+            flex: MediaQuery.of(context).orientation == Orientation.landscape ? 21 : 10,
             child: Container(
               height: 50,
-              margin: EdgeInsets.all(5),
+              margin: MediaQuery.of(context).orientation == Orientation.landscape ? EdgeInsets.fromLTRB(10, 5, 5, 7) : EdgeInsets.all(5),
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(
                     blurRadius: 1, color: Colors.black26, offset: Offset(0, 2))
@@ -410,7 +410,7 @@ class ChatPageState extends State<ChatPage> {
 
                   // Edit text | inputan teks
                   Expanded(
-                    flex: 5,
+                    flex: MediaQuery.of(context).orientation == Orientation.landscape ? 11 : 5,
                     child: Container(
                       child: TextField(
                         cursorColor: Colors.teal,
@@ -429,10 +429,11 @@ class ChatPageState extends State<ChatPage> {
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
-                              fontSize: 18),
+                              fontSize: 16,
+                              height: 1.5),
                         ),
                         focusNode: focusNode,
-                        autofocus: true,
+                        autofocus: false,
                       ),
                     ),
                   ),
@@ -646,7 +647,8 @@ class ChatPageState extends State<ChatPage> {
                   ],
                 ),
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-          constraints: BoxConstraints(maxWidth: 315),
+          // ini untuk ngatur max size
+          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).orientation == Orientation.landscape ? pesan['share'] ? 315 : 550 : 315),
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -655,7 +657,7 @@ class ChatPageState extends State<ChatPage> {
               color:
                   fromUser ? Color.fromARGB(255, 231, 255, 219) : Colors.white,
               borderRadius: BorderRadius.circular(8)),
-          margin: EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
+          margin: MediaQuery.of(context).orientation == Orientation.landscape? EdgeInsets.only(bottom: 5, right: 20, left: 20, top: 5) : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
         )
       ],
     );
@@ -680,7 +682,9 @@ class ChatPageState extends State<ChatPage> {
               TextSpan(
                   text: " Menu IslamBot",
                   style: TextStyle(
+                    fontFamily: "IslamBot",
                     fontSize: 17,
+                    height: 1.5,
                     color: Colors.blue,
                   )),
             ],
@@ -753,7 +757,6 @@ class ChatPageState extends State<ChatPage> {
                                 fromUser: false,
                                 isShare: isShare,
                                 suratAyat: jawabQBot);
-                            await saveArray();
 
                             // jika share ayat, tidak perlu autostart TTS
                             isShare
@@ -795,6 +798,7 @@ class ChatPageState extends State<ChatPage> {
                               listScrollController.position.maxScrollExtent +
                                   50);
                           await qbot();
+                          print('pake menu 5');
 
                           // scroll ke bawah
                           listScrollController.animateTo(
@@ -908,7 +912,8 @@ class ChatPageState extends State<ChatPage> {
       child: ListView.builder(
         controller: listScrollController,
         itemBuilder: (context, index) {
-          return buatItem(pesanArray[index], fromUser: pesanArray[index]['fromUser']);
+          return buatItem(pesanArray[index],
+              fromUser: pesanArray[index]['fromUser']);
         },
         itemCount: pesanArray.length,
         reverse: false,

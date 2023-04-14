@@ -68,7 +68,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
             return TextSpan(
                 text: katas[index],
                 style: TextStyle(
-                    fontFamily: "IslamBot", fontSize: 18, height: 1.5));
+                    fontFamily: "IslamBot", fontSize: 17, height: 1.4));
           }
         });
 
