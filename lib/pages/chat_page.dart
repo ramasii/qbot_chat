@@ -191,12 +191,11 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
     urutJawabBot = 2;
     qbotSpeaking = false;
-    menuArray;
-    pesanArray;
+    getArray('pesanArray');
+    getArray('menuArray');
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
-
     readLocal();
   }
 
@@ -214,7 +213,7 @@ class ChatPageState extends State<ChatPage> {
         "pesan": pesan,
         "fromUser": fromUser,
         "urut": urut,
-        "time": waktu,
+        "time": waktu.toString(),
         "share": isShare,
         "imgUrl": imgUrl
       });
@@ -472,6 +471,7 @@ class ChatPageState extends State<ChatPage> {
                         : print('teks kosong');
                     textEditingController.clear();
                     await qbotStop();
+                    await saveArray();
 
                     // IslamBot balas pesan
                     qbot() async {
@@ -490,6 +490,7 @@ class ChatPageState extends State<ChatPage> {
                           fromUser: false,
                           isShare: isShare,
                           suratAyat: jawabQBot);
+                      // jika share ayat, tidak perlu autostart TTS
                       isShare
                           ? print('SHARE AYAT, tanpa TTS')
                           : Future.delayed(Duration(milliseconds: 1500),
@@ -519,13 +520,17 @@ class ChatPageState extends State<ChatPage> {
                         menuArray[menuArray.length - 2]["isSpeaking"] = false;
                         menuArray[menuArray.length - 2]["useSpeaker"] = false;
                       });
+                      await saveArray();
                     }
 
                     ;
 
                     listScrollController.jumpTo(
-                        listScrollController.position.maxScrollExtent + 50);
+                        listScrollController.position.maxScrollExtent +
+                            (pakaiTeks ? 50 : 0));
+
                     if (pakaiTeks) await qbot();
+                    // await saveArray();
 
                     // scroll ke bawah
                     listScrollController.animateTo(
@@ -732,6 +737,7 @@ class ChatPageState extends State<ChatPage> {
                           await pushPesanArray(
                               menuArray[urut]['actions'][index]['action']);
                           await qbotStop();
+                          await saveArray();
 
                           // IslamBot balas pesan
                           qbot() async {
@@ -747,6 +753,9 @@ class ChatPageState extends State<ChatPage> {
                                 fromUser: false,
                                 isShare: isShare,
                                 suratAyat: jawabQBot);
+                            await saveArray();
+
+                            // jika share ayat, tidak perlu autostart TTS
                             isShare
                                 ? print('SHARE AYAT, tanpa TTS')
                                 : Future.delayed(Duration(milliseconds: 1500),
@@ -778,6 +787,7 @@ class ChatPageState extends State<ChatPage> {
                               menuArray[menuArray.length - 2]["useSpeaker"] =
                                   false;
                             });
+                            await saveArray();
                           }
 
                           Navigator.of(context).pop();
@@ -897,17 +907,55 @@ class ChatPageState extends State<ChatPage> {
     return Flexible(
       child: ListView.builder(
         controller: listScrollController,
-        itemBuilder: (context, index) => buatItem(pesanArray[index],
-            fromUser: pesanArray[index]['fromUser']),
+        itemBuilder: (context, index) {
+          return buatItem(pesanArray[index], fromUser: pesanArray[index]['fromUser']);
+        },
         itemCount: pesanArray.length,
         reverse: false,
       ),
     );
   }
 
+  // save array
+  saveArray() async {
+    print('start save array');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // convert List<Map> menjadi String
+    String strPesanArray = jsonEncode(pesanArray);
+    String strMenuArray = jsonEncode(menuArray);
+
+    // save List<String> ke device
+    await prefs.setString('pesanArray', strPesanArray);
+    await prefs.setString('menuArray', strMenuArray);
+
+    print('------------ save pesanArray dan menuArray');
+  }
+
+  // read array yang disimpan | get array yang disimpan
+  getArray(String kunci) async {
+    print('start get array');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? items = await prefs.getString(kunci);
+    // jika items tidak kosong, ternyata tanda '?' setelah typeData artinya kemugkinan variable berisi NULL
+    if (items != null) {
+      List mapList = jsonDecode(items);
+      print('------------ get array');
+
+      setState(() {
+        kunci == 'pesanArray' ? pesanArray = mapList : menuArray = mapList;
+      });
+      saveArray();
+    } else {
+      print('Nilai untuk kunci $kunci tidak ditemukan');
+    }
+  }
+
   // cek pertama kali dibuka
   Future<void> checkFirstRun() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // jika pertama kali dibuka maka autostart TTS pesan pertama
     if (prefs.getBool('isFirstRun') ?? true) {
       setState(() {
         menuArray[0]['isSpeaking'] = true;
