@@ -656,7 +656,8 @@ class ChatPageState extends State<ChatPage> {
                           // button menu untuk pesan teks
                           : [
                               Expanded(
-                                  flex: 3, child: listButton(pesan['urut'])),
+                                  flex: MediaQuery.of(context).orientation == Orientation.landscape ? 6 : 3, 
+                                  child: listButton(pesan['urut'])),
                               Container(
                                 width: 1,
                                 height: 30,
@@ -677,7 +678,7 @@ class ChatPageState extends State<ChatPage> {
                   MediaQuery.of(context).orientation == Orientation.landscape
                       ? pesan['share']
                           ? 315
-                          : 550
+                          : 650
                       : 315),
           decoration: BoxDecoration(
               boxShadow: [
@@ -688,7 +689,7 @@ class ChatPageState extends State<ChatPage> {
                   fromUser ? Color.fromARGB(255, 231, 255, 219) : Colors.white,
               borderRadius: BorderRadius.circular(8)),
           margin: MediaQuery.of(context).orientation == Orientation.landscape
-              ? EdgeInsets.only(bottom: 5, right: 20, left: 20, top: 5)
+              ? EdgeInsets.only(bottom: 5, right: 15, left: 15, top: 5)
               : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
         )
       ],
