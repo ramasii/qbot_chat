@@ -383,10 +383,15 @@ class ChatPageState extends State<ChatPage> {
         children: [
           // Button send image
           Expanded(
-            flex: MediaQuery.of(context).orientation == Orientation.landscape ? 21 : 10,
+            flex: MediaQuery.of(context).orientation == Orientation.landscape
+                ? 21
+                : 10,
             child: Container(
               height: 50,
-              margin: MediaQuery.of(context).orientation == Orientation.landscape ? EdgeInsets.fromLTRB(10, 5, 5, 7) : EdgeInsets.all(5),
+              margin:
+                  MediaQuery.of(context).orientation == Orientation.landscape
+                      ? EdgeInsets.fromLTRB(10, 5, 5, 7)
+                      : EdgeInsets.all(5),
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(
                     blurRadius: 1, color: Colors.black26, offset: Offset(0, 2))
@@ -410,7 +415,10 @@ class ChatPageState extends State<ChatPage> {
 
                   // Edit text | inputan teks
                   Expanded(
-                    flex: MediaQuery.of(context).orientation == Orientation.landscape ? 11 : 5,
+                    flex: MediaQuery.of(context).orientation ==
+                            Orientation.landscape
+                        ? 11
+                        : 5,
                     child: Container(
                       child: TextField(
                         cursorColor: Colors.teal,
@@ -563,8 +571,7 @@ class ChatPageState extends State<ChatPage> {
                   children: [
                     // cek apakah share ayat?
                     pesan['share']
-                        ? InkWell(
-                            child: Image.network(
+                        ? Image.network(
                               pesan['imgUrl'],
                               // LOADING INDIKATOR SHARE AYAT
                               loadingBuilder: (BuildContext context,
@@ -583,37 +590,7 @@ class ChatPageState extends State<ChatPage> {
                                   ),
                                 );
                               },
-                            ),
-
-                            // INI SHARE GAMBAR KE APP LAIN
-                            onTap: () async {
-                              showDialog(
-                                context: context,
-                                builder: (_) => Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                              try {
-                                final url = Uri.parse(pesan['imgUrl']);
-                                final response = await http.get(url);
-                                final bytes = response.bodyBytes;
-
-                                final temp = await getTemporaryDirectory();
-                                final path = '${temp.path}/image.jpg';
-                                File(path).writeAsBytesSync(bytes);
-
-                                await Share.shareFiles([path],
-                                    text:
-                                        'Gunakan IslamBot untuk membuat share seperti ini.');
-                              } catch (e) {
-                                // handle error
-                              } finally {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                          )
+                            )
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
@@ -625,9 +602,56 @@ class ChatPageState extends State<ChatPage> {
                       children: pesan['share']
                           // button menu untuk pesan share
                           ? [
-                              Center(
+                              Expanded(
+                                flex: 3,
                                 child: listButton(pesan['urut']),
-                              )
+                              ),
+                              Container(
+                                width: 1,
+                                height: 30,
+                                color: Colors.grey[300],
+                              ),
+                              Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    child: IconButton(
+                                        icon: Icon(
+                                          Icons.ios_share_rounded,
+                                          size: 35,
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (_) => Center(
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          );
+                                          try {
+                                            final url =
+                                                Uri.parse(pesan['imgUrl']);
+                                            final response =
+                                                await http.get(url);
+                                            final bytes = response.bodyBytes;
+
+                                            final temp =
+                                                await getTemporaryDirectory();
+                                            final path =
+                                                '${temp.path}/image.jpg';
+                                            File(path).writeAsBytesSync(bytes);
+
+                                            await Share.shareFiles([path],
+                                                text:
+                                                    'Gunakan IslamBot untuk membuat share seperti ini.');
+                                          } catch (e) {
+                                            // handle error
+                                          } finally {
+                                            Navigator.of(context).pop();
+                                          }
+                                        }),
+                                  )),
                             ]
                           // button menu untuk pesan teks
                           : [
@@ -648,7 +672,13 @@ class ChatPageState extends State<ChatPage> {
                 ),
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           // ini untuk ngatur max size
-          constraints: BoxConstraints(maxWidth: MediaQuery.of(context).orientation == Orientation.landscape ? pesan['share'] ? 315 : 550 : 315),
+          constraints: BoxConstraints(
+              maxWidth:
+                  MediaQuery.of(context).orientation == Orientation.landscape
+                      ? pesan['share']
+                          ? 315
+                          : 550
+                      : 315),
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -657,7 +687,9 @@ class ChatPageState extends State<ChatPage> {
               color:
                   fromUser ? Color.fromARGB(255, 231, 255, 219) : Colors.white,
               borderRadius: BorderRadius.circular(8)),
-          margin: MediaQuery.of(context).orientation == Orientation.landscape? EdgeInsets.only(bottom: 5, right: 20, left: 20, top: 5) : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
+          margin: MediaQuery.of(context).orientation == Orientation.landscape
+              ? EdgeInsets.only(bottom: 5, right: 20, left: 20, top: 5)
+              : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
         )
       ],
     );
@@ -760,7 +792,7 @@ class ChatPageState extends State<ChatPage> {
 
                             // jika share ayat, tidak perlu autostart TTS
                             isShare
-                                ? print('SHARE AYAT, tanpa TTS')
+                                ? print('SHARE AYAT, tanpa autostart TTS')
                                 : Future.delayed(Duration(milliseconds: 1500),
                                     () async {
                                     setState(() {
@@ -798,7 +830,6 @@ class ChatPageState extends State<ChatPage> {
                               listScrollController.position.maxScrollExtent +
                                   50);
                           await qbot();
-                          print('pake menu 5');
 
                           // scroll ke bawah
                           listScrollController.animateTo(
@@ -826,9 +857,10 @@ class ChatPageState extends State<ChatPage> {
     return Container(
       child: Center(
           child: menuArray[urut]['useSpeaker']
+              // tampilan button jika tombol speaker dipencet
               ? Row(children: [
+                  // tombol pause dan resume
                   Expanded(
-                      // tombol pause dan resume
                       child: IconButton(
                     icon: Icon(
                       menuArray[urut]['isSpeaking']
@@ -858,6 +890,8 @@ class ChatPageState extends State<ChatPage> {
                       }
                     },
                   )),
+
+                  // tombol stop
                   Expanded(
                       child: IconButton(
                     icon: Icon(
@@ -874,6 +908,7 @@ class ChatPageState extends State<ChatPage> {
                     },
                   ))
                 ])
+              // tampilan button jika tombol speaker belum dipencet
               : Row(
                   children: [
                     Expanded(
@@ -905,6 +940,8 @@ class ChatPageState extends State<ChatPage> {
                 )),
     );
   }
+
+  // button share ayat
 
   // buat list pesan, berisi item dari fungsi buatItem()
   Widget buatListPesan() {
@@ -942,7 +979,7 @@ class ChatPageState extends State<ChatPage> {
     print('start get array');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? items = await prefs.getString(kunci);
-    // jika items tidak kosong, ternyata tanda '?' setelah typeData artinya kemugkinan variable berisi NULL
+    // jika items tidak kosong. info: ternyata tanda '?' setelah typeData artinya kemugkinan variable berisi NULL
     if (items != null) {
       List mapList = jsonDecode(items);
       print('------------ get array');
