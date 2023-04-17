@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/allpackages.dart';
 
 class BoldAsteris extends StatefulWidget {
   final String text;
@@ -23,8 +24,9 @@ class _BoldAsterisState extends State<BoldAsteris> {
 
     // pisah teks
     if (widget.text.length > 396 && isExpanded == false) {
-      bagian1 =
-          widget.text.substring(0, 396).replaceAll(RegExp(r'.{4}$'), "..."); // diakhiri titik-titik (...)
+      bagian1 = widget.text
+          .substring(0, 396)
+          .replaceAll(RegExp(r'.{4}$'), "..."); // diakhiri titik-titik (...)
       bagian2 = widget.text.substring(397, widget.text.length);
     } else {
       bagian1 = widget.text;
@@ -37,43 +39,51 @@ class _BoldAsterisState extends State<BoldAsteris> {
     //replace asteris double
     String ubahAsteris = bagian1.replaceAll(RegExp(r'\*\*'), "*");
 
-    // split berdasarkan asteris
-    List<String> words = ubahAsteris.split(RegExp(r'\*'));
+    // split berdasarkan teks arab, outpunya List<String>
+    List<String> arabs = ubahAsteris
+        .split(RegExp(r'\n \n(?=[\u0600-\u06FF])|(?<=[\u0600-\u06FF]|∞)\n \n'));
 
-    List<TextSpan> spans = List<TextSpan>.generate(words.length, (index) {
-      if (index.isOdd) {
-        // ini untuk teks bold
-        return TextSpan(
-          text: words[index],
-          style: TextStyle(fontWeight: FontWeight.w700),
-        );
+    // List untuk ditampilkan di akhir, jangan pula digabung dengan myReadmore()
+    List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
+      // ubah font arab
+      if (arabicRegex.hasMatch(arabs[index])) {
+        return RichText(
+            // textAlign: TextAlign.end, // alignment
+            textDirection: TextDirection.rtl, // direction
+            text: TextSpan(
+              text: arabs[index],
+              style: TextStyle(
+                  fontFamily: "LPMQ",
+                  fontSize: 24,
+                  height: 2.3,
+                  color: Colors.black),
+            ));
       } else {
-        // ini untuk deteksi arab
-        List katas = words[index].split(
-            RegExp(r'|\n \n(?=[\u0600-\u06FF])|(?<=[\u0600-\u06FF]|∞)\n \n'));
+        // split berdasarkan asteris
+        List<String> words = arabs[index].split(RegExp(r'\*'));
 
-        // generate list(array) berisi textspan
-        List<TextSpan> kataSpans =
-            List<TextSpan>.generate(katas.length, (index) {
-          
-          // jika ini adalah teks arab
-          if (arabicRegex.hasMatch(katas[index])) {
+        List<TextSpan> spans = List<TextSpan>.generate(words.length, (index) {
+          if (index.isOdd) {
+            // ini untuk teks bold
             return TextSpan(
-                text: katas[index],
-                style:
-                    TextStyle(fontFamily: "LPMQ", fontSize: 24, height: 2.3));
-          } 
-          // jika bukan teks arab
-          else {
+              text: words[index],
+              style: TextStyle(fontWeight: FontWeight.w700),
+            );
+          } else {
             return TextSpan(
-                text: katas[index],
-                style: TextStyle(
-                    fontFamily: "IslamBot", fontSize: 17, height: 1.4));
+              text: words[index],
+              style: TextStyle(
+                fontFamily: "IslamBot",
+              ),
+            );
           }
         });
 
-        // ingat, ini bagian else, jadi return nilai array yang mendeteksi teks arab berupa textSpan
-        return TextSpan(children: kataSpans);
+        return RichText(
+          text: TextSpan(
+              children: spans,
+              style: TextStyle(color: Colors.black, fontSize: 17)),
+        );
       }
     });
 
@@ -87,7 +97,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
           : InkWell(
               child: Text(
                 'Baca selengkapnya',
-                style: TextStyle(color: Colors.blue, fontSize: 15, fontFamily: "IslamBot"),
+                style: TextStyle(
+                    color: Colors.blue, fontSize: 15, fontFamily: "IslamBot"),
               ),
               onTap: () {
                 print('object');
@@ -100,19 +111,13 @@ class _BoldAsterisState extends State<BoldAsteris> {
             );
     }
 
+    // listRichtext + myReadmore, digabung dengan readmore
+    listRichText.add(myReadmore());
+
     // return Column -> RichText & readmore widget
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          softWrap: true,
-          overflow: TextOverflow.clip,
-          text: TextSpan(
-              children: spans,
-              style: TextStyle(color: Colors.black, fontSize: 17)),
-        ),
-        myReadmore()
-      ],
+      children: listRichText,
     );
   }
 }
