@@ -48,8 +48,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
       // ubah font arab
       if (arabicRegex.hasMatch(arabs[index])) {
         return RichText(
-            // textAlign: TextAlign.end, // alignment
-            textDirection: TextDirection.rtl, // direction
+            textAlign: TextAlign.end, // alignment
+            // textDirection: TextDirection.rtl, // direction
             text: TextSpan(
               children: [
                 WidgetSpan(child: Container(height: 20,)),
