@@ -616,7 +616,7 @@ class ChatPageState extends State<ChatPage> {
                                   child: Container(
                                     child: IconButton(
                                         icon: Icon(
-                                          Icons.ios_share_rounded,
+                                          Icons.share_rounded,
                                           size: 35,
                                           color: Colors.grey,
                                         ),
@@ -676,10 +676,14 @@ class ChatPageState extends State<ChatPage> {
           constraints: BoxConstraints(
               maxWidth:
                   MediaQuery.of(context).orientation == Orientation.landscape
+                      // (langscape)
                       ? pesan['share']
-                          ? 315
-                          : 650
-                      : 315),
+                          ? 315 // ukuran untuk block share ayat
+                          : MediaQuery.of(context).size.width-80 // ukuran block pesan 
+                      // (potrait)
+                      : pesan['share'] 
+                          ? 315 // ukuran block share
+                          : MediaQuery.of(context).size.width-80), //ukuran block pesan
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -926,10 +930,13 @@ class ChatPageState extends State<ChatPage> {
                                     : menuArray[urut]['useSpeaker'] = true;
                               });
                               await qbotSpeak(
-                                  teks); // menunggu selesai speaking
+                                  teks); /* menunggu selesai speaking */
+                              // ketika selesai speaking, button kembali ke speaker
                               setState(() {
                                 menuArray[urut]['isSpeaking'] =
-                                    false; // ketika selesai speaking, button kembali ke play
+                                    false;
+                                menuArray[urut]['useSpeaker'] =
+                                    false;
                               });
                             },
                             icon: Icon(

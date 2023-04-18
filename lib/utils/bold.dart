@@ -43,7 +43,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
     List<String> arabs = ubahAsteris
         .split(RegExp(r'\n \n(?=[\u0600-\u06FF])|(?<=[\u0600-\u06FF]|∞)\n \n'));
 
-    // List untuk ditampilkan di akhir, jangan pula digabung dengan myReadmore()
+    // List untuk ditampilkan di akhir, jangan lupa digabung dengan myReadmore()
     List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
       // ubah font arab
       if (arabicRegex.hasMatch(arabs[index])) {
@@ -51,12 +51,18 @@ class _BoldAsterisState extends State<BoldAsteris> {
             // textAlign: TextAlign.end, // alignment
             textDirection: TextDirection.rtl, // direction
             text: TextSpan(
-              text: arabs[index],
-              style: TextStyle(
-                  fontFamily: "LPMQ",
-                  fontSize: 24,
-                  height: 2.3,
-                  color: Colors.black),
+              children: [
+                WidgetSpan(child: Container(height: 20,)),
+                TextSpan(
+                  text: arabs[index],
+                  style: TextStyle(
+                      fontFamily: "LPMQ",
+                      fontSize: 24,
+                      height: 2.3,
+                      color: Colors.black),
+                ),
+                WidgetSpan(child: Container(height: 20,))
+              ],
             ));
       } else {
         // split berdasarkan asteris
