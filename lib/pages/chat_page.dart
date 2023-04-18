@@ -545,7 +545,16 @@ class ChatPageState extends State<ChatPage> {
       children: <Widget>[
         Container(
           child: fromUser
-              ? BoldAsteris(text: pesan['pesan'])
+              ? RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                      text: pesan['pesan'],
+                      style: TextStyle(
+                        fontFamily: "IslamBot",
+                      ),
+                    ),
+                  ], style: TextStyle(color: Colors.black, fontSize: 17)),
+                )
               : Column(
                   children: [
                     // cek apakah share ayat?
@@ -954,9 +963,8 @@ class ChatPageState extends State<ChatPage> {
                           child: Container(
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(5)
-                            ),
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(5)),
                             child: Text(
                               'Batal',
                               style: TextStyle(color: Colors.white),
@@ -968,9 +976,8 @@ class ChatPageState extends State<ChatPage> {
                           child: Container(
                             padding: EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(5)
-                            ),
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(5)),
                             child: Text(
                               'Hapus',
                               style: TextStyle(color: Colors.white),
