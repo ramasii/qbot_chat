@@ -41,15 +41,15 @@ class _BoldAsterisState extends State<BoldAsteris> {
 
     // split berdasarkan teks arab, outpunya List<String>
     List<String> arabs = ubahAsteris
-        .split(RegExp(r'(\n|\n \n|\n\n)(?=(|{)[\u0600-\u06FF])|(?<=[\u0600-\u06FF](|})|∞)(\n \n|\n|\n\n)'));
+        .split(RegExp(r'(\n|\n \n(\s|)|\n\n)(?=(|{)[\u0600-\u06FF])|(?<=[\u0600-\u06FF](|})|∞|\s)(\n \n|\n|\n\n)'));
 
     // List untuk ditampilkan di akhir, jangan lupa digabung dengan myReadmore()
     List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
       // ubah font arab
       if (arabicRegex.hasMatch(arabs[index])) {
         return RichText(
-            textAlign: TextAlign.end, // alignment
-            // textDirection: TextDirection.rtl, // direction
+            // textAlign: TextAlign.end, // alignment
+            textDirection: TextDirection.rtl, // direction
             text: TextSpan(
               children: [
                 WidgetSpan(child: Container(height: 20,)),

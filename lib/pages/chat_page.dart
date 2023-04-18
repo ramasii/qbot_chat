@@ -311,28 +311,6 @@ class ChatPageState extends State<ChatPage> {
     }
   }
 
-  bool isLastMessageLeft(int index) {
-    if ((index > 0 &&
-            listMessage[index - 1].get(FirestoreConstants.idFrom) ==
-                currentUserId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool isLastMessageRight(int index) {
-    if ((index > 0 &&
-            listMessage[index - 1].get(FirestoreConstants.idFrom) !=
-                currentUserId) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -559,6 +537,7 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
+  // buat block pesan
   Widget buatItem(Map pesan, {bool fromUser = true}) {
     return Row(
       mainAxisAlignment:
@@ -572,25 +551,23 @@ class ChatPageState extends State<ChatPage> {
                     // cek apakah share ayat?
                     pesan['share']
                         ? Image.network(
-                              pesan['imgUrl'],
-                              // LOADING INDIKATOR SHARE AYAT
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.teal[900],
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                                  ),
-                                );
-                              },
-                            )
+                            pesan['imgUrl'],
+                            // LOADING INDIKATOR SHARE AYAT
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.teal[900],
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              );
+                            },
+                          )
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
@@ -656,7 +633,10 @@ class ChatPageState extends State<ChatPage> {
                           // button menu untuk pesan teks
                           : [
                               Expanded(
-                                  flex: MediaQuery.of(context).orientation == Orientation.landscape ? 6 : 3, 
+                                  flex: MediaQuery.of(context).orientation ==
+                                          Orientation.landscape
+                                      ? 6
+                                      : 3,
                                   child: listButton(pesan['urut'])),
                               Container(
                                 width: 1,
@@ -679,11 +659,13 @@ class ChatPageState extends State<ChatPage> {
                       // (langscape)
                       ? pesan['share']
                           ? 315 // ukuran untuk block share ayat
-                          : MediaQuery.of(context).size.width-80 // ukuran block pesan 
+                          : MediaQuery.of(context).size.width -
+                              80 // ukuran block pesan
                       // (potrait)
-                      : pesan['share'] 
+                      : pesan['share']
                           ? 315 // ukuran block share
-                          : MediaQuery.of(context).size.width-80), //ukuran block pesan
+                          : MediaQuery.of(context).size.width -
+                              80), //ukuran block pesan
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -933,10 +915,8 @@ class ChatPageState extends State<ChatPage> {
                                   teks); /* menunggu selesai speaking */
                               // ketika selesai speaking, button kembali ke speaker
                               setState(() {
-                                menuArray[urut]['isSpeaking'] =
-                                    false;
-                                menuArray[urut]['useSpeaker'] =
-                                    false;
+                                menuArray[urut]['isSpeaking'] = false;
+                                menuArray[urut]['useSpeaker'] = false;
                               });
                             },
                             icon: Icon(
@@ -949,16 +929,68 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
-  // button share ayat
-
   // buat list pesan, berisi item dari fungsi buatItem()
   Widget buatListPesan() {
     return Flexible(
       child: ListView.builder(
         controller: listScrollController,
         itemBuilder: (context, index) {
-          return buatItem(pesanArray[index],
-              fromUser: pesanArray[index]['fromUser']);
+          // Dismissible untuk drag and delete, hapus pesan
+          return Dismissible(
+              key: ObjectKey(pesanArray[index]),
+              direction: DismissDirection.endToStart,
+              confirmDismiss: (direction) async {
+                // Menampilkan konfirmasi dialog
+                return await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Konfirmasi'),
+                      content:
+                          Text('Apakah Anda yakin ingin menghapus pesan ini?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.grey,
+                              borderRadius: BorderRadius.circular(5)
+                            ),
+                            child: Text(
+                              'Batal',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(5)
+                            ),
+                            child: Text(
+                              'Hapus',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              onDismissed: (direction) {
+                setState(() {
+                  pesanArray.removeAt(index);
+                  // menuArray.removeAt(pesanArray[index]['urut']);
+                });
+                saveArray();
+              },
+              child: buatItem(pesanArray[index],
+                  fromUser: pesanArray[index]['fromUser']));
         },
         itemCount: pesanArray.length,
         reverse: false,
