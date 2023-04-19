@@ -460,64 +460,12 @@ class ChatPageState extends State<ChatPage> {
                     await qbotStop();
                     await saveArray();
 
-                    // IslamBot balas pesan
-                    qbot() async {
-                      bool isShare = newTeks.contains(
-                          RegExp(r'^(share|bagi(kan|))', caseSensitive: false));
-                      Map resQBot = await toAPI(newTeks);
-                      String jawabQBot = resQBot['answer'];
-                      List listMenu = resQBot['actions'] == null
-                          ? [
-                              {"action": "Acak Ayat"},
-                              {"action": "Share Acak"},
-                              {"action": "Bantuan"}
-                            ]
-                          : resQBot['actions'];
-                      await pushPesanArray(jawabQBot,
-                          fromUser: false,
-                          isShare: isShare,
-                          suratAyat: jawabQBot);
-                      // jika share ayat, tidak perlu autostart TTS
-                      isShare
-                          ? print('SHARE AYAT, tanpa TTS')
-                          : Future.delayed(Duration(milliseconds: 1500),
-                              () async {
-                              setState(() {
-                                menuArray[menuArray.length - 1]["isSpeaking"] =
-                                    true;
-                                menuArray[menuArray.length - 1]["useSpeaker"] =
-                                    true;
-                              });
-                              await qbotSpeak(jawabQBot);
-                              print('uda speking via KIRIM TEKS');
-                              setState(() {
-                                menuArray[menuArray.length - 1]["isSpeaking"] =
-                                    false;
-                                menuArray[menuArray.length - 1]["useSpeaker"] =
-                                    false;
-                              });
-                            });
-                      setState(() {
-                        menuArray.add({
-                          "jmlItem": listMenu.length,
-                          "actions": listMenu,
-                          "isSpeaking": false,
-                          "useSpeaker": false
-                        });
-                        menuArray[menuArray.length - 2]["isSpeaking"] = false;
-                        menuArray[menuArray.length - 2]["useSpeaker"] = false;
-                      });
-                      await saveArray();
-                    }
-
-                    ;
-
                     listScrollController.jumpTo(
                         listScrollController.position.maxScrollExtent +
                             (pakaiTeks ? 50 : 0));
 
-                    if (pakaiTeks) await qbot();
-                    // await saveArray();
+                    // jawab IslamBot
+                    if (pakaiTeks) await islamBot('Text', newTeks);
 
                     // scroll ke bawah
                     listScrollController.animateTo(
@@ -770,74 +718,62 @@ class ChatPageState extends State<ChatPage> {
                               ),
                             )),
                         onTap: () async {
-                          //user kirim pesan
-                          await pushPesanArray(
-                              menuArray[urut]['actions'][index]['action']);
-                          await qbotStop();
-                          await saveArray();
+                          // buat variabel supaya bisa mendapatkan length menuArray
+                          List arr = menuArray[urut]['actions'];
 
-                          // IslamBot balas pesan
-                          qbot() async {
-                            bool isShare = menuArray[urut]['actions'][index]
-                                    ['action']
-                                .contains(RegExp(r'^(share|bagi(kan|))',
-                                    caseSensitive: false));
-                            Map resQBot = await toAPI(
-                                menuArray[urut]['actions'][index]['action']);
-                            String jawabQBot = resQBot['answer'];
-                            List listMenu = resQBot['actions'];
-                            await pushPesanArray(jawabQBot,
-                                fromUser: false,
-                                isShare: isShare,
-                                suratAyat: jawabQBot);
+                          // dapatkan index dari pesanArray yang berisi "urut":{index}
+                          // ini digunakan untuk copy dan share
+                          int atPesanArray = pesanArray.indexWhere(
+                            (element) {
+                              return element['urut'] == urut;
+                            },
+                          );
+                          String pesanAnswer =
+                              pesanArray[atPesanArray]['pesan'];
 
-                            // jika share ayat, tidak perlu autostart TTS
-                            isShare
-                                ? print('SHARE AYAT, tanpa autostart TTS')
-                                : Future.delayed(Duration(milliseconds: 1500),
-                                    () async {
-                                    setState(() {
-                                      menuArray[menuArray.length - 1]
-                                          ["isSpeaking"] = true;
-                                      menuArray[menuArray.length - 1]
-                                          ["useSpeaker"] = true;
-                                    });
-                                    await qbotSpeak(jawabQBot);
-                                    print('uda speking via MENU BUTTON');
-                                    setState(() {
-                                      menuArray[menuArray.length - 1]
-                                          ["isSpeaking"] = false;
-                                      menuArray[menuArray.length - 1]
-                                          ["useSpeaker"] = false;
-                                    });
-                                  });
-                            setState(() {
-                              menuArray.add({
-                                "jmlItem": listMenu.length,
-                                "actions": listMenu,
-                                "isSpeaking": false,
-                                "useSpeaker": false
-                              });
-                              menuArray[menuArray.length - 2]["isSpeaking"] =
-                                  false;
-                              menuArray[menuArray.length - 2]["useSpeaker"] =
-                                  false;
-                            });
-                            await saveArray();
+                          // arr.length - 3, berarti di index "Copy to Clipboard"
+                          if (index == arr.length - 3) {
+                            print('start copy to clipborad');
+
+                            await Clipboard.setData(
+                                ClipboardData(text: pesanAnswer));
+                            Navigator.of(context).pop(); // close dialog menu
+
+                            print('done copy to clipboard');
                           }
 
-                          Navigator.of(context).pop();
-                          listScrollController.jumpTo(
-                              listScrollController.position.maxScrollExtent +
-                                  50);
-                          await qbot();
+                          // arr.length - 2, berarti di index "Share", share teks
+                          else if (index == arr.length - 2) {
+                            print('start share teks, answer urutan ke-$urut');
 
-                          // scroll ke bawah
-                          listScrollController.animateTo(
-                              listScrollController.position.maxScrollExtent +
-                                  600,
-                              duration: Duration(milliseconds: 500),
-                              curve: Curves.easeIn);
+                            // munculkan dialog share teks
+                            await Share.share(pesanAnswer, subject: pesanAnswer.split('\n').first.replaceAll(RegExp(r'\*'), ''));
+                            Navigator.of(context).pop(); // close dialog menu
+
+                            print('done share teks');
+                          }
+
+                          //user kirim pesan melalui menu
+                          else {
+                            await pushPesanArray(
+                                menuArray[urut]['actions'][index]['action']);
+                            await qbotStop();
+                            await saveArray();
+
+                            Navigator.of(context).pop();
+                            listScrollController.jumpTo(
+                                listScrollController.position.maxScrollExtent +
+                                    50);
+                            await islamBot('Menu',
+                                menuArray[urut]['actions'][index]['action']);
+
+                            // scroll ke bawah
+                            listScrollController.animateTo(
+                                listScrollController.position.maxScrollExtent +
+                                    600,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeIn);
+                          }
                         },
                       ),
                     ],
@@ -1067,6 +1003,65 @@ class ChatPageState extends State<ChatPage> {
         prefs.setBool('isFirstRun', false);
       }
     });
+  }
+
+  // fungsi IslamBot balas pesan
+  islamBot(String MenuOrText, String teks) async {
+    bool isShare =
+        teks.contains(RegExp(r'^(share|bagi(kan|))', caseSensitive: false));
+    Map resQBot = await toAPI(teks);
+    String jawabQBot = resQBot['answer'];
+
+    // buat variabel list menu dengan kondisi jika null
+    List listMenu = resQBot['actions'] == null
+        ? [
+            {"action": "Acak Ayat"},
+            {"action": "Share Acak"},
+            {"action": "Bantuan"}
+          ]
+        : resQBot['actions'];
+
+    // antisipasi jika listMenu tidak memiliki isi
+    listMenu.length == 0
+        ? listMenu = [
+            {"action": "Acak Ayat"},
+            {"action": "Share Acak"},
+            {"action": "Bantuan"}
+          ]
+        : // jika memiliki isi, tambah menu Copy dan Share teks
+        listMenu.insertAll(listMenu.length - 1, [
+            {"action": "Copy to Clipboard"},
+            {"action": "Share"},
+          ]);
+
+    await pushPesanArray(jawabQBot,
+        fromUser: false, isShare: isShare, suratAyat: jawabQBot);
+    // jika share ayat, tidak perlu autostart TTS
+    isShare
+        ? print('SHARE AYAT, tanpa TTS')
+        : Future.delayed(Duration(milliseconds: 1500), () async {
+            setState(() {
+              menuArray[menuArray.length - 1]["isSpeaking"] = true;
+              menuArray[menuArray.length - 1]["useSpeaker"] = true;
+            });
+            await qbotSpeak(jawabQBot);
+            print('uda speking via $MenuOrText');
+            setState(() {
+              menuArray[menuArray.length - 1]["isSpeaking"] = false;
+              menuArray[menuArray.length - 1]["useSpeaker"] = false;
+            });
+          });
+    setState(() {
+      menuArray.add({
+        "jmlItem": listMenu.length,
+        "actions": listMenu,
+        "isSpeaking": false,
+        "useSpeaker": false
+      });
+      menuArray[menuArray.length - 2]["isSpeaking"] = false;
+      menuArray[menuArray.length - 2]["useSpeaker"] = false;
+    });
+    await saveArray();
   }
 }
 
