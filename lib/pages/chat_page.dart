@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
@@ -320,6 +321,8 @@ class ChatPageState extends State<ChatPage> {
             this.widget.arguments.peerNickname,
             style: TextStyle(color: Colors.white),
           )),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: buttonScrollBottom(),
       body: Container(
         // background
         decoration: BoxDecoration(
@@ -344,6 +347,29 @@ class ChatPageState extends State<ChatPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Row buttonScrollBottom() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          padding: EdgeInsets.all(0),
+          height: 30,
+          margin: EdgeInsets.fromLTRB(0, 0, 5, 50),
+          child: FloatingActionButton(
+              backgroundColor: Colors.white,
+              elevation: 2,
+              highlightElevation: 2,
+              child: Icon(
+                Icons.keyboard_double_arrow_down,
+                size: 20,
+                color: Colors.grey,
+              ),
+              onPressed: scrollToBottom),
+        ),
+      ],
     );
   }
 
@@ -747,7 +773,11 @@ class ChatPageState extends State<ChatPage> {
                             print('start share teks, answer urutan ke-$urut');
 
                             // munculkan dialog share teks
-                            await Share.share(pesanAnswer, subject: pesanAnswer.split('\n').first.replaceAll(RegExp(r'\*'), ''));
+                            await Share.share(pesanAnswer,
+                                subject: pesanAnswer
+                                    .split('\n')
+                                    .first
+                                    .replaceAll(RegExp(r'\*'), ''));
                             Navigator.of(context).pop(); // close dialog menu
 
                             print('done share teks');
@@ -979,6 +1009,17 @@ class ChatPageState extends State<ChatPage> {
     } else {
       print('Nilai untuk kunci $kunci tidak ditemukan');
     }
+
+    // scroll ke bawah saat buka
+    if (pesanArray.length > 2) {
+      print('max scroll');
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        listScrollController
+            .jumpTo(listScrollController.position.maxScrollExtent);
+      });
+    } else {
+      print('pesanarray.length: ${pesanArray.length}');
+    }
   }
 
   // cek pertama kali dibuka
@@ -1062,6 +1103,19 @@ class ChatPageState extends State<ChatPage> {
       menuArray[menuArray.length - 2]["useSpeaker"] = false;
     });
     await saveArray();
+  }
+
+  // fungsi scroll to bottom
+  scrollToBottom() {
+    print('start scroll to bottom');
+
+    if (pesanArray.length > 2) {
+      listScrollController
+          .jumpTo(listScrollController.position.maxScrollExtent);
+    } else {
+      print('object ${pesanArray.length}');
+    }
+    print('done scroll to bottom');
   }
 }
 
