@@ -544,7 +544,9 @@ class ChatPageState extends State<ChatPage> {
           fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: <Widget>[
         Container(
+          // cek apakah pesan dari user?
           child: fromUser
+              // jika pesan dari user
               ? RichText(
                   text: TextSpan(children: [
                     TextSpan(
@@ -555,7 +557,10 @@ class ChatPageState extends State<ChatPage> {
                     ),
                   ], style: TextStyle(color: Colors.black, fontSize: 17)),
                 )
+
+              // jika pesan dari bot
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // cek apakah share ayat?
                     pesan['share']
