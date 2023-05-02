@@ -757,8 +757,9 @@ class ChatPageState extends State<ChatPage> {
                           String pesanAnswer =
                               pesanArray[atPesanArray]['pesan'];
 
-                          // arr.length - 3, berarti di index "Copy to Clipboard"
-                          if (index == arr.length - 3) {
+                          // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
+                          // jika tiada tombol bantuan maka arr.length - 2
+                          if (menuArray[urut]['actions'][arr.length-1]['action'] == "Bantuan" ? index == arr.length - 3 : index == arr.length - 2) {
                             print('start copy to clipborad');
 
                             await Clipboard.setData(
@@ -768,8 +769,9 @@ class ChatPageState extends State<ChatPage> {
                             print('done copy to clipboard');
                           }
 
-                          // arr.length - 2, berarti di index "Share", share teks
-                          else if (index == arr.length - 2) {
+                          // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
+                          // jika tiada tombol bantuan maka arr.length - 1
+                          else if (menuArray[urut]['actions'][arr.length-1]['action'] == "Bantuan" ? index == arr.length - 2 : index == arr.length - 1) {
                             print('start share teks, answer urutan ke-$urut');
 
                             // munculkan dialog share teks
@@ -925,8 +927,7 @@ class ChatPageState extends State<ChatPage> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text('Konfirmasi'),
-                      content:
-                          Text('Hapus pesan ini?'),
+                      content: Text('Hapus pesan ini?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -977,7 +978,7 @@ class ChatPageState extends State<ChatPage> {
 
   // save array
   saveArray() async {
-    print('start save array');
+    print('start save pesanArray dan menuArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // convert List<Map> menjadi String
@@ -988,7 +989,7 @@ class ChatPageState extends State<ChatPage> {
     await prefs.setString('pesanArray', strPesanArray);
     await prefs.setString('menuArray', strMenuArray);
 
-    print('------------ save pesanArray dan menuArray');
+    print('done save pesanArray dan menuArray');
   }
 
   // read array yang disimpan | get array yang disimpan
@@ -1069,7 +1070,8 @@ class ChatPageState extends State<ChatPage> {
             {"action": "Bantuan"}
           ]
         : // jika memiliki isi, tambah menu Copy dan Share teks
-        listMenu.insertAll(listMenu.length - 1, [
+          // jika list terakhir "bantuan" maka di-insert sebelum bantuan, jika bukan maka di-insert di bagian terakhir
+        listMenu.insertAll(listMenu[listMenu.length - 1]["action"] == "Bantuan" ? listMenu.length - 1 : listMenu.length, [
             {"action": "Copy to Clipboard"},
             {"action": "Share"},
           ]);
