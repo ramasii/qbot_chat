@@ -918,7 +918,6 @@ class ChatPageState extends State<ChatPage> {
           // Dismissible untuk drag and delete, hapus pesan
           return Dismissible(
               key: ObjectKey(pesanArray[index]),
-              direction: DismissDirection.endToStart,
               confirmDismiss: (direction) async {
                 // Menampilkan konfirmasi dialog
                 return await showDialog(
@@ -927,7 +926,7 @@ class ChatPageState extends State<ChatPage> {
                     return AlertDialog(
                       title: Text('Konfirmasi'),
                       content:
-                          Text('Apakah Anda yakin ingin menghapus pesan ini?'),
+                          Text('Hapus pesan ini?'),
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
