@@ -27,7 +27,7 @@ Future qbotCompleteHandler() async {
 }
 
 Future<dynamic> qbotStop() async {
-  print('tekan stop');
+  print('qbot stop');
   await flutterTts.stop();
 }
 

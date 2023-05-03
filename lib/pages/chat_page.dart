@@ -10,6 +10,8 @@ import '../utils/allpackages.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
+enum Options { clear, exit, export, about }
+
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key, required this.arguments}) : super(key: key);
 
@@ -32,6 +34,7 @@ class ChatPageState extends State<ChatPage> {
   String imageUrl = "";
   bool pakaiTeks = false;
   bool showUpButton = false;
+  var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
   late ScrollController listScrollController;
@@ -330,7 +333,25 @@ class ChatPageState extends State<ChatPage> {
           title: Text(
             this.widget.arguments.peerNickname,
             style: TextStyle(color: Colors.white),
-          )),
+          ),
+          actions: [
+            PopupMenuButton(
+                color: Colors.white,
+                onSelected: (value) {
+                  print('klik di popup menu, pojok kanan atas');
+                  _onMenuItemSelected(value as int);
+                },
+                itemBuilder: (ctx) => [
+                      _buildPopupMenuItem('Clear messages',
+                          Icons.cleaning_services_rounded, Options.clear.index),
+                      _buildPopupMenuItem('Exit app', Icons.exit_to_app_rounded,
+                          Options.exit.index),
+                      _buildPopupMenuItem('Export messages',
+                          Icons.upload_file_rounded, Options.export.index),
+                      _buildPopupMenuItem('About IslamBot',
+                          Icons.info_outline_rounded, Options.about.index),
+                    ])
+          ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: buttonScrollBottom(),
       body: Container(
@@ -373,7 +394,9 @@ class ChatPageState extends State<ChatPage> {
               elevation: 2,
               highlightElevation: 2,
               child: Icon(
-                showUpButton ? Icons.keyboard_double_arrow_up : Icons.keyboard_double_arrow_down,
+                showUpButton
+                    ? Icons.keyboard_double_arrow_up
+                    : Icons.keyboard_double_arrow_down,
                 size: 20,
                 color: Colors.grey,
               ),
@@ -995,8 +1018,8 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // save array
-  saveArray() async {
-    print('start save pesanArray dan menuArray');
+  saveArray({bool showLog = true}) async {
+    if (showLog) print('start save pesanArray dan menuArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // convert List<Map> menjadi String
@@ -1007,7 +1030,23 @@ class ChatPageState extends State<ChatPage> {
     await prefs.setString('pesanArray', strPesanArray);
     await prefs.setString('menuArray', strMenuArray);
 
-    print('done save pesanArray dan menuArray');
+    if (showLog) print('done save pesanArray dan menuArray');
+  }
+
+  // clear array
+  clearArray() async {
+    print('start clear pesanArray dan menuArray');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await qbotStop();
+    await saveArray(showLog: false);
+    setState(() {
+      pesanArray = [];
+      menuArray = [];
+    });
+    await saveArray(showLog: false);
+
+    print('done clear pesanArray dan menuArray');
   }
 
   // read array yang disimpan | get array yang disimpan
@@ -1122,8 +1161,12 @@ class ChatPageState extends State<ChatPage> {
         "isSpeaking": false,
         "useSpeaker": false
       });
-      menuArray[menuArray.length - 2]["isSpeaking"] = false;
-      menuArray[menuArray.length - 2]["useSpeaker"] = false;
+      menuArray.length < 2
+          ? print('do nothing')
+          : menuArray[menuArray.length - 2]["isSpeaking"] = false;
+      menuArray.length < 2
+          ? print('do nothing')
+          : menuArray[menuArray.length - 2]["useSpeaker"] = false;
     });
     await saveArray();
   }
@@ -1138,7 +1181,8 @@ class ChatPageState extends State<ChatPage> {
     } else {
       print('object ${pesanArray.length}');
     }
-    print('done scroll to bottom');
+    print(
+        'done scroll to bottom ${listScrollController.position.maxScrollExtent}');
   }
 
   // fungsi scroll to bottom
@@ -1151,9 +1195,105 @@ class ChatPageState extends State<ChatPage> {
     } else {
       print('object ${pesanArray.length}');
     }
-    print('done scroll to top');
+    print(
+        'done scroll to top, ${listScrollController.position.maxScrollExtent}');
   }
 
+  //widget popup menu button
+  PopupMenuItem _buildPopupMenuItem(
+      String title, IconData iconData, int position) {
+    return PopupMenuItem(
+      value: position,
+      child: Row(
+        children: [
+          Icon(
+            iconData,
+            color: Colors.teal,
+          ),
+          Container(
+            width: 10,
+          ),
+          Text(title),
+        ],
+      ),
+    );
+  }
+
+  // fungsi jika select di popup menu
+  _onMenuItemSelected(int value) async {
+    setState(() {
+      _popupMenuItemIndex = value;
+    });
+
+    if (value == Options.clear.index) {
+      // clear chat
+      await clearArray();
+    } else if (value == Options.exit.index) {
+      //exit app
+      print('start exit app');
+      SystemNavigator.pop();
+      print('done exit app');
+    } else if (value == Options.export.index) {
+      //export chat
+      print('start export message');
+
+      String ringkasan = "";
+
+      for (var pesan in pesanArray) {
+        if (!pesan["share"]) {
+          ringkasan += (pesan["fromUser"] ? "Anda: " : "IslamBot: ") +
+              '\n' +
+              pesan["pesan"] +
+              "\n\n";
+        }
+      }
+
+      await createTextFile(ringkasan);
+      print('done export message');
+    } else {
+      // about islambot
+      print('start about');
+    }
+  }
+
+  // fungsi export file
+  createTextFile(String content) async {
+    // dapatkan path direktori untuk penyimpanan file
+    final directory = Directory('/storage/emulated/0/Documents/IslamBot/');
+
+    // pastikan direktori sudah ada, jika belum maka buat direktori
+    if (!await directory.exists()) {
+      await directory.create(recursive: true);
+    }
+
+    // gabungkan nama file dengan path direktori
+    DateTime now = DateTime.now();
+    String filename = DateFormat('ydM-HH-mm-ss').format(now);
+    filename = 'Islambot-$filename';
+    final path = '${directory.path}/$filename.txt';
+
+    // buat file
+    final file = File(path);
+
+    // jika file sudah ada, hapus file lama
+    if (await file.exists()) {
+      await file.delete();
+    }
+
+    // buat file dengan nama yang diberikan
+    await file.create();
+    await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
+    Fluttertoast.showToast(
+        msg:
+            "File berhasil diekspor di memori internal/Documents/IslamBot/$filename.txt",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0);
+
+    print('file berhasil disimpan di ${directory.path}');
+  }
 }
 
 class ChatPageArguments {
