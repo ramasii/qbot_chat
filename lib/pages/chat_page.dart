@@ -31,9 +31,10 @@ class ChatPageState extends State<ChatPage> {
   bool isLoading = false;
   String imageUrl = "";
   bool pakaiTeks = false;
+  bool showUpButton = false;
 
   final TextEditingController textEditingController = TextEditingController();
-  final ScrollController listScrollController = ScrollController();
+  late ScrollController listScrollController;
   final FocusNode focusNode = FocusNode();
   late List menuArray = [
     {
@@ -180,8 +181,8 @@ class ChatPageState extends State<ChatPage> {
       "time": ""
     }
   ];
-  late int urutJawabBot;
-  late bool qbotSpeaking;
+  int urutJawabBot = 2;
+  bool qbotSpeaking = false;
   bool isFirstRun = true;
 
   late ChatProvider chatProvider;
@@ -189,15 +190,24 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    super.initState();
-    urutJawabBot = 2;
-    qbotSpeaking = false;
+    listScrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          if (listScrollController.offset <=
+              listScrollController.position.maxScrollExtent - 20) {
+            showUpButton = false;
+          } else {
+            showUpButton = true;
+          }
+        });
+      });
     getArray('pesanArray');
     getArray('menuArray');
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
     readLocal();
+    super.initState();
   }
 
   pushPesanArray(String pesan,
@@ -363,11 +373,11 @@ class ChatPageState extends State<ChatPage> {
               elevation: 2,
               highlightElevation: 2,
               child: Icon(
-                Icons.keyboard_double_arrow_down,
+                showUpButton ? Icons.keyboard_double_arrow_up : Icons.keyboard_double_arrow_down,
                 size: 20,
                 color: Colors.grey,
               ),
-              onPressed: scrollToBottom),
+              onPressed: showUpButton ? scrollToTop : scrollToBottom),
         ),
       ],
     );
@@ -437,7 +447,7 @@ class ChatPageState extends State<ChatPage> {
                           });
                         },
                         decoration: InputDecoration.collapsed(
-                          hintText: tipsPLaceholder(),
+                          hintText: "Coba \"Albaqarah 127\"",
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
@@ -759,7 +769,11 @@ class ChatPageState extends State<ChatPage> {
 
                           // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 2
-                          if (menuArray[urut]['actions'][arr.length-1]['action'] == "Bantuan" ? index == arr.length - 3 : index == arr.length - 2) {
+                          if (menuArray[urut]['actions'][arr.length - 1]
+                                      ['action'] ==
+                                  "Bantuan"
+                              ? index == arr.length - 3
+                              : index == arr.length - 2) {
                             print('start copy to clipborad');
 
                             await Clipboard.setData(
@@ -771,7 +785,11 @@ class ChatPageState extends State<ChatPage> {
 
                           // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 1
-                          else if (menuArray[urut]['actions'][arr.length-1]['action'] == "Bantuan" ? index == arr.length - 2 : index == arr.length - 1) {
+                          else if (menuArray[urut]['actions'][arr.length - 1]
+                                      ['action'] ==
+                                  "Bantuan"
+                              ? index == arr.length - 2
+                              : index == arr.length - 1) {
                             print('start share teks, answer urutan ke-$urut');
 
                             // munculkan dialog share teks
@@ -1070,11 +1088,15 @@ class ChatPageState extends State<ChatPage> {
             {"action": "Bantuan"}
           ]
         : // jika memiliki isi, tambah menu Copy dan Share teks
-          // jika list terakhir "bantuan" maka di-insert sebelum bantuan, jika bukan maka di-insert di bagian terakhir
-        listMenu.insertAll(listMenu[listMenu.length - 1]["action"] == "Bantuan" ? listMenu.length - 1 : listMenu.length, [
-            {"action": "Copy to Clipboard"},
-            {"action": "Share"},
-          ]);
+        // jika list terakhir "bantuan" maka di-insert sebelum bantuan, jika bukan maka di-insert di bagian terakhir
+        listMenu.insertAll(
+            listMenu[listMenu.length - 1]["action"] == "Bantuan"
+                ? listMenu.length - 1
+                : listMenu.length,
+            [
+                {"action": "Copy to Clipboard"},
+                {"action": "Share"},
+              ]);
 
     await pushPesanArray(jawabQBot,
         fromUser: false, isShare: isShare, suratAyat: jawabQBot);
@@ -1118,6 +1140,20 @@ class ChatPageState extends State<ChatPage> {
     }
     print('done scroll to bottom');
   }
+
+  // fungsi scroll to bottom
+  scrollToTop() {
+    print('start scroll to top');
+
+    if (pesanArray.length > 2) {
+      listScrollController
+          .jumpTo(listScrollController.position.minScrollExtent);
+    } else {
+      print('object ${pesanArray.length}');
+    }
+    print('done scroll to top');
+  }
+
 }
 
 class ChatPageArguments {
