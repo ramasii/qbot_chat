@@ -82,11 +82,9 @@ class AuthProvider extends ChangeNotifier {
 
           // Write data to local storage
           User? currentUser = firebaseUser;
-          await prefs.setString(FirestoreConstants.id, currentUser.uid);
-          await prefs.setString(
-              FirestoreConstants.nickname, currentUser.displayName ?? "");
-          await prefs.setString(
-              FirestoreConstants.photoUrl, currentUser.photoURL ?? "");
+          await prefs.setString("id", currentUser.uid);
+          await prefs.setString("nickname", currentUser.displayName ?? "");
+          await prefs.setString("photoUrl", currentUser.photoURL ?? "");
 
           // sda
           print("daftar baru '${currentUser.displayName}' ,${currentUser.uid}");
@@ -95,13 +93,13 @@ class AuthProvider extends ChangeNotifier {
           DocumentSnapshot documentSnapshot = documents[0];
           UserChat userChat = UserChat.fromDocument(documentSnapshot);
           // Write data to local
-          await prefs.setString(FirestoreConstants.id, userChat.id);
-          await prefs.setString(FirestoreConstants.nickname, userChat.nickname);
-          await prefs.setString(FirestoreConstants.photoUrl, userChat.photoUrl);
-          await prefs.setString(FirestoreConstants.aboutMe, userChat.aboutMe);
+          await prefs.setString("id", userChat.id);
+          await prefs.setString("nickname", userChat.nickname);
+          await prefs.setString("photoUrl", userChat.photoUrl);
+          await prefs.setString("aboutMe", userChat.aboutMe);
 
           // asd
-          print('uda login, ${userChat.nickname} ..id ${userChat.id}');
+          print('uda login, ${prefs.getString("nickname")} ..id ${userChat.id}');
         }
         _status = Status.authenticated;
         notifyListeners();

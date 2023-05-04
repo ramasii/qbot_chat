@@ -797,13 +797,13 @@ class ChatPageState extends State<ChatPage> {
                                   "Bantuan"
                               ? index == arr.length - 3
                               : index == arr.length - 2) {
-                            print('start copy to clipborad');
+                            print('START copy to clipborad');
 
                             await Clipboard.setData(
                                 ClipboardData(text: pesanAnswer));
                             Navigator.of(context).pop(); // close dialog menu
 
-                            print('done copy to clipboard');
+                            print('DONE copy to clipboard');
                           }
 
                           // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
@@ -813,7 +813,7 @@ class ChatPageState extends State<ChatPage> {
                                   "Bantuan"
                               ? index == arr.length - 2
                               : index == arr.length - 1) {
-                            print('start share teks, answer urutan ke-$urut');
+                            print('START share teks, answer urutan ke-$urut');
 
                             // munculkan dialog share teks
                             await Share.share(pesanAnswer,
@@ -823,7 +823,7 @@ class ChatPageState extends State<ChatPage> {
                                     .replaceAll(RegExp(r'\*'), ''));
                             Navigator.of(context).pop(); // close dialog menu
 
-                            print('done share teks');
+                            print('DONE share teks');
                           }
 
                           //user kirim pesan melalui menu
@@ -1019,7 +1019,7 @@ class ChatPageState extends State<ChatPage> {
 
   // save array
   saveArray({bool showLog = true}) async {
-    if (showLog) print('start save pesanArray dan menuArray');
+    if (showLog) print('START save pesanArray dan menuArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // convert List<Map> menjadi String
@@ -1030,12 +1030,12 @@ class ChatPageState extends State<ChatPage> {
     await prefs.setString('pesanArray', strPesanArray);
     await prefs.setString('menuArray', strMenuArray);
 
-    if (showLog) print('done save pesanArray dan menuArray');
+    if (showLog) print('DONE save pesanArray dan menuArray');
   }
 
   // clear array
   clearArray() async {
-    print('start clear pesanArray dan menuArray');
+    print('START clear pesanArray dan menuArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await qbotStop();
@@ -1046,12 +1046,12 @@ class ChatPageState extends State<ChatPage> {
     });
     await saveArray(showLog: false);
 
-    print('done clear pesanArray dan menuArray');
+    print('DONE clear pesanArray dan menuArray');
   }
 
   // read array yang disimpan | get array yang disimpan
   getArray(String kunci) async {
-    print('start get array');
+    print('START get array');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? items = await prefs.getString(kunci);
     // jika items tidak kosong. info: ternyata tanda '?' setelah typeData artinya kemugkinan variable berisi NULL
@@ -1173,7 +1173,7 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi scroll to bottom
   scrollToBottom() {
-    print('start scroll to bottom');
+    print('START scroll to bottom');
 
     if (pesanArray.length > 2) {
       listScrollController
@@ -1182,12 +1182,12 @@ class ChatPageState extends State<ChatPage> {
       print('object ${pesanArray.length}');
     }
     print(
-        'done scroll to bottom ${listScrollController.position.maxScrollExtent}');
+        'DONE scroll to bottom ${listScrollController.position.maxScrollExtent}');
   }
 
   // fungsi scroll to bottom
   scrollToTop() {
-    print('start scroll to top');
+    print('START scroll to top');
 
     if (pesanArray.length > 2) {
       listScrollController
@@ -1196,7 +1196,7 @@ class ChatPageState extends State<ChatPage> {
       print('object ${pesanArray.length}');
     }
     print(
-        'done scroll to top, ${listScrollController.position.maxScrollExtent}');
+        'DONE scroll to top, ${listScrollController.position.maxScrollExtent}');
   }
 
   //widget popup menu button
@@ -1230,15 +1230,13 @@ class ChatPageState extends State<ChatPage> {
       await clearArray();
     } else if (value == Options.exit.index) {
       //exit app
-      print('start exit app');
+      print('START exit app');
       SystemNavigator.pop();
-      print('done exit app');
+      print('DONE exit app');
     } else if (value == Options.export.index) {
       //export chat
-      print('start export message');
-
+      print('START export message');
       String ringkasan = "";
-
       for (var pesan in pesanArray) {
         if (!pesan["share"]) {
           ringkasan += (pesan["fromUser"] ? "Anda: " : "IslamBot: ") +
@@ -1247,12 +1245,16 @@ class ChatPageState extends State<ChatPage> {
               "\n\n";
         }
       }
-
       await createTextFile(ringkasan);
-      print('done export message');
+      print('DONE export message');
     } else {
       // about islambot
-      print('start about');
+      print('START open about us page');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AboutUsScreen()),
+      );
+      print('DONE open about us page');
     }
   }
 
