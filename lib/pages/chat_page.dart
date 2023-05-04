@@ -342,14 +342,14 @@ class ChatPageState extends State<ChatPage> {
                   _onMenuItemSelected(value as int);
                 },
                 itemBuilder: (ctx) => [
-                      _buildPopupMenuItem('Clear messages',
-                          Icons.cleaning_services_rounded, Options.clear.index),
-                      _buildPopupMenuItem('Exit app', Icons.exit_to_app_rounded,
-                          Options.exit.index),
-                      _buildPopupMenuItem('Export messages',
+                      _buildPopupMenuItem('Export Messages',
                           Icons.upload_file_rounded, Options.export.index),
+                      _buildPopupMenuItem('Clear Messages',
+                          Icons.cleaning_services_rounded, Options.clear.index),
                       _buildPopupMenuItem('About IslamBot',
                           Icons.info_outline_rounded, Options.about.index),
+                      _buildPopupMenuItem('Exit Application',
+                          Icons.exit_to_app_rounded, Options.exit.index),
                     ])
           ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -969,7 +969,7 @@ class ChatPageState extends State<ChatPage> {
                     return AlertDialog(
                       title: Text('Konfirmasi'),
                       content: Text('Hapus pesan ini?'),
-                      actions: <Widget>[
+                      actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
                           child: Container(
@@ -1226,8 +1226,50 @@ class ChatPageState extends State<ChatPage> {
     });
 
     if (value == Options.clear.index) {
-      // clear chat
-      await clearArray();
+      // show confirmation dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Hapus semua pesan?'),
+            content: Text('Pesan yang dihapus tidak bisa dikembalikan.'),
+            actions: [
+              TextButton(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    'Batal',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    'Hapus',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                onPressed: () async {
+                  // clear chat
+                  await clearArray();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     } else if (value == Options.exit.index) {
       //exit app
       print('START exit app');
