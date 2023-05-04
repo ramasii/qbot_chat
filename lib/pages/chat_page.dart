@@ -1271,23 +1271,31 @@ class ChatPageState extends State<ChatPage> {
         },
       );
     } else if (value == Options.exit.index) {
-      //exit app
+      // exit app
       print('START exit app');
       SystemNavigator.pop();
       print('DONE exit app');
     } else if (value == Options.export.index) {
-      //export chat
+      // export chat
       print('START export message');
-      String ringkasan = "";
-      for (var pesan in pesanArray) {
-        if (!pesan["share"]) {
-          ringkasan += (pesan["fromUser"] ? "Anda: " : "IslamBot: ") +
-              '\n' +
-              pesan["pesan"] +
-              "\n\n";
-        }
+      // Buat string dengan header kolom 'Pengirim' dan 'Pesan'
+      String pesanStr = 'Pengirim,Pesan\n';
+
+      // Loop melalui setiap pesan pada pesanArray
+      for (final pesan in pesanArray) {
+        // Dapatkan nilai dari key 'fromUser'
+        final isFromUser = pesan['fromUser'] as bool;
+
+        // Tentukan nilai untuk 'pengirim' berdasarkan nilai 'fromUser'
+        final pengirim = isFromUser ? 'Anda' : 'IslamBot';
+
+        // Dapatkan nilai dari key 'pesan'
+        final pesanText = pesan['pesan'] as String;
+
+        // Tambahkan baris baru pada 'pesanStr' dengan format 'pengirim,pesan'
+        pesanStr += '$pengirim,"$pesanText"\n';
       }
-      await createTextFile(ringkasan);
+      await createTextFile(pesanStr);
       print('DONE export message');
     } else {
       // about islambot
@@ -1312,9 +1320,9 @@ class ChatPageState extends State<ChatPage> {
 
     // gabungkan nama file dengan path direktori
     DateTime now = DateTime.now();
-    String filename = DateFormat('ydM-HH-mm-ss').format(now);
-    filename = 'Islambot-$filename';
-    final path = '${directory.path}/$filename.txt';
+    String filename = DateFormat('yyyyMMdd').format(now);
+    filename = 'Islambot-Messages-$filename';
+    final path = '${directory.path}/$filename.csv';
 
     // buat file
     final file = File(path);
@@ -1329,7 +1337,7 @@ class ChatPageState extends State<ChatPage> {
     await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
     Fluttertoast.showToast(
         msg:
-            "File berhasil diekspor di memori internal/Documents/IslamBot/$filename.txt",
+            "File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv",
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.green,
