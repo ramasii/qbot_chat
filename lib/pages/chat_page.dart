@@ -967,8 +967,8 @@ class ChatPageState extends State<ChatPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Konfirmasi'),
-                      content: Text('Hapus pesan ini?'),
+                      title: Text('Hapus pesan ini?'),
+                      content: Text('Pesan yang dihapus tidak bisa dikembalikan.'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -1335,14 +1335,15 @@ class ChatPageState extends State<ChatPage> {
     // buat file dengan nama yang diberikan
     await file.create();
     await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
-    Fluttertoast.showToast(
-        msg:
-            "File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv",
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.BOTTOM,
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv'),
         backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0);
+        showCloseIcon: true,
+        closeIconColor: Colors.white,
+      ),
+    );
 
     print('file berhasil disimpan di ${directory.path}');
   }

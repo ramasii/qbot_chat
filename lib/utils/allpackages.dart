@@ -15,4 +15,3 @@ export '../providers/providers.dart';
 export '../widgets/widgets.dart';
 export 'dart:convert';
 export 'package:flutter/services.dart';
-export 'package:csv/csv.dart';
