@@ -571,24 +571,8 @@ class ChatPageState extends State<ChatPage> {
                   children: [
                     // cek apakah share ayat?
                     pesan['share']
-                        ? Image.network(
-                            pesan['imgUrl'],
-                            // LOADING INDIKATOR SHARE AYAT
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent? loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.teal[900],
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                          )
+                        ? FullScreenImage(imageUrl: pesan['imgUrl'])
+
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
@@ -1367,6 +1351,84 @@ class ChatPageState extends State<ChatPage> {
     print('file berhasil disimpan di ${directory.path}');
   }
 }
+
+// class photo view
+class FullScreenImage extends StatelessWidget {
+  final String imageUrl;
+
+  FullScreenImage({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => FullScreenImageView(imageUrl: imageUrl),
+          ),
+        );
+      },
+      child: Image.network(
+        imageUrl,
+        // LOADING INDIKATOR SHARE AYAT
+        loadingBuilder: (BuildContext context, Widget child,
+            ImageChunkEvent? loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              color: Colors.teal[900],
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                  : null,
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class FullScreenImageView extends StatelessWidget {
+  final String imageUrl;
+
+  FullScreenImageView({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+        },
+        child: Container(
+          color: Colors.black,
+          alignment: Alignment.center,
+          child: PhotoView(
+            imageProvider: NetworkImage(imageUrl),
+            backgroundDecoration: BoxDecoration(
+              color: Colors.black,
+            ),
+            loadingBuilder: (BuildContext context, ImageChunkEvent? progress) {
+              return progress == null
+                  ? Container()
+                  : Center(
+                      child: CircularProgressIndicator(
+                        value: progress.expectedTotalBytes != null
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class ChatPageArguments {
   final String peerId;
