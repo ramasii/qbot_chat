@@ -968,7 +968,8 @@ class ChatPageState extends State<ChatPage> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text('Hapus pesan ini?'),
-                      content: Text('Pesan yang dihapus tidak bisa dikembalikan.'),
+                      content:
+                          Text('Pesan yang dihapus tidak bisa dikembalikan.'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -1295,7 +1296,7 @@ class ChatPageState extends State<ChatPage> {
         // Tambahkan baris baru pada 'pesanStr' dengan format 'pengirim,pesan'
         pesanStr += '$pengirim,"$pesanText"\n';
       }
-      await createTextFile(pesanStr);
+      if (await checkStoragePermission()) await createTextFile(pesanStr);
       print('DONE export message');
     } else {
       // about islambot
@@ -1305,6 +1306,23 @@ class ChatPageState extends State<ChatPage> {
         MaterialPageRoute(builder: (context) => AboutUsScreen()),
       );
       print('DONE open about us page');
+    }
+  }
+
+  // fungsi izin akses memori
+  Future<bool> checkStoragePermission() async {
+    // Mengecek apakah aplikasi memiliki izin akses ke penyimpanan
+    var storageStatus = await Permission.storage.status;
+    if (storageStatus.isGranted) {
+      return true;
+    } else {
+      // Jika tidak memiliki izin, meminta izin akses ke penyimpanan
+      var result = await Permission.storage.request();
+      if (result.isGranted) {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -1338,7 +1356,8 @@ class ChatPageState extends State<ChatPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv'),
+        content: Text(
+            'File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv'),
         backgroundColor: Colors.green,
         showCloseIcon: true,
         closeIconColor: Colors.white,
