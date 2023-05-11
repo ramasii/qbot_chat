@@ -57,8 +57,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
                   text: arabs[index],
                   style: TextStyle(
                       fontFamily: "LPMQ",
-                      fontSize: 24,
-                      height: 2.3,
+                      fontSize: arabSize,
+                      height: arabSize/10,
                       color: Colors.black),
                 ),
                 WidgetSpan(child: Container(height: 20,))
@@ -88,7 +88,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
         return RichText(
           text: TextSpan(
               children: spans,
-              style: TextStyle(color: Colors.black, fontSize: 17)),
+              style: TextStyle(color: Colors.black, fontSize: textSize)),
         );
       }
     });

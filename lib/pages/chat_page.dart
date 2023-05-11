@@ -462,7 +462,7 @@ class ChatPageState extends State<ChatPage> {
                         style: TextStyle(
                             color: ColorConstants.primaryColor,
                             fontFamily: "IslamBot",
-                            fontSize: 18),
+                            fontSize: textSize+1),
                         controller: textEditingController,
                         onChanged: (text) {
                           setState(() {
@@ -474,7 +474,7 @@ class ChatPageState extends State<ChatPage> {
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
-                              fontSize: 16,
+                              fontSize: textSize-1,
                               height: 1.5),
                         ),
                         focusNode: focusNode,
@@ -1127,7 +1127,8 @@ class ChatPageState extends State<ChatPage> {
     // jika share ayat, tidak perlu autostart TTS
     isShare
         ? print('SHARE AYAT, tanpa TTS')
-        : Future.delayed(Duration(milliseconds: 1500), () async {
+        : autoStartTts
+          ? Future.delayed(Duration(milliseconds: 1500), () async {
             setState(() {
               menuArray[menuArray.length - 1]["isSpeaking"] = true;
               menuArray[menuArray.length - 1]["useSpeaker"] = true;
@@ -1138,7 +1139,8 @@ class ChatPageState extends State<ChatPage> {
               menuArray[menuArray.length - 1]["isSpeaking"] = false;
               menuArray[menuArray.length - 1]["useSpeaker"] = false;
             });
-          });
+          })
+          : print('tanpa auto TTS');
     setState(() {
       menuArray.add({
         "jmlItem": listMenu.length,

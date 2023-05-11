@@ -17,3 +17,4 @@ export 'dart:convert';
 export 'package:flutter/services.dart';
 export 'package:permission_handler/permission_handler.dart';
 export 'package:photo_view/photo_view.dart';
+export 'settings.dart';
