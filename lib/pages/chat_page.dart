@@ -1128,6 +1128,7 @@ class ChatPageState extends State<ChatPage> {
     isShare
         ? print('SHARE AYAT, tanpa TTS')
         : autoStartTts
+          // autoTTS on
           ? Future.delayed(Duration(milliseconds: 1500), () async {
             setState(() {
               menuArray[menuArray.length - 1]["isSpeaking"] = true;
@@ -1140,6 +1141,7 @@ class ChatPageState extends State<ChatPage> {
               menuArray[menuArray.length - 1]["useSpeaker"] = false;
             });
           })
+          // autoTTS off
           : print('tanpa auto TTS');
     setState(() {
       menuArray.add({
@@ -1400,36 +1402,54 @@ class FullScreenImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Container(
-          color: Colors.black,
-          alignment: Alignment.center,
-          child: PhotoView(
-            imageProvider: NetworkImage(imageUrl),
-            backgroundDecoration: BoxDecoration(
-              color: Colors.black,
-            ),
-            loadingBuilder: (BuildContext context, ImageChunkEvent? progress) {
-              return progress == null
-                  ? Container()
-                  : Center(
-                      child: CircularProgressIndicator(
-                        value: progress.expectedTotalBytes != null
-                            ? progress.cumulativeBytesLoaded /
-                                progress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
             },
+            child: Container(
+              color: Colors.black,
+              alignment: Alignment.center,
+              child: PhotoView(
+                imageProvider: NetworkImage(imageUrl),
+                backgroundDecoration: BoxDecoration(
+                  color: Colors.black,
+                ),
+                loadingBuilder:
+                    (BuildContext context, ImageChunkEvent? progress) {
+                  return progress == null
+                      ? Container()
+                      : Center(
+                          child: CircularProgressIndicator(
+                            value: progress.expectedTotalBytes != null
+                                ? progress.cumulativeBytesLoaded /
+                                    progress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                },
+                minScale: PhotoViewComputedScale.contained * 0.8,
+                maxScale: PhotoViewComputedScale.covered * 2.5,
+              ),
+            ),
           ),
-        ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            right: 10,
+            child: IconButton(
+              icon: Icon(Icons.close, color: Colors.white, size: 30),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 
 class ChatPageArguments {
