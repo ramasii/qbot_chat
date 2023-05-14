@@ -10,7 +10,7 @@ import '../utils/allpackages.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
-enum Options { clear, exit, export, about }
+enum Options { clear, exit, export, about, settings }
 
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key, required this.arguments}) : super(key: key);
@@ -206,6 +206,7 @@ class ChatPageState extends State<ChatPage> {
       });
     getArray('pesanArray');
     getArray('menuArray');
+    AppSettings.loadSettings;
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
@@ -346,6 +347,8 @@ class ChatPageState extends State<ChatPage> {
                           Icons.upload_file_rounded, Options.export.index),
                       _buildPopupMenuItem('Clear Messages',
                           Icons.cleaning_services_rounded, Options.clear.index),
+                      _buildPopupMenuItem(
+                          'Pengaturan', Icons.settings, Options.settings.index),
                       _buildPopupMenuItem('About IslamBot',
                           Icons.info_outline_rounded, Options.about.index),
                       _buildPopupMenuItem('Exit Application',
@@ -462,7 +465,7 @@ class ChatPageState extends State<ChatPage> {
                         style: TextStyle(
                             color: ColorConstants.primaryColor,
                             fontFamily: "IslamBot",
-                            fontSize: textSize+1),
+                            fontSize: AppSettings.regularTextSize),
                         controller: textEditingController,
                         onChanged: (text) {
                           setState(() {
@@ -474,7 +477,7 @@ class ChatPageState extends State<ChatPage> {
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
-                              fontSize: textSize-1,
+                              fontSize: AppSettings.regularTextSize,
                               height: 1.5),
                         ),
                         focusNode: focusNode,
@@ -572,7 +575,6 @@ class ChatPageState extends State<ChatPage> {
                     // cek apakah share ayat?
                     pesan['share']
                         ? FullScreenImage(imageUrl: pesan['imgUrl'])
-
                         : BoldAsteris(text: pesan['pesan']),
                     Container(
                       margin: EdgeInsets.only(top: 10),
@@ -1127,22 +1129,22 @@ class ChatPageState extends State<ChatPage> {
     // jika share ayat, tidak perlu autostart TTS
     isShare
         ? print('SHARE AYAT, tanpa TTS')
-        : autoStartTts
-          // autoTTS on
-          ? Future.delayed(Duration(milliseconds: 1500), () async {
-            setState(() {
-              menuArray[menuArray.length - 1]["isSpeaking"] = true;
-              menuArray[menuArray.length - 1]["useSpeaker"] = true;
-            });
-            await qbotSpeak(jawabQBot);
-            print('uda speking via $MenuOrText');
-            setState(() {
-              menuArray[menuArray.length - 1]["isSpeaking"] = false;
-              menuArray[menuArray.length - 1]["useSpeaker"] = false;
-            });
-          })
-          // autoTTS off
-          : print('tanpa auto TTS');
+        : AppSettings.enableTTS
+            // autoTTS on
+            ? Future.delayed(Duration(milliseconds: 1500), () async {
+                setState(() {
+                  menuArray[menuArray.length - 1]["isSpeaking"] = true;
+                  menuArray[menuArray.length - 1]["useSpeaker"] = true;
+                });
+                await qbotSpeak(jawabQBot);
+                print('uda speking via $MenuOrText');
+                setState(() {
+                  menuArray[menuArray.length - 1]["isSpeaking"] = false;
+                  menuArray[menuArray.length - 1]["useSpeaker"] = false;
+                });
+              })
+            // autoTTS off
+            : print('tanpa auto TTS');
     setState(() {
       menuArray.add({
         "jmlItem": listMenu.length,
@@ -1286,7 +1288,7 @@ class ChatPageState extends State<ChatPage> {
       }
       if (await checkStoragePermission()) await createTextFile(pesanStr);
       print('DONE export message');
-    } else {
+    } else if (value == Options.about.index) {
       // about islambot
       print('START open about us page');
       Navigator.push(
@@ -1294,6 +1296,14 @@ class ChatPageState extends State<ChatPage> {
         MaterialPageRoute(builder: (context) => AboutUsScreen()),
       );
       print('DONE open about us page');
+    } else if (value == Options.settings.index) {
+      // about islambot
+      print('START open SETTINGS page');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SettingsPage()),
+      );
+      print('DONE open SETTINGS page');
     }
   }
 
@@ -1449,8 +1459,6 @@ class FullScreenImageView extends StatelessWidget {
     );
   }
 }
-
-
 
 class ChatPageArguments {
   final String peerId;

@@ -13,13 +13,16 @@ import 'constants/color_constants.dart';
 import 'pages/pages.dart';
 import 'providers/providers.dart';
 import 'package:flutter/services.dart';
+import './utils/allpackages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  await AppSettings.loadSettings();
   // meminta izin akses penyimpanan
-  SystemChannels.platform.invokeMethod('SystemNavigator.requestStoragePermissions');
+  SystemChannels.platform
+      .invokeMethod('SystemNavigator.requestStoragePermissions');
   runApp(MyApp(prefs: prefs));
 }
 

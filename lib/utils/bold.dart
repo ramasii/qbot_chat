@@ -40,8 +40,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
     String ubahAsteris = bagian1.replaceAll(RegExp(r'\*\*'), "*");
 
     // split berdasarkan teks arab, outpunya List<String>
-    List<String> arabs = ubahAsteris
-        .split(RegExp(r'(\n|\n \n(\s|)|\n\n)(?=(|{)[\u0600-\u06FF])|(?<=[\u0600-\u06FF](|})|∞|\s)(\n \n|\n|\n\n)'));
+    List<String> arabs = ubahAsteris.split(RegExp(
+        r'(\n|\n \n(\s|)|\n\n)(?=(|{)[\u0600-\u06FF])|(?<=[\u0600-\u06FF](|})|∞|\s)(\n \n|\n|\n\n)'));
 
     // List untuk ditampilkan di akhir, jangan lupa digabung dengan myReadmore()
     List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
@@ -52,16 +52,22 @@ class _BoldAsterisState extends State<BoldAsteris> {
             textDirection: TextDirection.rtl, // direction
             text: TextSpan(
               children: [
-                WidgetSpan(child: Container(height: 20,)),
+                WidgetSpan(
+                    child: Container(
+                  height: 20,
+                )),
                 TextSpan(
                   text: arabs[index],
                   style: TextStyle(
                       fontFamily: "LPMQ",
-                      fontSize: arabSize,
-                      height: arabSize/10,
+                      fontSize: AppSettings.arabicTextSize,
+                      height: AppSettings.arabicTextSize / 10,
                       color: Colors.black),
                 ),
-                WidgetSpan(child: Container(height: 20,))
+                WidgetSpan(
+                    child: Container(
+                  height: 20,
+                ))
               ],
             ));
       } else {
@@ -88,7 +94,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
         return RichText(
           text: TextSpan(
               children: spans,
-              style: TextStyle(color: Colors.black, fontSize: textSize)),
+              style: TextStyle(color: Colors.black, fontSize: AppSettings.regularTextSize)),
         );
       }
     });
@@ -104,7 +110,9 @@ class _BoldAsterisState extends State<BoldAsteris> {
               child: Text(
                 'Baca selengkapnya',
                 style: TextStyle(
-                    color: Colors.blue, fontSize: 15, fontFamily: "IslamBot"),
+                    color: Colors.blue,
+                    fontSize: AppSettings.regularTextSize,
+                    fontFamily: "IslamBot"),
               ),
               onTap: () {
                 print('object');
