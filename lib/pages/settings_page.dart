@@ -103,8 +103,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void _showRegularTextSizeDialog() async {
     final prefs = await SharedPreferences.getInstance();
-    int initialTextSize = prefs.getInt('AppSettings.regularTextSize') ?? 17;
-    int selectedTextSize = initialTextSize;
+    double initialTextSize =
+        prefs.getDouble('AppSettings.regularTextSize') ?? 17;
+    int selectedTextSize = initialTextSize.toInt();
 
     final List<int> textSizes = [10, 13, 17, 20, 23, 27, 30, 33, 37, 40];
 
@@ -143,8 +144,51 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
   }
-
   void _showArabicTextSizeDialog() async {
+    final prefs = await SharedPreferences.getInstance();
+    double initialTextSize =
+        prefs.getDouble('AppSettings.arabicTextSize') ?? 24;
+    int selectedTextSize = initialTextSize.toInt();
+
+    final List<int> textSizes = [20, 24, 27, 30, 33, 37, 40, 43, 47, 50];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pilih Ukuran Teks Biasa'),
+          content: DropdownButton<int>(
+            value: selectedTextSize,
+            onChanged: (int? value) {
+              setState(() {
+                selectedTextSize = value!;
+              });
+            },
+            items: textSizes.map<DropdownMenuItem<int>>((int value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                child: Text(value.toString()),
+              );
+            }).toList(),
+          ),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () async {
+                setState(() {
+                  AppSettings.arabicTextSize = selectedTextSize.toDouble();
+                });
+                await AppSettings.saveSettings();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /* void _showArabicTextSizeDialog() async {
     final prefs = await SharedPreferences.getInstance();
     double initialTextSize =
         prefs.getDouble('AppSettings.arabicTextSize') ?? 24.0;
@@ -180,7 +224,7 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       },
     );
-  }
+  } */
 
   Container tombol(String pesan,
       {Color warnaTombol = Colors.green, Color warnaTeks = Colors.white}) {
