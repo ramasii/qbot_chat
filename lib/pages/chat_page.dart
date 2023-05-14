@@ -442,14 +442,10 @@ class ChatPageState extends State<ChatPage> {
                     flex: 1,
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 1),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.attach_file,
+                      child: Icon(
+                          Icons.panorama_fish_eye,
                           color: Colors.grey,
                         ),
-                        onPressed: getImage,
-                        color: ColorConstants.primaryColor,
-                      ),
                     ),
                   ),
 
