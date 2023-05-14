@@ -25,7 +25,13 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: EdgeInsets.all(16),
         children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(color: Colors.grey[300]),
+            child: Text("Umum", style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey[600]),),
+          ),
           ListTile(
+            leading: Icon(Icons.language),
             title: Text('Bahasa'),
             subtitle: Text(AppSettings.language),
             onTap: () {
@@ -33,6 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.text_fields_rounded),
             title: Text('Ukuran Teks Biasa'),
             subtitle: Text(AppSettings.regularTextSize.toString()),
             onTap: () {
@@ -40,6 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.text_fields_rounded),
             title: Text('Ukuran Teks Arab'),
             subtitle: Text(AppSettings.arabicTextSize.toString()),
             onTap: () {
@@ -47,6 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.volume_up_rounded),
             title: Text('Auto Start TTS'),
             trailing: Switch(
               value: AppSettings.enableTTS,

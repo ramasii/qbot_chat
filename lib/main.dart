@@ -68,6 +68,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: AppConstants.appTitle,
         theme: ThemeData(
+          fontFamily: "IslamBot",
           primaryColor: ColorConstants.themeColor,
           primarySwatch: MaterialColor(0xfff5a623, ColorConstants.swatchColor),
         ),
