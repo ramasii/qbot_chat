@@ -59,7 +59,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
                 TextSpan(
                   text: arabs[index],
                   style: TextStyle(
-                      fontFamily: "LPMQ",
+                      fontFamily: AppSettings.arabicFont,
                       fontSize: AppSettings.arabicTextSize,
                       height: AppSettings.arabicTextSize / 10,
                       color: Colors.black),

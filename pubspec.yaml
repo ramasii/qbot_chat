@@ -40,9 +40,18 @@ flutter:
         - asset: fonts/Inter-Regular.ttf
         - asset: fonts/Inter-Bold.ttf
           weight: 700
-    - family: LPMQ
+    - family: LPMQ Isep Misbah
       fonts:
-        - asset: fonts/LPMQ.ttf                                                  
+        - asset: fonts/LPMQ.ttf
+    - family: Al Qalam Quran Majeed
+      fonts:
+        - asset: fonts/Al-Qalam-Quran-Majeed.ttf
+    - family: Hafs Arabic & Quran
+      fonts:
+        - asset: fonts/Hafs-Arabic-Quran.ttf
+    - family: PDMS Saleem Quran
+      fonts:
+        - asset: fonts/PDMS-Saleem-Quran.ttf
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
