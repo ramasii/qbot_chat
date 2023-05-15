@@ -173,7 +173,8 @@ class ChatPageState extends State<ChatPage> {
       "fromUser": false,
       "share": false,
       "urut": 0,
-      "time": ""
+      "time": "",
+      "isFavourite": false
     },
     {
       "pesan":
@@ -181,7 +182,8 @@ class ChatPageState extends State<ChatPage> {
       "fromUser": false,
       "share": false,
       "urut": 1,
-      "time": ""
+      "time": "",
+      "isFavourite": false
     }
   ];
   int urutJawabBot = 2;
@@ -217,12 +219,13 @@ class ChatPageState extends State<ChatPage> {
   pushPesanArray(String pesan,
       {bool fromUser = true,
       bool isShare = false,
-      String suratAyat = ""}) async {
+      String suratAyat = "",
+      bool isFavourite = false}) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "";
     DateTime waktu = DateTime.now();
-    int urut = fromUser ? 0 : menuArray.length;
+    int urut = fromUser ? -1 : menuArray.length;
     setState(() {
       pesanArray.add({
         "pesan": pesan,
@@ -230,10 +233,11 @@ class ChatPageState extends State<ChatPage> {
         "urut": urut,
         "time": waktu.toString(),
         "share": isShare,
-        "imgUrl": imgUrl
+        "imgUrl": imgUrl,
+        "isFavourite": isFavourite,
       });
     });
-    print('---------- pushPesanArray');
+    print('--------- 219: pushPesanArray');
   }
 
   void readLocal() {
@@ -443,9 +447,9 @@ class ChatPageState extends State<ChatPage> {
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 1),
                       child: Icon(
-                          Icons.panorama_fish_eye,
-                          color: Colors.grey,
-                        ),
+                        Icons.panorama_fish_eye,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
 
@@ -568,6 +572,31 @@ class ChatPageState extends State<ChatPage> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // tombol favorit
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                          onPressed: () {
+                            print('tekan favorit');
+                            setState(() {
+                              pesan['isFavourite'] =
+                                  pesan['isFavourite'] == true ? false : true;
+                              saveArray();
+                            });
+                            print('is favorit? ${pesan['isFavourite']}');
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                          icon: pesan['isFavourite']
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border_rounded,
+                                  color: Colors.grey[400],
+                                )),
+                    ),
                     // cek apakah share ayat?
                     pesan['share']
                         ? FullScreenImage(imageUrl: pesan['imgUrl'])
@@ -1022,11 +1051,27 @@ class ChatPageState extends State<ChatPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await qbotStop();
-    await saveArray(showLog: false);
+
     setState(() {
       pesanArray = [];
       menuArray = [];
     });
+
+    // -------------------- COBA UNTUK HAPUS YANG NO-FAVORIT --------------------
+    // for (var pesan in pesanArray) {
+    //   // hapus pesan yang bukan favorit
+    //   if (!pesan['isFavourite']) {
+    //     // pesanArray.remove(pesan);
+    //     //cek jika bukan dari user, maka hapus juga di menuArray
+    //     // if (!pesan['fromUser']) menuArray.removeAt(pesan['urut']);
+    //     print(
+    //         'dihapus, user? ${pesan['fromUser']}, favorit? ${pesan['isFavourite']}');
+    //   } else {
+    //     print(
+    //         'aman, user? ${pesan['fromUser']}, favorit? ${pesan['isFavourite']}');
+    //   }
+    // }
+
     await saveArray(showLog: false);
 
     print('DONE clear pesanArray dan menuArray');

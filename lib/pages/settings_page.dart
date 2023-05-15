@@ -27,7 +27,6 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           subtitleSetting("Umum", bottom: 5),
           TileSetting("Bahasa", Icons.language, AppSettings.language, _showLanguageDialog),
-          TileSetting("Ukuran Teks Biasa", Icons.text_fields_rounded, AppSettings.regularTextSize.toString(), _showRegularTextSizeDialog),
           ListTile(
             leading: Icon(Icons.volume_up_rounded),
             title: Text('Auto Start TTS'),
@@ -41,9 +40,10 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
           ),
-          subtitleSetting("Teks Arab", top: 5, bottom: 5),
+          subtitleSetting("Font", top: 5, bottom: 5),
+          TileSetting("Ukuran Font Latin", Icons.text_fields_rounded, AppSettings.regularTextSize.toInt().toString(), _showRegularTextSizeDialog),
+          TileSetting("Ukuran Font Arab", Icons.text_fields_rounded, AppSettings.arabicTextSize.toInt().toString(), _showArabicTextSizeDialog),
           TileSetting("Font Arab", Icons.format_align_left_rounded, AppSettings.arabicFont, _showArabicFontDialog),
-          TileSetting("Ukuran Teks Arab", Icons.text_fields_rounded, AppSettings.arabicTextSize.toString(), _showArabicTextSizeDialog),
         ],
       ),
     );
@@ -156,13 +156,13 @@ class _SettingsPageState extends State<SettingsPage> {
         prefs.getDouble('AppSettings.regularTextSize') ?? 17;
     int selectedTextSize = initialTextSize.toInt();
 
-    final List<int> textSizes = [10, 13, 17, 20, 23, 27, 30, 33, 37, 40];
+    final List<int> textSizes = List.generate(21, (index) => index + 10);
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pilih Ukuran Teks Biasa'),
+          title: Text('Pilih Ukuran Font Latin'),
           content: DropdownButton<int>(
             value: selectedTextSize,
             onChanged: (int? value) {
@@ -199,13 +199,14 @@ class _SettingsPageState extends State<SettingsPage> {
         prefs.getDouble('AppSettings.arabicTextSize') ?? 24;
     int selectedTextSize = initialTextSize.toInt();
 
-    final List<int> textSizes = [20, 24, 27, 30, 33, 37, 40, 43, 47, 50];
+    final List<int> textSizes = List.generate(26, (index) => index + 15);
+;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pilih Ukuran Teks Biasa'),
+          title: Text('Pilih Ukuran Font Arab'),
           content: DropdownButton<int>(
             value: selectedTextSize,
             onChanged: (int? value) {
