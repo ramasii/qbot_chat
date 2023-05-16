@@ -26,7 +26,8 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: EdgeInsets.all(16),
         children: [
           subtitleSetting("Umum", bottom: 5),
-          TileSetting("Bahasa", Icons.language, AppSettings.language, _showLanguageDialog),
+          TileSetting("Bahasa", Icons.language, AppSettings.language,
+              _showLanguageDialog),
           ListTile(
             leading: Icon(Icons.volume_up_rounded),
             title: Text('Auto Start TTS'),
@@ -41,66 +42,91 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           subtitleSetting("Font", top: 5, bottom: 5),
-          TileSetting("Ukuran Font Latin", Icons.text_fields_rounded, AppSettings.regularTextSize.toInt().toString(), _showRegularTextSizeDialog),
-          TileSetting("Ukuran Font Arab", Icons.text_fields_rounded, AppSettings.arabicTextSize.toInt().toString(), _showArabicTextSizeDialog),
-          TileSetting("Font Arab", Icons.format_align_left_rounded, AppSettings.arabicFont, _showArabicFontDialog),
+          TileSetting(
+              "Ukuran Font Latin",
+              Icons.text_fields_rounded,
+              AppSettings.regularTextSize.toInt().toString(),
+              _showRegularTextSizeDialog),
+          TileSetting(
+              "Ukuran Font Arab",
+              Icons.text_fields_rounded,
+              AppSettings.arabicTextSize.toInt().toString(),
+              _showArabicTextSizeDialog),
+          TileSetting("Font Arab", Icons.format_align_left_rounded,
+              AppSettings.arabicFont, _showArabicFontDialog),
         ],
       ),
     );
   }
 
-  ListTile TileSetting(String judul, IconData ikon, String trailing, Function() diTap) {
+  ListTile TileSetting(
+      String judul, IconData ikon, String trailing, Function() diTap) {
     return ListTile(
-          leading: Icon(ikon),
-          title: Text(judul),
-          trailing: textTrailing(trailing),
-          onTap: () {
-            diTap();
-          },
-        );
+      leading: Icon(ikon),
+      title: Text(judul),
+      trailing: textTrailing(trailing),
+      onTap: () {
+        diTap();
+      },
+    );
   }
 
-  Container subtitleSetting(String judul, {double left = 0,double right = 0,double top = 0,double bottom = 0}) {
+  Container subtitleSetting(String judul,
+      {double left = 0, double right = 0, double top = 0, double bottom = 0}) {
     return Container(
-          margin: EdgeInsets.fromLTRB(left, right, top, bottom),
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(15)
-            ),
-          child: Text(judul, style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey[600]),),
-        );
+      margin: EdgeInsets.fromLTRB(left, right, top, bottom),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          color: Colors.grey[300], borderRadius: BorderRadius.circular(15)),
+      child: Text(
+        judul,
+        style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey[600]),
+      ),
+    );
   }
 
-  Text textTrailing(String teks) => Text(teks, style: TextStyle(color: Colors.grey[600]));
+  Text textTrailing(String teks) =>
+      Text(teks, style: TextStyle(color: Colors.grey[600]));
 
   void _showLanguageDialog() {
+    String selectedLanguage = AppSettings.language;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Pilih Bahasa'),
-          content: DropdownButton<String>(
-            value: AppSettings.language,
-            onChanged: (String? value) {
-              setState(() {
-                AppSettings.language = value!;
-              });
-            },
-            items: <String>['Indonesia', 'Malaysia']
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              RadioListTile<String>(
+                title: Text('Indonesia'),
+                value: 'Indonesia',
+                groupValue: selectedLanguage,
+                onChanged: (value) {
+                  setState(() {
+                    selectedLanguage = value!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: Text('Malaysia'),
+                value: 'Malaysia',
+                groupValue: selectedLanguage,
+                onChanged: (value) {
+                  setState(() {
+                    selectedLanguage = value!;
+                  });
+                },
+              ),
+            ],
           ),
           actions: [
             TextButton(
-              child: tombol('OK'),
+              child: Text('OK'),
               onPressed: () async {
                 setState(() {
-                  AppSettings.language = AppSettings.language;
+                  AppSettings.language = selectedLanguage;
                 });
                 await AppSettings.saveSettings();
                 Navigator.of(context).pop();
@@ -125,8 +151,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 AppSettings.arabicFont = value!;
               });
             },
-            items: <String>['LPMQ Isep Misbah', 'Al Qalam Quran Majeed', 'Hafs Arabic & Quran', 'PDMS Saleem Quran']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: <String>[
+              'LPMQ Isep Misbah',
+              'Al Qalam Quran Majeed',
+              'Hafs Arabic & Quran',
+              'PDMS Saleem Quran'
+            ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -193,6 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
       },
     );
   }
+
   void _showArabicTextSizeDialog() async {
     final prefs = await SharedPreferences.getInstance();
     double initialTextSize =
@@ -200,7 +231,7 @@ class _SettingsPageState extends State<SettingsPage> {
     int selectedTextSize = initialTextSize.toInt();
 
     final List<int> textSizes = List.generate(26, (index) => index + 15);
-;
+    ;
 
     showDialog(
       context: context,
