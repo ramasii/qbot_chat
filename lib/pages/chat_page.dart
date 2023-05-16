@@ -1053,24 +1053,8 @@ class ChatPageState extends State<ChatPage> {
     await qbotStop();
 
     setState(() {
-      pesanArray = [];
-      menuArray = [];
+      pesanArray.removeWhere((element) => !element['isFavourite']);
     });
-
-    // -------------------- COBA UNTUK HAPUS YANG NO-FAVORIT --------------------
-    // for (var pesan in pesanArray) {
-    //   // hapus pesan yang bukan favorit
-    //   if (!pesan['isFavourite']) {
-    //     // pesanArray.remove(pesan);
-    //     //cek jika bukan dari user, maka hapus juga di menuArray
-    //     // if (!pesan['fromUser']) menuArray.removeAt(pesan['urut']);
-    //     print(
-    //         'dihapus, user? ${pesan['fromUser']}, favorit? ${pesan['isFavourite']}');
-    //   } else {
-    //     print(
-    //         'aman, user? ${pesan['fromUser']}, favorit? ${pesan['isFavourite']}');
-    //   }
-    // }
 
     await saveArray(showLog: false);
 
