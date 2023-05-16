@@ -1,4 +1,6 @@
 import 'allpackages.dart';
+import 'dart:io';
+import 'dart:async';
 
 // settingan
 class AppSettings {
@@ -15,27 +17,6 @@ class AppSettings {
     AppSettings.regularTextSize = prefs.getDouble('regularTextSize') ?? 17;
     AppSettings.arabicTextSize = prefs.getDouble('arabicTextSize') ?? 24;
     AppSettings.enableTTS = prefs.getBool('enableTTS') ?? false;
-    print('loaded setting');
-  }
-
-  static Future loadSetOnly(String setting) async {
-    final prefs = await SharedPreferences.getInstance();
-    switch (setting) {
-      case 'language':
-        return prefs.getString('language') ?? 'Indonesia';
-        break;
-      case 'regularTextSize':
-        return prefs.getDouble('regularTextSize') ?? 17;
-        break;
-      case 'arabicTextSize':
-        return prefs.getDouble('arabicTextSize') ?? 24;
-        break;
-      case 'enableTTS':
-        return prefs.getBool('enableTTS') ?? false;
-        break;
-      default:
-        break;
-    }
     print('loaded setting');
   }
 

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:speech_to_text/speech_recognition_result.dart';
 
 // masukkan packages lewat allpackages.dart
 import '../utils/allpackages.dart';
@@ -34,10 +36,12 @@ class ChatPageState extends State<ChatPage> {
   String imageUrl = "";
   bool pakaiTeks = false;
   bool showUpButton = false;
+  bool listening = false;
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
   late ScrollController listScrollController;
+  final stt.SpeechToText speechToText = stt.SpeechToText();
   final FocusNode focusNode = FocusNode();
   late List menuArray = [
     {
@@ -263,55 +267,6 @@ class ChatPageState extends State<ChatPage> {
     );
   }
 
-  Future getImage() async {
-    ImagePicker imagePicker = ImagePicker();
-    PickedFile? pickedFile;
-
-    pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      imageFile = File(pickedFile.path);
-      if (imageFile != null) {
-        setState(() {
-          isLoading = true;
-        });
-        uploadFile();
-      }
-    }
-  }
-
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    UploadTask uploadTask = chatProvider.uploadFile(imageFile!, fileName);
-    try {
-      TaskSnapshot snapshot = await uploadTask;
-      imageUrl = await snapshot.ref.getDownloadURL();
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, TypeMessage.image);
-      });
-    } on FirebaseException catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      Fluttertoast.showToast(msg: e.message ?? e.toString());
-    }
-  }
-
-  void onSendMessage(String content, int type) {
-    if (content.trim().isNotEmpty) {
-      textEditingController.clear();
-      chatProvider.sendMessage(
-          content, type, groupChatId, currentUserId, widget.arguments.peerId);
-      if (listScrollController.hasClients) {
-        listScrollController.animateTo(0,
-            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      }
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
-    }
-  }
-
   void onKirimPesan(
     String content,
     int type,
@@ -461,6 +416,8 @@ class ChatPageState extends State<ChatPage> {
                         : 5,
                     child: Container(
                       child: TextField(
+                        enabled: !listening,
+                        readOnly: listening,
                         cursorColor: Colors.teal,
                         style: TextStyle(
                             color: ColorConstants.primaryColor,
@@ -468,9 +425,13 @@ class ChatPageState extends State<ChatPage> {
                             fontSize: AppSettings.regularTextSize),
                         controller: textEditingController,
                         onChanged: (text) {
-                          setState(() {
-                            text.isEmpty ? pakaiTeks = false : pakaiTeks = true;
-                          });
+                          if (!listening) {
+                            setState(() {
+                              text.isEmpty
+                                  ? pakaiTeks = false
+                                  : pakaiTeks = true;
+                            });
+                          }
                         },
                         decoration: InputDecoration.collapsed(
                           hintText: "Coba \"Albaqarah 127\"",
@@ -511,39 +472,91 @@ class ChatPageState extends State<ChatPage> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
-                    String newTeks = textEditingController.text
-                        .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
+                    // ini pakai inputan teks
+                    if (pakaiTeks) {
+                      // Lakukan logika pengiriman pesan seperti sebelumnya
+                      String newTeks = textEditingController.text
+                          .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
+                      await pushPesanArray(newTeks);
+                      textEditingController.clear();
+                      // Set ulang pakaiTeks menjadi false
+                      setState(() {
+                        pakaiTeks = false;
+                      });
+                      await qbotStop();
+                      await saveArray();
 
-                    // user kirim pesan
-                    pakaiTeks
-                        ? await pushPesanArray(newTeks)
-                        : print('teks kosong');
-                    textEditingController.clear();
-                    await qbotStop();
-                    await saveArray();
+                      listScrollController.jumpTo(
+                          listScrollController.position.maxScrollExtent +
+                              (pakaiTeks ? 50 : 0));
 
-                    listScrollController.jumpTo(
-                        listScrollController.position.maxScrollExtent +
-                            (pakaiTeks ? 50 : 0));
+                      await islamBot('Text', newTeks);
 
-                    // jawab IslamBot
-                    if (pakaiTeks) await islamBot('Text', newTeks);
-
-                    // scroll ke bawah
-                    listScrollController.animateTo(
+                      // Scroll ke bawah
+                      listScrollController.animateTo(
                         listScrollController.position.maxScrollExtent + 600,
                         duration: Duration(milliseconds: 500),
-                        curve: Curves.easeIn);
+                        curve: Curves.easeIn,
+                      );
+                    }
 
-                    setState(() {
-                      pakaiTeks = false;
-                    });
+                    // ini pakai speech-to-text
+                    else {
+                      ScaffoldMessenger.of(context).showSnackBar(pesanSnackbar(
+                          'Mulai mendengarkan...',
+                          warna: Colors.teal[600]));
+                      setState(() {
+                        listening = true;
+                      });
+
+                      // Mulai speech-to-text
+                      bool isAvailable = await speechToText.initialize();
+                      if (isAvailable) {
+                        await speechToText.listen(
+                          onResult: (SpeechRecognitionResult result) {
+                            // Update TextField dengan hasil speech-to-text secara realtime
+                            setState(() {
+                              textEditingController.text =
+                                  result.recognizedWords;
+                            });
+
+                            if (result.finalResult) {
+                              setState(() {
+                                pakaiTeks = true;
+                              });
+                            }
+                          },
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            pesanSnackbar('Berhenti mendengarkan',
+                                warna: Colors.teal[600]));
+                        setState(() {
+                        listening = false;
+                      });
+                      } else {
+                        // Jika speech-to-text tidak tersedia, berikan pesan atau tindakan yang sesuai
+                        print('Speech-to-text tidak tersedia');
+                      }
+                    }
                   },
                   color: ColorConstants.primaryColor,
                 ),
               )),
         ],
       ),
+    );
+  }
+
+  SnackBar pesanSnackbar(String pesan,
+      {Color? warna = Colors.grey, Color? warnaPesan = Colors.white}) {
+    return SnackBar(
+      content: Text(
+        pesan,
+        style: TextStyle(color: warnaPesan),
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: warna,
     );
   }
 
