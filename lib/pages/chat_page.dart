@@ -513,6 +513,7 @@ class ChatPageState extends State<ChatPage> {
                       bool isAvailable = await speechToText.initialize();
                       if (isAvailable) {
                         await speechToText.listen(
+                          localeId: "id_ID",
                           onResult: (SpeechRecognitionResult result) {
                             // Update TextField dengan hasil speech-to-text secara realtime
                             setState(() {
