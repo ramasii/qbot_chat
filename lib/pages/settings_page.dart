@@ -7,6 +7,14 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  late String selectedLanguage = AppSettings.language;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,8 +34,8 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: EdgeInsets.all(16),
         children: [
           subtitleSetting("Umum", bottom: 5),
-          TileSetting("Bahasa", Icons.language, AppSettings.language,
-              _showLanguageDialog),
+          TileSetting(
+              "Bahasa", Icons.language, selectedLanguage, _showLanguageDialog),
           ListTile(
             leading: Icon(Icons.volume_up_rounded),
             title: Text('Auto Start TTS'),
@@ -88,51 +96,55 @@ class _SettingsPageState extends State<SettingsPage> {
   Text textTrailing(String teks) =>
       Text(teks, style: TextStyle(color: Colors.grey[600]));
 
-  void _showLanguageDialog() {
-    String selectedLanguage = AppSettings.language;
-
+  void _showLanguageDialog() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Bahasa'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              RadioListTile<String>(
-                title: Text('Indonesia'),
-                value: 'Indonesia',
-                groupValue: selectedLanguage,
-                onChanged: (value) {
-                  setState(() {
-                    selectedLanguage = value!;
-                  });
-                },
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Pilih Bahasa'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  RadioListTile<String>(
+                    title: Text('Indonesia'),
+                    value: 'Indonesia',
+                    groupValue: selectedLanguage,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                      print('set ke $selectedLanguage, $value');
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Malaysia'),
+                    value: 'Malaysia',
+                    groupValue: selectedLanguage,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                      print('set ke $selectedLanguage, $value');
+                    },
+                  ),
+                ],
               ),
-              RadioListTile<String>(
-                title: Text('Malaysia'),
-                value: 'Malaysia',
-                groupValue: selectedLanguage,
-                onChanged: (value) {
-                  setState(() {
-                    selectedLanguage = value!;
-                  });
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              child: Text('OK'),
-              onPressed: () async {
-                setState(() {
-                  AppSettings.language = selectedLanguage;
-                });
-                await AppSettings.saveSettings();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+              actions: [
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () async {
+                    setState(() {
+                      AppSettings.language = selectedLanguage;
+                    });
+                    await AppSettings.saveSettings();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -142,40 +154,44 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Font Arab'),
-          content: DropdownButton<String>(
-            value: AppSettings.arabicFont,
-            onChanged: (String? value) {
-              setState(() {
-                AppSettings.arabicFont = value!;
-              });
-            },
-            items: <String>[
-              'LPMQ Isep Misbah',
-              'Al Qalam Quran Majeed',
-              'Hafs Arabic & Quran',
-              'PDMS Saleem Quran'
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              child: tombol('OK'),
-              onPressed: () async {
+        return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: Text('Pilih Font Arab'),
+            content: DropdownButton<String>(
+              value: AppSettings.arabicFont,
+              onChanged: (String? value) {
                 setState(() {
-                  AppSettings.arabicFont = AppSettings.arabicFont;
+                  AppSettings.arabicFont = value!;
                 });
-                await AppSettings.saveSettings();
-                Navigator.of(context).pop();
+                print('pilih font arab: ${value}');
               },
+              items: <String>[
+                'LPMQ Isep Misbah',
+                'Al Qalam Quran Majeed',
+                'Hafs Arabic & Quran',
+                'PDMS Saleem Quran'
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
-          ],
-        );
+            actions: [
+              TextButton(
+                child: tombol('OK'),
+                onPressed: () async {
+                  setState(() {
+                    AppSettings.arabicFont = AppSettings.arabicFont;
+                  });
+                  await AppSettings.saveSettings();
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
       },
     );
   }
@@ -191,34 +207,38 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Ukuran Font Latin'),
-          content: DropdownButton<int>(
-            value: selectedTextSize,
-            onChanged: (int? value) {
-              setState(() {
-                selectedTextSize = value!;
-              });
-            },
-            items: textSizes.map<DropdownMenuItem<int>>((int value) {
-              return DropdownMenuItem<int>(
-                value: value,
-                child: Text(value.toString()),
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              child: tombol('OK'),
-              onPressed: () async {
-                setState(() {
-                  AppSettings.regularTextSize = selectedTextSize.toDouble();
-                });
-                await AppSettings.saveSettings();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Pilih Ukuran Font Latin'),
+              content: DropdownButton<int>(
+                value: selectedTextSize,
+                onChanged: (int? value) {
+                  setState(() {
+                    selectedTextSize = value!;
+                  });
+                },
+                items: textSizes.map<DropdownMenuItem<int>>((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+              ),
+              actions: [
+                TextButton(
+                  child: tombol('OK'),
+                  onPressed: () async {
+                    setState(() {
+                      AppSettings.regularTextSize = selectedTextSize.toDouble();
+                    });
+                    await AppSettings.saveSettings();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          }
         );
       },
     );
@@ -236,34 +256,38 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Ukuran Font Arab'),
-          content: DropdownButton<int>(
-            value: selectedTextSize,
-            onChanged: (int? value) {
-              setState(() {
-                selectedTextSize = value!;
-              });
-            },
-            items: textSizes.map<DropdownMenuItem<int>>((int value) {
-              return DropdownMenuItem<int>(
-                value: value,
-                child: Text(value.toString()),
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              child: tombol('OK'),
-              onPressed: () async {
-                setState(() {
-                  AppSettings.arabicTextSize = selectedTextSize.toDouble();
-                });
-                await AppSettings.saveSettings();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Pilih Ukuran Font Arab'),
+              content: DropdownButton<int>(
+                value: selectedTextSize,
+                onChanged: (int? value) {
+                  setState(() {
+                    selectedTextSize = value!;
+                  });
+                },
+                items: textSizes.map<DropdownMenuItem<int>>((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+              ),
+              actions: [
+                TextButton(
+                  child: tombol('OK'),
+                  onPressed: () async {
+                    setState(() {
+                      AppSettings.arabicTextSize = selectedTextSize.toDouble();
+                    });
+                    await AppSettings.saveSettings();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          }
         );
       },
     );

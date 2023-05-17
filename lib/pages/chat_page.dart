@@ -533,8 +533,8 @@ class ChatPageState extends State<ChatPage> {
                             pesanSnackbar('Berhenti mendengarkan',
                                 warna: Colors.teal[600]));
                         setState(() {
-                        listening = false;
-                      });
+                          listening = false;
+                        });
                       } else {
                         // Jika speech-to-text tidak tersedia, berikan pesan atau tindakan yang sesuai
                         print('Speech-to-text tidak tersedia');
@@ -1308,9 +1308,22 @@ class ChatPageState extends State<ChatPage> {
     } else if (value == Options.export.index) {
       // export chat
       print('START export message');
-      // Buat string dengan header kolom 'Pengirim' dan 'Pesan'
-      String pesanStr = 'Pengirim,Pesan\n';
 
+      // Buat string dengan header kolom 'Pengirim' dan 'Pesan'
+      /*  var keys = pesanArray[0].keys;
+      String header = '';
+      String isi = '';
+      for (var key in keys) {
+        if (header.isEmpty) {
+          header = key;
+        } else {
+          header = header + ',$key';
+        }
+      }
+      header += '\n';
+      print(header); */
+
+      String pesanStr = 'Pengirim,Pesan\n';
       // Loop melalui setiap pesan pada pesanArray
       for (final pesan in pesanArray) {
         // Dapatkan nilai dari key 'fromUser'

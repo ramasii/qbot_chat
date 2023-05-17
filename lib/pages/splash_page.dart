@@ -28,7 +28,8 @@ class SplashPageState extends State<SplashPage> {
     if (isLoggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ChatPage(
+        MaterialPageRoute(builder: (context) => 
+        ChatPage(
           arguments: ChatPageArguments(
             peerId: '111',
             peerAvatar: 'images/app_icon.png',
