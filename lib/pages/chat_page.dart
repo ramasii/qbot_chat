@@ -176,21 +176,143 @@ class ChatPageState extends State<ChatPage> {
           "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
       "fromUser": false,
       "share": false,
-      "urut": 0,
       "time": "",
-      "isFavourite": false
+      "isFavourite": false,
+      "menu": {
+        "jmlItem": 3,
+        "actions": [
+          {"action": "Acak Ayat"},
+          {"action": "Share Acak"},
+          {"action": "Bantuan"}
+        ],
+        "isSpeaking": false,
+        "useSpeaker": false
+      }
     },
     {
       "pesan":
           "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
       "fromUser": false,
       "share": false,
-      "urut": 1,
       "time": "",
-      "isFavourite": false
+      "isFavourite": false,
+      "menu": {
+        "jmlItem": 36,
+        "actions": [
+          {
+            "action": "Al-Baqarah:183",
+          },
+          {
+            "action": "Al-Baqarah ayat 183",
+          },
+          {
+            "action": "2:183",
+          },
+          {
+            "action": "2 ayat 183",
+          },
+          {
+            "action": "Al-Baqarah:183-185",
+          },
+          {
+            "action": "Al-Baqarah ayat 183-185",
+          },
+          {
+            "action": "Al-Baqarah ayat 183 sampai 185",
+          },
+          {
+            "action": "2:183-185",
+          },
+          {
+            "action": "2 ayat 183-185",
+          },
+          {
+            "action": "2:183 sampai 185",
+          },
+          {
+            "action": "2 ayat 183 sampai 185",
+          },
+          {
+            "action": "Tafsir 2:183",
+          },
+          {
+            "action": "Tafsir Al-Baqarah:183",
+          },
+          {
+            "action": "Tafsir Al-Baqarah ayat 183",
+          },
+          {
+            "action": "Al-Baqarah surat ke berapa?",
+          },
+          {
+            "action": "Surat ke 2 surat apa?",
+          },
+          {
+            "action": "Al-Baqarah",
+          },
+          {
+            "action": "Tentang Al-Baqarah",
+          },
+          {
+            "action": "Tentang surat Al-Baqarah",
+          },
+          {
+            "action": "Acak",
+          },
+          {
+            "action": "Share Acak",
+          },
+          {
+            "action": "Share Al-Baqarah:183",
+          },
+          {
+            "action": "Share Al-Baqarah ayat 183",
+          },
+          {
+            "action": "Share 2:183",
+          },
+          {
+            "action": "Share 2 ayat 183",
+          },
+          {
+            "action": "cari surga",
+          },
+          {
+            "action": "cari surga#2",
+          },
+          {
+            "action": "Set terjemahan melayu",
+          },
+          {
+            "action": "Set tafsir kemenag",
+          },
+          {
+            "action": "Ayat terpendek",
+          },
+          {
+            "action": "Ayat terpanjang",
+          },
+          {
+            "action": "Surat terpendek",
+          },
+          {
+            "action": "Surat terpanjang",
+          },
+          {
+            "action": "Surat makiyah",
+          },
+          {
+            "action": "Surat madaniyah",
+          },
+          {
+            "action": "Surat makiyah dan madaniyah",
+          }
+        ],
+        "isSpeaking": false,
+        "useSpeaker": false
+      }
     }
   ];
-  int urutJawabBot = 2;
   bool qbotSpeaking = false;
   bool isFirstRun = true;
 
@@ -211,7 +333,6 @@ class ChatPageState extends State<ChatPage> {
         });
       });
     getArray('pesanArray');
-    getArray('menuArray');
     AppSettings.loadSettings;
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
@@ -220,25 +341,25 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
   }
 
-  pushPesanArray(String pesan,
+  pushPesanArray(String pesan,Map menu,
       {bool fromUser = true,
       bool isShare = false,
       String suratAyat = "",
-      bool isFavourite = false}) async {
+      bool isFavourite = false,
+      }) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "";
     DateTime waktu = DateTime.now();
-    int urut = fromUser ? -1 : menuArray.length;
     setState(() {
       pesanArray.add({
         "pesan": pesan,
         "fromUser": fromUser,
-        "urut": urut,
         "time": waktu.toString(),
         "share": isShare,
         "imgUrl": imgUrl,
         "isFavourite": isFavourite,
+        "menu": menu
       });
     });
     print('--------- 219: pushPesanArray');
@@ -477,7 +598,7 @@ class ChatPageState extends State<ChatPage> {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
                       String newTeks = textEditingController.text
                           .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
-                      await pushPesanArray(newTeks);
+                      await pushPesanArray(newTeks, {'noMenu':'noMenu'});
                       textEditingController.clear();
                       // Set ulang pakaiTeks menjadi false
                       setState(() {
@@ -562,7 +683,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // buat block pesan
-  Widget buatItem(Map pesan, {bool fromUser = true}) {
+  Widget buatItem(Map pesan, int index, {bool fromUser = true}) {
     return Row(
       mainAxisAlignment:
           fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -683,7 +804,7 @@ class ChatPageState extends State<ChatPage> {
                                           Orientation.landscape
                                       ? 6
                                       : 3,
-                                  child: listButton(pesan['urut'])),
+                                  child: listButton(pesan)),
                               Container(
                                 width: 1,
                                 height: 30,
@@ -691,8 +812,7 @@ class ChatPageState extends State<ChatPage> {
                               ),
                               Expanded(
                                   flex: 2,
-                                  child:
-                                      buttonTts(pesan['pesan'], pesan['urut']))
+                                  child: buttonTts(pesan['pesan'], index))
                             ],
                     )
                   ],
@@ -729,7 +849,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // button menu
-  Widget listButton(int urut) {
+  Widget listButton(Map pesanItem) {
     return InkWell(
       child: Container(
         alignment: Alignment(-1, 0.4),
@@ -797,27 +917,21 @@ class ChatPageState extends State<ChatPage> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                child: Text(menuArray[urut]['actions'][index]
+                                child: Text(pesanItem['menu']['actions'][index]
                                     ['action']),
                               ),
                             )),
                         onTap: () async {
-                          // buat variabel supaya bisa mendapatkan length menuArray
-                          List arr = menuArray[urut]['actions'];
+                          // buat variabel supaya bisa mendapatkan panjang menu
+                          List arr = pesanItem['menu']['actions'];
 
-                          // dapatkan index dari pesanArray yang berisi "urut":{index}
+                          // dapatkan isi pesan
                           // ini digunakan untuk copy dan share
-                          int atPesanArray = pesanArray.indexWhere(
-                            (element) {
-                              return element['urut'] == urut;
-                            },
-                          );
-                          String pesanAnswer =
-                              pesanArray[atPesanArray]['pesan'];
+                          String pesanAnswer = pesanItem['pesan'];
 
                           // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 2
-                          if (menuArray[urut]['actions'][arr.length - 1]
+                          if (pesanItem['menu']['actions'][arr.length - 1]
                                       ['action'] ==
                                   "Bantuan"
                               ? index == arr.length - 3
@@ -833,12 +947,12 @@ class ChatPageState extends State<ChatPage> {
 
                           // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 1
-                          else if (menuArray[urut]['actions'][arr.length - 1]
+                          else if (pesanItem['menu']['actions'][arr.length - 1]
                                       ['action'] ==
                                   "Bantuan"
                               ? index == arr.length - 2
                               : index == arr.length - 1) {
-                            print('START share teks, answer urutan ke-$urut');
+                            print('START share teks');
 
                             // munculkan dialog share teks
                             await Share.share(pesanAnswer,
@@ -854,7 +968,7 @@ class ChatPageState extends State<ChatPage> {
                           //user kirim pesan melalui menu
                           else {
                             await pushPesanArray(
-                                menuArray[urut]['actions'][index]['action']);
+                                pesanItem['menu']['actions'][index]['action'], {'noMenu':'noMenu'});
                             await qbotStop();
                             await saveArray();
 
@@ -863,7 +977,7 @@ class ChatPageState extends State<ChatPage> {
                                 listScrollController.position.maxScrollExtent +
                                     50);
                             await islamBot('Menu',
-                                menuArray[urut]['actions'][index]['action']);
+                                pesanItem['menu']['actions'][index]['action']);
 
                             // scroll ke bawah
                             listScrollController.animateTo(
@@ -876,7 +990,7 @@ class ChatPageState extends State<ChatPage> {
                       ),
                     ],
                   ),
-                  itemCount: menuArray[urut]['jmlItem'],
+                  itemCount: pesanItem['menu']['jmlItem'],
                   reverse: false,
                 ),
               ),
@@ -888,17 +1002,17 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // BUTTON TTS
-  Widget buttonTts(String teks, int urut) {
+  Widget buttonTts(String teks, int indexKe) {
     return Container(
       child: Center(
-          child: menuArray[urut]['useSpeaker']
+          child: pesanArray[indexKe]['menu']['useSpeaker']
               // tampilan button jika tombol speaker dipencet
               ? Row(children: [
                   // tombol pause dan resume
                   Expanded(
                       child: IconButton(
                     icon: Icon(
-                      menuArray[urut]['isSpeaking']
+                      pesanArray[indexKe]['menu']['isSpeaking']
                           ? Icons.pause_rounded
                           : Icons.play_arrow_rounded,
                       size: 40,
@@ -906,19 +1020,19 @@ class ChatPageState extends State<ChatPage> {
                     ),
                     onPressed: () async {
                       setState(() {
-                        menuArray[urut]['isSpeaking']
-                            ? menuArray[urut]['isSpeaking'] = false
-                            : menuArray[urut]['isSpeaking'] = true;
+                        pesanArray[indexKe]['menu']['isSpeaking']
+                            ? pesanArray[indexKe]['menu']['isSpeaking'] = false
+                            : pesanArray[indexKe]['menu']['isSpeaking'] = true;
                       });
-                      menuArray[urut]['isSpeaking']
+                      pesanArray[indexKe]['menu']['isSpeaking']
                           ? print('speaking')
                           : print('stop steapking');
                       ;
-                      if (menuArray[urut]['isSpeaking']) {
+                      if (pesanArray[indexKe]['menu']['isSpeaking']) {
                         await qbotSpeak(teks);
                         setState(() {
-                          menuArray[urut]['isSpeaking'] = false;
-                          menuArray[urut]['useSpeaker'] = false;
+                          pesanArray[indexKe]['menu']['isSpeaking'] = false;
+                          pesanArray[indexKe]['menu']['useSpeaker'] = false;
                         });
                       } else {
                         qbotPause();
@@ -938,7 +1052,7 @@ class ChatPageState extends State<ChatPage> {
                       print('page: tekan stop');
                       await qbotStop();
                       setState(() {
-                        menuArray[urut]['useSpeaker'] = false;
+                        pesanArray[indexKe]['menu']['useSpeaker'] = false;
                       });
                     },
                   ))
@@ -949,22 +1063,26 @@ class ChatPageState extends State<ChatPage> {
                     Expanded(
                         child: IconButton(
                             onPressed: () async {
-                              menuArray[urut]['useSpeaker']
+                              pesanArray[indexKe]['menu']['useSpeaker']
                                   ? print('off')
                                   : print('on');
-                              menuArray[urut]['isSpeaking'] =
+                              pesanArray[indexKe]['menu']['isSpeaking'] =
                                   true; // ketika ditekan langsung speaking
                               setState(() {
-                                menuArray[urut]['useSpeaker']
-                                    ? menuArray[urut]['useSpeaker'] = false
-                                    : menuArray[urut]['useSpeaker'] = true;
+                                pesanArray[indexKe]['menu']['useSpeaker']
+                                    ? pesanArray[indexKe]['menu']
+                                        ['useSpeaker'] = false
+                                    : pesanArray[indexKe]['menu']
+                                        ['useSpeaker'] = true;
                               });
                               await qbotSpeak(
                                   teks); /* menunggu selesai speaking */
                               // ketika selesai speaking, button kembali ke speaker
                               setState(() {
-                                menuArray[urut]['isSpeaking'] = false;
-                                menuArray[urut]['useSpeaker'] = false;
+                                pesanArray[indexKe]['menu']['isSpeaking'] =
+                                    false;
+                                pesanArray[indexKe]['menu']['useSpeaker'] =
+                                    false;
                               });
                             },
                             icon: Icon(
@@ -1030,11 +1148,10 @@ class ChatPageState extends State<ChatPage> {
               onDismissed: (direction) {
                 setState(() {
                   pesanArray.removeAt(index);
-                  // menuArray.removeAt(pesanArray[index]['urut']);
                 });
                 saveArray();
               },
-              child: buatItem(pesanArray[index],
+              child: buatItem(pesanArray[index], index,
                   fromUser: pesanArray[index]['fromUser']));
         },
         itemCount: pesanArray.length,
@@ -1045,23 +1162,21 @@ class ChatPageState extends State<ChatPage> {
 
   // save array
   saveArray({bool showLog = true}) async {
-    if (showLog) print('START save pesanArray dan menuArray');
+    if (showLog) print('START save pesanArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     // convert List<Map> menjadi String
     String strPesanArray = jsonEncode(pesanArray);
-    String strMenuArray = jsonEncode(menuArray);
 
     // save List<String> ke device
     await prefs.setString('pesanArray', strPesanArray);
-    await prefs.setString('menuArray', strMenuArray);
 
-    if (showLog) print('DONE save pesanArray dan menuArray');
+    if (showLog) print('DONE save pesanArray');
   }
 
   // clear array
   clearArray() async {
-    print('START clear pesanArray dan menuArray');
+    print('START clear pesanArray');
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await qbotStop();
@@ -1072,7 +1187,7 @@ class ChatPageState extends State<ChatPage> {
 
     await saveArray(showLog: false);
 
-    print('DONE clear pesanArray dan menuArray');
+    print('DONE clear pesanArray');
   }
 
   // read array yang disimpan | get array yang disimpan
@@ -1086,7 +1201,7 @@ class ChatPageState extends State<ChatPage> {
       print('------------ get array');
 
       setState(() {
-        kunci == 'pesanArray' ? pesanArray = mapList : menuArray = mapList;
+        pesanArray = mapList;
       });
       saveArray();
     } else {
@@ -1112,13 +1227,13 @@ class ChatPageState extends State<ChatPage> {
     // jika pertama kali dibuka maka autostart TTS pesan pertama
     if (prefs.getBool('isFirstRun') ?? true) {
       setState(() {
-        menuArray[0]['isSpeaking'] = true;
-        menuArray[0]['useSpeaker'] = true;
+        pesanArray[0]['menu']['isSpeaking'] = true;
+        pesanArray[0]['menu']['useSpeaker'] = true;
       });
       await qbotSpeak(pesanArray[0]['pesan']);
       setState(() {
-        menuArray[0]['isSpeaking'] = false;
-        menuArray[0]['useSpeaker'] = false;
+        pesanArray[0]['menu']['isSpeaking'] = false;
+        pesanArray[0]['menu']['useSpeaker'] = false;
       });
     }
     setState(() {
@@ -1163,8 +1278,15 @@ class ChatPageState extends State<ChatPage> {
                 {"action": "Share"},
               ]);
 
-    await pushPesanArray(jawabQBot,
-        fromUser: false, isShare: isShare, suratAyat: jawabQBot);
+    await pushPesanArray(jawabQBot,{
+          "jmlItem": listMenu.length,
+          "actions": listMenu,
+          "isSpeaking": false,
+          "useSpeaker": false
+        },
+        fromUser: false,
+        isShare: isShare,
+        suratAyat: jawabQBot);
     // jika share ayat, tidak perlu autostart TTS
     isShare
         ? print('SHARE AYAT, tanpa TTS')
@@ -1172,31 +1294,35 @@ class ChatPageState extends State<ChatPage> {
             // autoTTS on
             ? Future.delayed(Duration(milliseconds: 1500), () async {
                 setState(() {
-                  menuArray[menuArray.length - 1]["isSpeaking"] = true;
-                  menuArray[menuArray.length - 1]["useSpeaker"] = true;
+                  pesanArray[pesanArray.length - 1]['menu']["isSpeaking"] =
+                      true;
+                  pesanArray[pesanArray.length - 1]['menu']["useSpeaker"] =
+                      true;
                 });
                 await qbotSpeak(jawabQBot);
                 print('uda speking via $MenuOrText');
                 setState(() {
-                  menuArray[menuArray.length - 1]["isSpeaking"] = false;
-                  menuArray[menuArray.length - 1]["useSpeaker"] = false;
+                  pesanArray[pesanArray.length - 1]['menu']["isSpeaking"] =
+                      false;
+                  pesanArray[pesanArray.length - 1]['menu']["useSpeaker"] =
+                      false;
                 });
               })
             // autoTTS off
             : print('tanpa auto TTS');
     setState(() {
-      menuArray.add({
+      pesanArray[pesanArray.length - 1]['menu'] = {
         "jmlItem": listMenu.length,
         "actions": listMenu,
         "isSpeaking": false,
         "useSpeaker": false
-      });
-      menuArray.length < 2
+      };
+      pesanArray.length < 2
           ? print('do nothing')
-          : menuArray[menuArray.length - 2]["isSpeaking"] = false;
-      menuArray.length < 2
+          : pesanArray[pesanArray.length - 2]['menu']["isSpeaking"] = false;
+      pesanArray.length < 2
           ? print('do nothing')
-          : menuArray[menuArray.length - 2]["useSpeaker"] = false;
+          : pesanArray[pesanArray.length - 2]['menu']["useSpeaker"] = false;
     });
     await saveArray();
   }
