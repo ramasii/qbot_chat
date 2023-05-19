@@ -748,7 +748,7 @@ class ChatPageState extends State<ChatPage> {
                           ? [
                               Expanded(
                                 flex: 3,
-                                child: listButton(pesan['urut']),
+                                child: listButton(pesan),
                               ),
                               Container(
                                 width: 1,
