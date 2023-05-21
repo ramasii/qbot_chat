@@ -43,133 +43,6 @@ class ChatPageState extends State<ChatPage> {
   late ScrollController listScrollController;
   final stt.SpeechToText speechToText = stt.SpeechToText();
   final FocusNode focusNode = FocusNode();
-  late List menuArray = [
-    {
-      "jmlItem": 3,
-      "actions": [
-        {"action": "Acak Ayat"},
-        {"action": "Share Acak"},
-        {"action": "Bantuan"}
-      ],
-      "isSpeaking": false,
-      "useSpeaker": false
-    },
-    {
-      "jmlItem": 36,
-      "actions": [
-        {
-          "action": "Al-Baqarah:183",
-        },
-        {
-          "action": "Al-Baqarah ayat 183",
-        },
-        {
-          "action": "2:183",
-        },
-        {
-          "action": "2 ayat 183",
-        },
-        {
-          "action": "Al-Baqarah:183-185",
-        },
-        {
-          "action": "Al-Baqarah ayat 183-185",
-        },
-        {
-          "action": "Al-Baqarah ayat 183 sampai 185",
-        },
-        {
-          "action": "2:183-185",
-        },
-        {
-          "action": "2 ayat 183-185",
-        },
-        {
-          "action": "2:183 sampai 185",
-        },
-        {
-          "action": "2 ayat 183 sampai 185",
-        },
-        {
-          "action": "Tafsir 2:183",
-        },
-        {
-          "action": "Tafsir Al-Baqarah:183",
-        },
-        {
-          "action": "Tafsir Al-Baqarah ayat 183",
-        },
-        {
-          "action": "Al-Baqarah surat ke berapa?",
-        },
-        {
-          "action": "Surat ke 2 surat apa?",
-        },
-        {
-          "action": "Al-Baqarah",
-        },
-        {
-          "action": "Tentang Al-Baqarah",
-        },
-        {
-          "action": "Tentang surat Al-Baqarah",
-        },
-        {
-          "action": "Acak",
-        },
-        {
-          "action": "Share Acak",
-        },
-        {
-          "action": "Share Al-Baqarah:183",
-        },
-        {
-          "action": "Share Al-Baqarah ayat 183",
-        },
-        {
-          "action": "Share 2:183",
-        },
-        {
-          "action": "Share 2 ayat 183",
-        },
-        {
-          "action": "cari surga",
-        },
-        {
-          "action": "cari surga#2",
-        },
-        {
-          "action": "Set terjemahan melayu",
-        },
-        {
-          "action": "Set tafsir kemenag",
-        },
-        {
-          "action": "Ayat terpendek",
-        },
-        {
-          "action": "Ayat terpanjang",
-        },
-        {
-          "action": "Surat terpendek",
-        },
-        {
-          "action": "Surat terpanjang",
-        },
-        {
-          "action": "Surat makiyah",
-        },
-        {
-          "action": "Surat madaniyah",
-        },
-        {
-          "action": "Surat makiyah dan madaniyah",
-        }
-      ],
-      "isSpeaking": false,
-      "useSpeaker": false
-    }
-  ];
   late List pesanArray = [
     {
       "pesan":
@@ -333,7 +206,7 @@ class ChatPageState extends State<ChatPage> {
         });
       });
     getArray('pesanArray');
-    AppSettings.loadSettings;
+    AppSettings.loadSettings();
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
