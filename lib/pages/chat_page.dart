@@ -49,7 +49,7 @@ class ChatPageState extends State<ChatPage> {
           "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
       "fromUser": false,
       "share": false,
-      "time": "",
+      "time": "10",
       "isFavourite": false,
       "menu": {
         "jmlItem": 3,
@@ -67,7 +67,7 @@ class ChatPageState extends State<ChatPage> {
           "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
       "fromUser": false,
       "share": false,
-      "time": "",
+      "time": "10",
       "isFavourite": false,
       "menu": {
         "jmlItem": 36,
@@ -225,7 +225,7 @@ class ChatPageState extends State<ChatPage> {
   }) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
-        : "";
+        : "noUrl";
     DateTime waktu = DateTime.now();
     setState(() {
       pesanArray.add({
@@ -1307,17 +1307,23 @@ class ChatPageState extends State<ChatPage> {
           );
         },
       );
-    } else if (value == Options.exit.index) {
-      // exit app
+    }
+
+    // exit app
+    else if (value == Options.exit.index) {
       print('START exit app');
       SystemNavigator.pop();
       print('DONE exit app');
-    } else if (value == Options.import.index) {
-      // import chat
+    }
+
+    // import chat
+    else if (value == Options.import.index) {
       print('START import message');
       await loadCsvData();
-    } else if (value == Options.export.index) {
-      // export chat
+    }
+
+    // export chat
+    else if (value == Options.export.index) {
       print('START export message');
       var isi = '';
 
@@ -1331,22 +1337,26 @@ class ChatPageState extends State<ChatPage> {
         var menu = '${e["menu"]}';
 
         isi = isi +
-            '\"$pesan\";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
+            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
       }
       print(isi);
       var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
       if (await checkStoragePermission()) await createTextFile(toCSV);
       print('DONE export message');
-    } else if (value == Options.about.index) {
-      // about islambot
+    }
+
+    // about islambot
+    else if (value == Options.about.index) {
       print('START open about us page');
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AboutUsScreen()),
       );
       print('DONE open about us page');
-    } else if (value == Options.settings.index) {
-      // about islambot
+    }
+
+    // about islambot
+    else if (value == Options.settings.index) {
       print('START open SETTINGS page');
       Navigator.push(
         context,
@@ -1375,44 +1385,52 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi export file
   createTextFile(String content) async {
-    // dapatkan path direktori untuk penyimpanan file
-    final directory = Directory('/storage/emulated/0/Documents/IslamBot/');
-
-    // pastikan direktori sudah ada, jika belum maka buat direktori
-    if (!await directory.exists()) {
-      await directory.create(recursive: true);
-    }
-
-    // gabungkan nama file dengan path direktori
+  // Periksa izin penyimpanan
+  if (await Permission.storage.request().isGranted) {
+    // Dapatkan direktori penyimpanan dokumen aplikasi
+    final directory = await getApplicationDocumentsDirectory();
+    
+    // Gabungkan nama file dengan path direktori
     DateTime now = DateTime.now();
     String filename = DateFormat('yyyyMMdd').format(now);
     filename = 'Islambot-Messages-$filename';
-    final path = '${directory.path}/$filename.csv';
+    final path = '${directory.path}/$filename.txt';
 
-    // buat file
+    // Buat file
     final file = File(path);
 
-    // jika file sudah ada, hapus file lama
+    // Jika file sudah ada, hapus file lama
     if (await file.exists()) {
       await file.delete();
     }
 
-    // buat file dengan nama yang diberikan
-    await file.create();
+    // Tulis konten ke file
     await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
+
+    // Tampilkan snackbar dengan pesan berhasil
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text(
-            'File berhasil diekspor di memori internal/Documents/IslamBot/$filename.csv'),
+        content: Text('File berhasil diekspor di ${directory.path}/$filename.csv'),
         backgroundColor: Colors.green,
         showCloseIcon: true,
         closeIconColor: Colors.white,
       ),
     );
-
-    print('file berhasil disimpan di ${directory.path}');
+  } else {
+    // Tampilkan snackbar dengan pesan izin ditolak
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Izin penyimpanan ditolak'),
+        backgroundColor: Colors.red,
+        showCloseIcon: true,
+        closeIconColor: Colors.white,
+      ),
+    );
   }
+}
+
 
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
@@ -1424,8 +1442,13 @@ class ChatPageState extends State<ChatPage> {
         .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
         .toList();
     final strIsi = '';
+    int index = 0;
     for (var e in isi) {
       print(e);
+      /* if (index != 0) {
+        print(e);
+      }
+      index++; */
     }
   }
 }
