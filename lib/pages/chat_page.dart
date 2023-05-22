@@ -1334,10 +1334,11 @@ class ChatPageState extends State<ChatPage> {
         var share = '${e["share"]}';
         var imgUrl = '${e["imgUrl"]}';
         var isFavourite = '${e["isFavourite"]}';
-        var menu = '${e["menu"]}';
+        var menu = jsonEncode(e["menu"]);
 
         isi = isi +
-            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
+            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu' +
+            '\n';
       }
       print(isi);
       var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
@@ -1385,71 +1386,152 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi export file
   createTextFile(String content) async {
-  // Periksa izin penyimpanan
-  if (await Permission.storage.request().isGranted) {
-    // Dapatkan direktori penyimpanan dokumen aplikasi
-    final directory = await getApplicationDocumentsDirectory();
-    
-    // Gabungkan nama file dengan path direktori
-    DateTime now = DateTime.now();
-    String filename = DateFormat('yyyyMMdd').format(now);
-    filename = 'Islambot-Messages-$filename';
-    final path = '${directory.path}/$filename.txt';
+    // Periksa izin penyimpanan
+    if (await Permission.storage.request().isGranted) {
+      // Dapatkan direktori penyimpanan dokumen aplikasi
+      final directory = await getApplicationDocumentsDirectory();
 
-    // Buat file
-    final file = File(path);
+      // Gabungkan nama file dengan path direktori
+      DateTime now = DateTime.now();
+      String filename = DateFormat('yyyyMMdd').format(now);
+      filename = 'Islambot-Messages-$filename';
+      final path = '/storage/emulated/0/Documents/IslamBot/$filename.csv';
 
-    // Jika file sudah ada, hapus file lama
-    if (await file.exists()) {
-      await file.delete();
+      // Buat file
+      final file = File(path);
+
+      // Jika file sudah ada, hapus file lama
+      if (await file.exists()) {
+        await file.delete();
+      }
+
+      // Tulis konten ke file
+      await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
+
+      // Tampilkan snackbar dengan pesan berhasil
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+              'File berhasil diekspor di Documents/IslamBot/$filename.csv'),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    } else {
+      // Tampilkan snackbar dengan pesan izin ditolak
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Izin penyimpanan ditolak'),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
     }
-
-    // Tulis konten ke file
-    await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
-
-    // Tampilkan snackbar dengan pesan berhasil
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('File berhasil diekspor di ${directory.path}/$filename.csv'),
-        backgroundColor: Colors.green,
-        showCloseIcon: true,
-        closeIconColor: Colors.white,
-      ),
-    );
-  } else {
-    // Tampilkan snackbar dengan pesan izin ditolak
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('Izin penyimpanan ditolak'),
-        backgroundColor: Colors.red,
-        showCloseIcon: true,
-        closeIconColor: Colors.white,
-      ),
-    );
   }
-}
-
 
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
-    final input = File(
-            '/storage/emulated/0/Documents/IslamBot/IslamBot-Messages-20230522.csv')
-        .openRead();
-    final isi = await input
-        .transform(utf8.decoder)
-        .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
-        .toList();
-    final strIsi = '';
-    int index = 0;
-    for (var e in isi) {
-      print(e);
-      /* if (index != 0) {
-        print(e);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowCompression: false);
+
+    if (result != null) {
+      final input = File(result.files.single.path!).openRead();
+      final isi = await input
+          .transform(utf8.decoder)
+          .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
+          .toList();
+      final strIsi = '';
+      int index = 0;
+      List objFromCsv = parseTextToObjects(isi[1][0]);
+
+      for (var obj in objFromCsv) {
+        setState(() {
+          pesanArray.add(obj);
+        });
       }
-      index++; */
+
+      print(objFromCsv);
+    } else {
+      print('cancel import');
     }
+  }
+
+  // fungsi ubah teks ke obj
+  List<Map<String, dynamic>> parseTextToObjects(String text) {
+    print('START parseTextToObjects');
+    List<Map<String, dynamic>> objects = [];
+    List<String> lines = text.split('\n');
+
+    for (String line in lines) {
+      List<String> values = line.split(';');
+
+      if (values.length == 7) {
+        Map<String, dynamic> obj = {
+          'pesan': values[0].toString(),
+          'fromUser': values[1] == 'true',
+          'time': values[2].toString(),
+          'share': values[3] == 'true',
+          'imgUrl': values[4],
+          'isFavourite': values[5] == 'true',
+          'menu': parseMenuToObject(values[6]),
+        };
+
+        objects.add(obj);
+      }
+    }
+    print('DONE parseTextToObjects');
+    return objects;
+  }
+
+  // menu ke obj
+  Map<String, dynamic> parseMenuToObject(String text) {
+    print('START parseMenuToObject');
+    // Hapus kurung kurawal di awal dan akhir teks
+    text = text.substring(1, text.length - 1);
+
+    // Split teks berdasarkan koma
+    List<String> keyValuePairs = text.split(', ');
+
+    Map<String, dynamic> obj = {};
+
+    // Loop melalui setiap pasangan kunci-nilai
+    for (String pair in keyValuePairs) {
+      // Split pasangan kunci-nilai berdasarkan titik dua
+      List<String> keyValue = pair.split(': ');
+
+      String key = keyValue[0];
+      String valueText = keyValue[0];
+
+      // Periksa jika nilai berupa teks dalam tanda kutip
+      if (valueText.startsWith('"') && valueText.endsWith('"')) {
+        // Hapus tanda kutip dari nilai teks
+        String value = valueText.substring(1, valueText.length - 1);
+
+        obj[key] = value;
+      }
+      // Periksa jika nilai berupa boolean
+      else if (valueText == 'true' || valueText == 'false') {
+        bool value = valueText == 'true';
+
+        obj[key] = value;
+      }
+      // Periksa jika nilai berupa angka
+      else if (double.tryParse(valueText) != null) {
+        double value = double.parse(valueText);
+
+        obj[key] = value;
+      }
+      // Jika tidak memenuhi tipe data di atas, anggap sebagai teks
+      else {
+        obj[key] = valueText;
+      }
+    }
+
+    print('DONE parseMenuToObject');
+    return obj;
   }
 }
 
