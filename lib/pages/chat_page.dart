@@ -12,7 +12,7 @@ import '../utils/allpackages.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
-enum Options { clear, exit, export, about, settings }
+enum Options { clear, exit, export, about, settings, import }
 
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key, required this.arguments}) : super(key: key);
@@ -186,6 +186,7 @@ class ChatPageState extends State<ChatPage> {
       }
     }
   ];
+  List csvData = [];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
 
@@ -214,12 +215,14 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
   }
 
-  pushPesanArray(String pesan,Map menu,
-      {bool fromUser = true,
-      bool isShare = false,
-      String suratAyat = "",
-      bool isFavourite = false,
-      }) async {
+  pushPesanArray(
+    String pesan,
+    Map menu, {
+    bool fromUser = true,
+    bool isShare = false,
+    String suratAyat = "",
+    bool isFavourite = false,
+  }) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "";
@@ -298,6 +301,8 @@ class ChatPageState extends State<ChatPage> {
                 itemBuilder: (ctx) => [
                       _buildPopupMenuItem('Export Messages',
                           Icons.upload_file_rounded, Options.export.index),
+                      _buildPopupMenuItem('Import Messages',
+                          Icons.file_download_rounded, Options.import.index),
                       _buildPopupMenuItem('Clear Messages',
                           Icons.cleaning_services_rounded, Options.clear.index),
                       _buildPopupMenuItem(
@@ -471,7 +476,7 @@ class ChatPageState extends State<ChatPage> {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
                       String newTeks = textEditingController.text
                           .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
-                      await pushPesanArray(newTeks, {'noMenu':'noMenu'});
+                      await pushPesanArray(newTeks, {'noMenu': 'noMenu'});
                       textEditingController.clear();
                       // Set ulang pakaiTeks menjadi false
                       setState(() {
@@ -841,7 +846,8 @@ class ChatPageState extends State<ChatPage> {
                           //user kirim pesan melalui menu
                           else {
                             await pushPesanArray(
-                                pesanItem['menu']['actions'][index]['action'], {'noMenu':'noMenu'});
+                                pesanItem['menu']['actions'][index]['action'],
+                                {'noMenu': 'noMenu'});
                             await qbotStop();
                             await saveArray();
 
@@ -1151,7 +1157,9 @@ class ChatPageState extends State<ChatPage> {
                 {"action": "Share"},
               ]);
 
-    await pushPesanArray(jawabQBot,{
+    await pushPesanArray(
+        jawabQBot,
+        {
           "jmlItem": listMenu.length,
           "actions": listMenu,
           "isSpeaking": false,
@@ -1304,40 +1312,30 @@ class ChatPageState extends State<ChatPage> {
       print('START exit app');
       SystemNavigator.pop();
       print('DONE exit app');
+    } else if (value == Options.import.index) {
+      // import chat
+      print('START import message');
+      await loadCsvData();
     } else if (value == Options.export.index) {
       // export chat
       print('START export message');
+      var isi = '';
 
-      // Buat string dengan header kolom 'Pengirim' dan 'Pesan'
-      /*  var keys = pesanArray[0].keys;
-      String header = '';
-      String isi = '';
-      for (var key in keys) {
-        if (header.isEmpty) {
-          header = key;
-        } else {
-          header = header + ',$key';
-        }
+      for (var e in pesanArray) {
+        var pesan = '${e["pesan"]}';
+        var fromUser = '${e["fromUser"]}';
+        var time = '${e["time"]}';
+        var share = '${e["share"]}';
+        var imgUrl = '${e["imgUrl"]}';
+        var isFavourite = '${e["isFavourite"]}';
+        var menu = '${e["menu"]}';
+
+        isi = isi +
+            '\"$pesan\";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
       }
-      header += '\n';
-      print(header); */
-
-      String pesanStr = 'Pengirim,Pesan\n';
-      // Loop melalui setiap pesan pada pesanArray
-      for (final pesan in pesanArray) {
-        // Dapatkan nilai dari key 'fromUser'
-        final isFromUser = pesan['fromUser'] as bool;
-
-        // Tentukan nilai untuk 'pengirim' berdasarkan nilai 'fromUser'
-        final pengirim = isFromUser ? 'Anda' : 'IslamBot';
-
-        // Dapatkan nilai dari key 'pesan'
-        final pesanText = pesan['pesan'] as String;
-
-        // Tambahkan baris baru pada 'pesanStr' dengan format 'pengirim,pesan'
-        pesanStr += '$pengirim,"$pesanText"\n';
-      }
-      if (await checkStoragePermission()) await createTextFile(pesanStr);
+      print(isi);
+      var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
+      if (await checkStoragePermission()) await createTextFile(toCSV);
       print('DONE export message');
     } else if (value == Options.about.index) {
       // about islambot
@@ -1414,6 +1412,21 @@ class ChatPageState extends State<ChatPage> {
     );
 
     print('file berhasil disimpan di ${directory.path}');
+  }
+
+  // fungsi import file / import pesan
+  Future<void> loadCsvData() async {
+    final input = File(
+            '/storage/emulated/0/Documents/IslamBot/IslamBot-Messages-20230522.csv')
+        .openRead();
+    final isi = await input
+        .transform(utf8.decoder)
+        .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
+        .toList();
+    final strIsi = '';
+    for (var e in isi) {
+      print(e);
+    }
   }
 }
 

@@ -23,6 +23,7 @@ dependencies:
   share_plus: 2.1.4
   permission_handler: ^10.2.0
   speech_to_text: ^6.1.1
+  csv:
 
 
 dev_dependencies:
