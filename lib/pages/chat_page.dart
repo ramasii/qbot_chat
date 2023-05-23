@@ -476,7 +476,7 @@ class ChatPageState extends State<ChatPage> {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
                       String newTeks = textEditingController.text
                           .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
-                      await pushPesanArray(newTeks, {'noMenu': 'noMenu'});
+                      await pushPesanArray(newTeks, {});
                       textEditingController.clear();
                       // Set ulang pakaiTeks menjadi false
                       setState(() {
@@ -847,7 +847,7 @@ class ChatPageState extends State<ChatPage> {
                           else {
                             await pushPesanArray(
                                 pesanItem['menu']['actions'][index]['action'],
-                                {'noMenu': 'noMenu'});
+                                {});
                             await qbotStop();
                             await saveArray();
 
@@ -1435,7 +1435,11 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(allowCompression: false);
+    final directory = await getTemporaryDirectory();
+    directory.delete(recursive: true);
+
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowCompression: false);
 
     if (result != null) {
       final input = File(result.files.single.path!).openRead();
@@ -1444,16 +1448,19 @@ class ChatPageState extends State<ChatPage> {
           .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
           .toList();
       final strIsi = '';
+      List objFromCsv = [];
       int index = 0;
-      List objFromCsv = parseTextToObjects(isi[1][0]);
-
-      for (var obj in objFromCsv) {
-        setState(() {
-          pesanArray.add(obj);
-        });
+      print(isi);
+      for (var e in isi[1]) {
+        objFromCsv.add(parseTextToObjects(e.toString()));
       }
 
-      print(objFromCsv);
+      for (var pesan in objFromCsv[0]) {
+        setState(() {
+          pesanArray.add(pesan);
+        });
+        saveArray(showLog: false);
+      }
     } else {
       print('cancel import');
     }
@@ -1470,68 +1477,26 @@ class ChatPageState extends State<ChatPage> {
 
       if (values.length == 7) {
         Map<String, dynamic> obj = {
-          'pesan': values[0].toString(),
-          'fromUser': values[1] == 'true',
-          'time': values[2].toString(),
-          'share': values[3] == 'true',
-          'imgUrl': values[4],
-          'isFavourite': values[5] == 'true',
-          'menu': parseMenuToObject(values[6]),
+          "pesan": "${values[0].toString()}",
+          "fromUser": values[1] == "true",
+          "time": "${values[2].toString()}",
+          "share": values[3] == "true",
+          "imgUrl": "${values[4]}",
+          "isFavourite": values[5] == "true",
+          "menu": jsonDecode(values[6]
+              .replaceAllMapped(
+                RegExp(r'(\w+)(:)(?!\d+\})', multiLine: true),
+                (match) => '"${match.group(1)}"${match.group(2)}',
+              )
+              .replaceAllMapped(RegExp(r'{"action":([^,}]+)}'),
+                  (match) => '{"action":"${match.group(1)}"}')),
         };
-
         objects.add(obj);
       }
     }
+
     print('DONE parseTextToObjects');
     return objects;
-  }
-
-  // menu ke obj
-  Map<String, dynamic> parseMenuToObject(String text) {
-    print('START parseMenuToObject');
-    // Hapus kurung kurawal di awal dan akhir teks
-    text = text.substring(1, text.length - 1);
-
-    // Split teks berdasarkan koma
-    List<String> keyValuePairs = text.split(', ');
-
-    Map<String, dynamic> obj = {};
-
-    // Loop melalui setiap pasangan kunci-nilai
-    for (String pair in keyValuePairs) {
-      // Split pasangan kunci-nilai berdasarkan titik dua
-      List<String> keyValue = pair.split(': ');
-
-      String key = keyValue[0];
-      String valueText = keyValue[0];
-
-      // Periksa jika nilai berupa teks dalam tanda kutip
-      if (valueText.startsWith('"') && valueText.endsWith('"')) {
-        // Hapus tanda kutip dari nilai teks
-        String value = valueText.substring(1, valueText.length - 1);
-
-        obj[key] = value;
-      }
-      // Periksa jika nilai berupa boolean
-      else if (valueText == 'true' || valueText == 'false') {
-        bool value = valueText == 'true';
-
-        obj[key] = value;
-      }
-      // Periksa jika nilai berupa angka
-      else if (double.tryParse(valueText) != null) {
-        double value = double.parse(valueText);
-
-        obj[key] = value;
-      }
-      // Jika tidak memenuhi tipe data di atas, anggap sebagai teks
-      else {
-        obj[key] = valueText;
-      }
-    }
-
-    print('DONE parseMenuToObject');
-    return obj;
   }
 }
 
