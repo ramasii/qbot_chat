@@ -5,6 +5,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  file_picker: ^5.3.0
   cupertino_icons: 1.0.5
   firebase_core: 1.21.1
   firebase_auth: 3.7.0

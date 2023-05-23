@@ -476,7 +476,7 @@ class ChatPageState extends State<ChatPage> {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
                       String newTeks = textEditingController.text
                           .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
-                      await pushPesanArray(newTeks, {'noMenu': 'noMenu'});
+                      await pushPesanArray(newTeks, {});
                       textEditingController.clear();
                       // Set ulang pakaiTeks menjadi false
                       setState(() {
@@ -847,7 +847,7 @@ class ChatPageState extends State<ChatPage> {
                           else {
                             await pushPesanArray(
                                 pesanItem['menu']['actions'][index]['action'],
-                                {'noMenu': 'noMenu'});
+                                {});
                             await qbotStop();
                             await saveArray();
 
@@ -1403,7 +1403,7 @@ class ChatPageState extends State<ChatPage> {
     if (await file.exists()) {
       await file.delete();
     }
-
+    
     // Tulis konten ke file
     await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
 
@@ -1431,25 +1431,71 @@ class ChatPageState extends State<ChatPage> {
   }
 }
 
-
+  
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
-    final input = File(
-            '/storage/emulated/0/Documents/IslamBot/IslamBot-Messages-20230522.csv')
-        .openRead();
-    final isi = await input
-        .transform(utf8.decoder)
-        .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
-        .toList();
-    final strIsi = '';
-    int index = 0;
-    for (var e in isi) {
-      print(e);
-      /* if (index != 0) {
-        print(e);
+    final directory = await getTemporaryDirectory();
+    directory.delete(recursive: true);
+
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowCompression: false);
+
+    if (result != null) {
+      final input = File(result.files.single.path!).openRead();
+      final isi = await input
+          .transform(utf8.decoder)
+          .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
+          .toList();
+      final strIsi = '';
+      List objFromCsv = [];
+      int index = 0;
+      print(isi);
+      for (var e in isi[1]) {
+        objFromCsv.add(parseTextToObjects(e.toString()));
       }
-      index++; */
+
+      for (var pesan in objFromCsv[0]) {
+        setState(() {
+          pesanArray.add(pesan);
+        });
+        saveArray(showLog: false);
+      }
+    } else {
+      print('cancel import');
     }
+  }
+
+  // fungsi ubah teks ke obj
+  List<Map<String, dynamic>> parseTextToObjects(String text) {
+    print('START parseTextToObjects');
+    List<Map<String, dynamic>> objects = [];
+    List<String> lines = text.split('\n');
+
+    for (String line in lines) {
+      List<String> values = line.split(';');
+
+      if (values.length == 7) {
+        Map<String, dynamic> obj = {
+          "pesan": "${values[0].toString()}",
+          "fromUser": values[1] == "true",
+          "time": "${values[2].toString()}",
+          "share": values[3] == "true",
+          "imgUrl": "${values[4]}",
+          "isFavourite": values[5] == "true",
+          "menu": jsonDecode(values[6]
+              .replaceAllMapped(
+                RegExp(r'(\w+)(:)(?!\d+\})', multiLine: true),
+                (match) => '"${match.group(1)}"${match.group(2)}',
+              )
+              .replaceAllMapped(RegExp(r'{"action":([^,}]+)}'),
+                  (match) => '{"action":"${match.group(1)}"}')),
+        };
+        objects.add(obj);
+      }
+    }
+
+    print('DONE parseTextToObjects');
+    return objects;
   }
 }
 
