@@ -19,4 +19,3 @@ export 'package:permission_handler/permission_handler.dart';
 export 'package:photo_view/photo_view.dart';
 export 'settings.dart';
 export 'package:csv/csv.dart';
-export 'package:file_picker/file_picker.dart';

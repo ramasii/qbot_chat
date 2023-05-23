@@ -1334,11 +1334,10 @@ class ChatPageState extends State<ChatPage> {
         var share = '${e["share"]}';
         var imgUrl = '${e["imgUrl"]}';
         var isFavourite = '${e["isFavourite"]}';
-        var menu = jsonEncode(e["menu"]);
+        var menu = '${e["menu"]}';
 
         isi = isi +
-            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu' +
-            '\n';
+            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
       }
       print(isi);
       var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
@@ -1386,53 +1385,53 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi export file
   createTextFile(String content) async {
-    // Periksa izin penyimpanan
-    if (await Permission.storage.request().isGranted) {
-      // Dapatkan direktori penyimpanan dokumen aplikasi
-      final directory = await getApplicationDocumentsDirectory();
+  // Periksa izin penyimpanan
+  if (await Permission.storage.request().isGranted) {
+    // Dapatkan direktori penyimpanan dokumen aplikasi
+    final directory = await getApplicationDocumentsDirectory();
+    
+    // Gabungkan nama file dengan path direktori
+    DateTime now = DateTime.now();
+    String filename = DateFormat('yyyyMMdd').format(now);
+    filename = 'Islambot-Messages-$filename';
+    final path = '${directory.path}/$filename.txt';
 
-      // Gabungkan nama file dengan path direktori
-      DateTime now = DateTime.now();
-      String filename = DateFormat('yyyyMMdd').format(now);
-      filename = 'Islambot-Messages-$filename';
-      final path = '/storage/emulated/0/Documents/IslamBot/$filename.csv';
+    // Buat file
+    final file = File(path);
 
-      // Buat file
-      final file = File(path);
-
-      // Jika file sudah ada, hapus file lama
-      if (await file.exists()) {
-        await file.delete();
-      }
-
-      // Tulis konten ke file
-      await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
-
-      // Tampilkan snackbar dengan pesan berhasil
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(
-              'File berhasil diekspor di Documents/IslamBot/$filename.csv'),
-          backgroundColor: Colors.green,
-          showCloseIcon: true,
-          closeIconColor: Colors.white,
-        ),
-      );
-    } else {
-      // Tampilkan snackbar dengan pesan izin ditolak
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Izin penyimpanan ditolak'),
-          backgroundColor: Colors.red,
-          showCloseIcon: true,
-          closeIconColor: Colors.white,
-        ),
-      );
+    // Jika file sudah ada, hapus file lama
+    if (await file.exists()) {
+      await file.delete();
     }
-  }
+    
+    // Tulis konten ke file
+    await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
 
+    // Tampilkan snackbar dengan pesan berhasil
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('File berhasil diekspor di ${directory.path}/$filename.csv'),
+        backgroundColor: Colors.green,
+        showCloseIcon: true,
+        closeIconColor: Colors.white,
+      ),
+    );
+  } else {
+    // Tampilkan snackbar dengan pesan izin ditolak
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text('Izin penyimpanan ditolak'),
+        backgroundColor: Colors.red,
+        showCloseIcon: true,
+        closeIconColor: Colors.white,
+      ),
+    );
+  }
+}
+
+  
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
     final directory = await getTemporaryDirectory();
