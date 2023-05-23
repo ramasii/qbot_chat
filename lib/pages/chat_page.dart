@@ -1394,7 +1394,7 @@ class ChatPageState extends State<ChatPage> {
     DateTime now = DateTime.now();
     String filename = DateFormat('yyyyMMdd').format(now);
     filename = 'Islambot-Messages-$filename';
-    final path = '${directory.path}/$filename.txt';
+    final path = '/storage/emulated/0/Documents/IslamBot/$filename.csv';
 
     // Buat file
     final file = File(path);
@@ -1411,7 +1411,7 @@ class ChatPageState extends State<ChatPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        content: Text('File berhasil diekspor di ${directory.path}/$filename.csv'),
+        content: Text('File berhasil diekspor di memori internal/Documents/$filename.csv'),
         backgroundColor: Colors.green,
         showCloseIcon: true,
         closeIconColor: Colors.white,

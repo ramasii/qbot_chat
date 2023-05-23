@@ -4,7 +4,6 @@ description: This is the demo for chat app by Flutter
 dependencies:
   flutter:
     sdk: flutter
-
   file_picker: ^5.3.0
   cupertino_icons: 1.0.5
   firebase_core: 1.21.1
