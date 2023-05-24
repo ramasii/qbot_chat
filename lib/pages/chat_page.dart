@@ -37,6 +37,7 @@ class ChatPageState extends State<ChatPage> {
   bool pakaiTeks = false;
   bool showUpButton = false;
   bool listening = false;
+  bool loadingOcr = false;
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
@@ -400,9 +401,14 @@ class ChatPageState extends State<ChatPage> {
                     flex: 1,
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 1),
-                      child: Icon(
-                        Icons.panorama_fish_eye,
-                        color: Colors.grey,
+                      child: InkWell(
+                        onTap: () {
+                          openCamera();
+                        },
+                        child: Icon(
+                          Icons.panorama_fish_eye,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                   ),
@@ -433,7 +439,10 @@ class ChatPageState extends State<ChatPage> {
                           }
                         },
                         decoration: InputDecoration.collapsed(
-                          hintText: "Coba \"Albaqarah 127\"",
+                          floatingLabelAlignment: FloatingLabelAlignment.start,
+                          hintText: loadingOcr
+                              ? "Proses scanning..."
+                              : "Coba \"Albaqarah 127\"",
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
@@ -1385,53 +1394,53 @@ class ChatPageState extends State<ChatPage> {
 
   // fungsi export file
   createTextFile(String content) async {
-  // Periksa izin penyimpanan
-  if (await Permission.storage.request().isGranted) {
-    // Dapatkan direktori penyimpanan dokumen aplikasi
-    final directory = await getApplicationDocumentsDirectory();
-    
-    // Gabungkan nama file dengan path direktori
-    DateTime now = DateTime.now();
-    String filename = DateFormat('yyyyMMdd').format(now);
-    filename = 'Islambot-Messages-$filename';
-    final path = '/storage/emulated/0/Documents/IslamBot/$filename.csv';
+    // Periksa izin penyimpanan
+    if (await Permission.storage.request().isGranted) {
+      // Dapatkan direktori penyimpanan dokumen aplikasi
+      final directory = await getApplicationDocumentsDirectory();
 
-    // Buat file
-    final file = File(path);
+      // Gabungkan nama file dengan path direktori
+      DateTime now = DateTime.now();
+      String filename = DateFormat('yyyyMMdd').format(now);
+      filename = 'Islambot-Messages-$filename';
+      final path = '/storage/emulated/0/Documents/IslamBot/$filename.csv';
 
-    // Jika file sudah ada, hapus file lama
-    if (await file.exists()) {
-      await file.delete();
+      // Buat file
+      final file = File(path);
+
+      // Jika file sudah ada, hapus file lama
+      if (await file.exists()) {
+        await file.delete();
+      }
+
+      // Tulis konten ke file
+      await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
+
+      // Tampilkan snackbar dengan pesan berhasil
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text(
+              'File berhasil diekspor di memori internal/Documents/$filename.csv'),
+          backgroundColor: Colors.green,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
+    } else {
+      // Tampilkan snackbar dengan pesan izin ditolak
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Izin penyimpanan ditolak'),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
     }
-    
-    // Tulis konten ke file
-    await file.writeAsString(content.replaceAll(RegExp(r'\*\*'), '*'));
-
-    // Tampilkan snackbar dengan pesan berhasil
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('File berhasil diekspor di memori internal/Documents/$filename.csv'),
-        backgroundColor: Colors.green,
-        showCloseIcon: true,
-        closeIconColor: Colors.white,
-      ),
-    );
-  } else {
-    // Tampilkan snackbar dengan pesan izin ditolak
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        content: Text('Izin penyimpanan ditolak'),
-        backgroundColor: Colors.red,
-        showCloseIcon: true,
-        closeIconColor: Colors.white,
-      ),
-    );
   }
-}
 
-  
   // fungsi import file / import pesan
   Future<void> loadCsvData() async {
     final directory = await getTemporaryDirectory();
@@ -1497,6 +1506,34 @@ class ChatPageState extends State<ChatPage> {
     print('DONE parseTextToObjects');
     return objects;
   }
+
+  // fungsi buka kamera, ambil gambar dari kamera
+  void openCamera() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
+
+    // Lakukan sesuatu dengan gambar yang diambil, misalnya tampilkan di ImageView
+    if (pickedImage != null) {
+      // Gunakan pickedImage.path untuk path file gambar yang diambil
+      // Tampilkan gambar di ImageView
+      setState(() {
+        loadingOcr = true;
+      });
+      String text = await FlutterTesseractOcr.extractText(pickedImage.path,
+          language: 'ind',
+          args: {
+            "psm": "1",
+            "preserve_interword_spaces": "1",
+          });
+      print('hasil ocr: $text');
+      setState(() {
+        loadingOcr = false;
+        textEditingController.text = text;
+      });
+    }
+  }
+
+  // fungsi deteksi teks
 }
 
 // class photo view
