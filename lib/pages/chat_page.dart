@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
@@ -38,6 +39,7 @@ class ChatPageState extends State<ChatPage> {
   bool showUpButton = false;
   bool listening = false;
   bool loadingOcr = false;
+  bool selectItem = false;
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
@@ -51,6 +53,7 @@ class ChatPageState extends State<ChatPage> {
       "fromUser": false,
       "share": false,
       "time": "10",
+      "isSelected": false,
       "isFavourite": false,
       "menu": {
         "jmlItem": 3,
@@ -70,6 +73,7 @@ class ChatPageState extends State<ChatPage> {
       "share": false,
       "time": "10",
       "isFavourite": false,
+      "isSelected": false,
       "menu": {
         "jmlItem": 36,
         "actions": [
@@ -188,6 +192,8 @@ class ChatPageState extends State<ChatPage> {
     }
   ];
   List csvData = [];
+  late List selectedItems = [];
+  List labeledItems = [];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
 
@@ -236,6 +242,7 @@ class ChatPageState extends State<ChatPage> {
         "share": isShare,
         "imgUrl": imgUrl,
         "isFavourite": isFavourite,
+        "isSelected": false,
         "menu": menu
       });
     });
@@ -293,26 +300,132 @@ class ChatPageState extends State<ChatPage> {
             style: TextStyle(color: Colors.white),
           ),
           actions: [
-            PopupMenuButton(
-                color: Colors.white,
-                onSelected: (value) {
-                  print('klik di popup menu, pojok kanan atas');
-                  _onMenuItemSelected(value as int);
-                },
-                itemBuilder: (ctx) => [
-                      _buildPopupMenuItem('Export Messages',
-                          Icons.upload_file_rounded, Options.export.index),
-                      _buildPopupMenuItem('Import Messages',
-                          Icons.file_download_rounded, Options.import.index),
-                      _buildPopupMenuItem('Clear Messages',
-                          Icons.cleaning_services_rounded, Options.clear.index),
-                      _buildPopupMenuItem(
-                          'Pengaturan', Icons.settings, Options.settings.index),
-                      _buildPopupMenuItem('About IslamBot',
-                          Icons.info_outline_rounded, Options.about.index),
-                      _buildPopupMenuItem('Exit Application',
-                          Icons.exit_to_app_rounded, Options.exit.index),
-                    ])
+            selectedItems.length != 0
+                ? IconButton(
+                    onPressed: () async {
+                      String labelName = '';
+
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Buat Label Baru'),
+                            content: TextField(
+                              onChanged: (value) {
+                                labelName = value;
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Masukkan nama label',
+                                border: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 58, 86, 100))),
+                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 58, 86, 100)))
+                              ),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Text(
+                              'Batal',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  if (labelName.isNotEmpty) {
+                                    log('klik new label, pesan dipilih: ${selectedItems.length}');
+                                    setState(() {
+                                      labeledItems.add({
+                                        "labelName": labelName,
+                                        "listPesan": selectedItems
+                                      });
+                                    });
+                                    await saveLabeledItems();
+                                    await clearSelectedItems();
+
+                                    log('sukses melabel pesan: ${labeledItems}');
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            'Disimpan dengan label "$labelName"',
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white);
+                                    Navigator.pop(context);
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: 'Nama label tidak boleh kosong',
+                                        textColor: Colors.black,
+                                        backgroundColor: Colors.yellow);
+                                  }
+                                },
+                                child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                color: Colors.green,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Text(
+                              'Simpan',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      Icons.new_label_rounded,
+                      color: Colors.white,
+                    ))
+                : IconButton(
+                    onPressed: () {
+                      log('klik page label');
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => LabelPage()));
+                    },
+                    icon: Icon(
+                      Icons.label_rounded,
+                      color: Colors.white,
+                    )),
+            selectedItems.length == 0
+                ? PopupMenuButton(
+                    color: Colors.white,
+                    onSelected: (value) {
+                      print('klik di popup menu, pojok kanan atas');
+                      _onMenuItemSelected(value as int);
+                    },
+                    itemBuilder: (ctx) => [
+                          _buildPopupMenuItem('Export Messages',
+                              Icons.upload_file_rounded, Options.export.index),
+                          _buildPopupMenuItem(
+                              'Import Messages',
+                              Icons.file_download_rounded,
+                              Options.import.index),
+                          _buildPopupMenuItem(
+                              'Clear Messages',
+                              Icons.cleaning_services_rounded,
+                              Options.clear.index),
+                          _buildPopupMenuItem('Pengaturan', Icons.settings,
+                              Options.settings.index),
+                          _buildPopupMenuItem('About IslamBot',
+                              Icons.info_outline_rounded, Options.about.index),
+                          _buildPopupMenuItem('Exit Application',
+                              Icons.exit_to_app_rounded, Options.exit.index),
+                        ])
+                : IconButton(
+                    onPressed: () {
+                      clearSelectedItems();
+                    },
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    )),
           ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: buttonScrollBottom(),
@@ -320,7 +433,7 @@ class ChatPageState extends State<ChatPage> {
         // background
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/bg.jpg"), fit: BoxFit.cover)),
+                image: AssetImage("images/bg.jpg"), repeat: ImageRepeat.repeatY)),
         child: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -571,144 +684,183 @@ class ChatPageState extends State<ChatPage> {
 
   // buat block pesan
   Widget buatItem(Map pesan, int index, {bool fromUser = true}) {
-    return Row(
-      mainAxisAlignment:
-          fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          // cek apakah pesan dari user?
-          child: fromUser
-              // jika pesan dari user
-              ? RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                      text: pesan['pesan'],
-                      style: TextStyle(
-                        fontFamily: "IslamBot",
-                      ),
-                    ),
-                  ], style: TextStyle(color: Colors.black, fontSize: 17)),
-                )
-
-              // jika pesan dari bot
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // tombol favorit
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                          onPressed: () {
-                            print('tekan favorit');
-                            setState(() {
-                              pesan['isFavourite'] =
-                                  pesan['isFavourite'] == true ? false : true;
-                              saveArray();
-                            });
-                            print('is favorit? ${pesan['isFavourite']}');
-                          },
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                          icon: pesan['isFavourite']
-                              ? Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                )
-                              : Icon(
-                                  Icons.favorite_border_rounded,
-                                  color: Colors.grey[400],
-                                )),
-                    ),
-                    // cek apakah share ayat?
-                    pesan['share']
-                        ? FullScreenImage(imageUrl: pesan['imgUrl'])
-                        : BoldAsteris(text: pesan['pesan']),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      height: 1,
-                      color: Colors.black12,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: pesan['share']
-                          // button menu untuk pesan share
-                          ? [
-                              Expanded(
-                                flex: 3,
-                                child: listButton(pesan),
-                              ),
-                              Container(
-                                width: 1,
-                                height: 30,
-                                color: Colors.grey[300],
-                              ),
-                              Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    child: IconButton(
-                                        icon: Icon(
-                                          Icons.share_rounded,
-                                          size: 35,
-                                          color: Colors.grey,
-                                        ),
-                                        onPressed: () async {
-                                          showDialog(
-                                            context: context,
-                                            builder: (_) => Center(
-                                              child: CircularProgressIndicator(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          );
-                                          try {
-                                            final url =
-                                                Uri.parse(pesan['imgUrl']);
-                                            final response =
-                                                await http.get(url);
-                                            final bytes = response.bodyBytes;
-
-                                            final temp =
-                                                await getTemporaryDirectory();
-                                            final path =
-                                                '${temp.path}/image.jpg';
-                                            File(path).writeAsBytesSync(bytes);
-
-                                            await Share.shareFiles([path],
-                                                text:
-                                                    'Gunakan IslamBot untuk membuat share seperti ini.');
-                                          } catch (e) {
-                                            // handle error
-                                          } finally {
-                                            Navigator.of(context).pop();
-                                          }
-                                        }),
-                                  )),
-                            ]
-                          // button menu untuk pesan teks
-                          : [
-                              Expanded(
-                                  flex: MediaQuery.of(context).orientation ==
-                                          Orientation.landscape
-                                      ? 6
-                                      : 3,
-                                  child: listButton(pesan)),
-                              Container(
-                                width: 1,
-                                height: 30,
-                                color: Colors.grey[300],
-                              ),
-                              Expanded(
-                                  flex: 2,
-                                  child: buttonTts(pesan['pesan'], index))
-                            ],
+    return InkWell(
+      onLongPress: () async {
+        if (pesan['isSelected'] == false && selectedItems.length == 0) {
+          await await getLabeledItems();
+          setState(() {
+            selectItem = true;
+            pesan['isSelected'] = true;
+            selectedItems.add({"inx": index, "pesanObj": pesan});
+          });
+          log('selectItem[$index] = ${pesan['isSelected']}');
+        }
+      },
+      onTap: () {
+        if (pesan['isSelected']) {
+          setState(() {
+            pesan['isSelected'] = false;
+            selectedItems.removeWhere((element) => element["inx"] == index);
+          });
+          log('selectItem[$index] = ${pesan['isSelected']}');
+        } else if (selectedItems.length != 0) {
+          setState(() {
+            pesan['isSelected'] = true;
+            selectedItems.add({"inx": index, "pesanObj": pesan});
+          });
+          log('selectItem[$index] = ${pesan['isSelected']}');
+        }
+      },
+      child: Row(
+        mainAxisAlignment:
+            fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            foregroundDecoration: BoxDecoration(
+                color: pesan['isSelected']
+                    ? Color.fromARGB(50, 0, 168, 132)
+                    : Color.fromARGB(0, 0, 168, 132),
+                backgroundBlendMode: BlendMode.darken),
+            child: Container(
+              // cek apakah pesan dari user?
+              child: fromUser
+                  // jika pesan dari user
+                  ? RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                          text: pesan['pesan'],
+                          style: TextStyle(
+                            fontFamily: "IslamBot",
+                          ),
+                        ),
+                      ], style: TextStyle(color: Colors.black, fontSize: 17)),
                     )
-                  ],
-                ),
-          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-          // ini untuk ngatur max size
-          constraints: BoxConstraints(
-              maxWidth:
-                  MediaQuery.of(context).orientation == Orientation.landscape
+
+                  // jika pesan dari bot
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // tombol favorit
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                              onPressed: () {
+                                print('tekan favorit');
+                                setState(() {
+                                  pesan['isFavourite'] =
+                                      pesan['isFavourite'] == true
+                                          ? false
+                                          : true;
+                                  saveArray();
+                                });
+                                print('is favorit? ${pesan['isFavourite']}');
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              icon: pesan['isFavourite']
+                                  ? Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border_rounded,
+                                      color: Colors.grey[400],
+                                    )),
+                        ),
+                        // cek apakah share ayat?
+                        pesan['share']
+                            ? FullScreenImage(imageUrl: pesan['imgUrl'])
+                            : BoldAsteris(text: pesan['pesan']),
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          height: 1,
+                          color: Colors.black12,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: pesan['share']
+                              // button menu untuk pesan share
+                              ? [
+                                  Expanded(
+                                    flex: 3,
+                                    child: listButton(pesan),
+                                  ),
+                                  Container(
+                                    width: 1,
+                                    height: 30,
+                                    color: Colors.grey[300],
+                                  ),
+                                  Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        child: IconButton(
+                                            icon: Icon(
+                                              Icons.share_rounded,
+                                              size: 35,
+                                              color: Colors.grey,
+                                            ),
+                                            onPressed: () async {
+                                              showDialog(
+                                                context: context,
+                                                builder: (_) => Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              );
+                                              try {
+                                                final url =
+                                                    Uri.parse(pesan['imgUrl']);
+                                                final response =
+                                                    await http.get(url);
+                                                final bytes =
+                                                    response.bodyBytes;
+
+                                                final temp =
+                                                    await getTemporaryDirectory();
+                                                final path =
+                                                    '${temp.path}/image.jpg';
+                                                File(path)
+                                                    .writeAsBytesSync(bytes);
+
+                                                await Share.shareFiles([path],
+                                                    text:
+                                                        'Gunakan IslamBot untuk membuat share seperti ini.');
+                                              } catch (e) {
+                                                // handle error
+                                              } finally {
+                                                Navigator.of(context).pop();
+                                              }
+                                            }),
+                                      )),
+                                ]
+                              // button menu untuk pesan teks
+                              : [
+                                  Expanded(
+                                      flex:
+                                          MediaQuery.of(context).orientation ==
+                                                  Orientation.landscape
+                                              ? 6
+                                              : 3,
+                                      child: listButton(pesan)),
+                                  Container(
+                                    width: 1,
+                                    height: 30,
+                                    color: Colors.grey[300],
+                                  ),
+                                  Expanded(
+                                      flex: 2,
+                                      child: buttonTts(pesan['pesan'], index))
+                                ],
+                        )
+                      ],
+                    ),
+              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+              // ini untuk ngatur max size
+              constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).orientation ==
+                          Orientation.landscape
                       // (langscape)
                       ? pesan['share']
                           ? 315 // ukuran untuk block share ayat
@@ -719,19 +871,25 @@ class ChatPageState extends State<ChatPage> {
                           ? 315 // ukuran block share
                           : MediaQuery.of(context).size.width -
                               80), //ukuran block pesan
-          decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 1, color: Colors.black26, offset: Offset(0, 2))
-              ],
-              color:
-                  fromUser ? Color.fromARGB(255, 231, 255, 219) : Colors.white,
-              borderRadius: BorderRadius.circular(8)),
-          margin: MediaQuery.of(context).orientation == Orientation.landscape
-              ? EdgeInsets.only(bottom: 5, right: 15, left: 15, top: 5)
-              : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
-        )
-      ],
+              decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 1,
+                        color: Colors.black26,
+                        offset: Offset(0, 2))
+                  ],
+                  color: fromUser
+                      ? Color.fromARGB(255, 231, 255, 219)
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(8)),
+              margin:
+                  MediaQuery.of(context).orientation == Orientation.landscape
+                      ? EdgeInsets.only(bottom: 5, right: 15, left: 15, top: 5)
+                      : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -993,6 +1151,7 @@ class ChatPageState extends State<ChatPage> {
           return Dismissible(
               key: ObjectKey(pesanArray[index]),
               confirmDismiss: (direction) async {
+                await clearSelectedItems();
                 // Menampilkan konfirmasi dialog
                 return await showDialog(
                   context: context,
@@ -1533,7 +1692,42 @@ class ChatPageState extends State<ChatPage> {
     }
   }
 
-  // fungsi deteksi teks
+  // fungsi save labeledItems
+  saveLabeledItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('labeledItems', jsonEncode(labeledItems));
+    log('saved labeledItems');
+  }
+
+  // fungsi get labeleditems
+  getLabeledItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? a = await prefs.getString('labeledItems');
+    if (a != null) {
+      setState(() {
+        labeledItems = jsonDecode(a);
+      });
+      log('labeledItems ditemukan', name: 'getLabeledItems');
+    } else {
+      log('labeledItems tidak ditemukan', name: 'getLabeledItems');
+    }
+  }
+
+  // fungsi clear selectedItems
+  clearSelectedItems() {
+    for (var e in selectedItems) {
+      setState(() {
+        pesanArray[e['inx']]['isSelected'] = false;
+      });
+    }
+
+    setState(() {
+      selectedItems.clear();
+      selectItem = false;
+    });
+  }
 }
 
 // class photo view

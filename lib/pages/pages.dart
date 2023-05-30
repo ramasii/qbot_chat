@@ -3,3 +3,4 @@ export 'login_page.dart';
 export 'splash_page.dart';
 export 'about_us_page.dart';
 export 'settings_page.dart';
+export 'label_page.dart';
