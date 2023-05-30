@@ -40,6 +40,7 @@ class ChatPageState extends State<ChatPage> {
   bool listening = false;
   bool loadingOcr = false;
   bool selectItem = false;
+  bool speaking = false;
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
@@ -1098,6 +1099,7 @@ class ChatPageState extends State<ChatPage> {
                       print('page: tekan stop');
                       await qbotStop();
                       setState(() {
+                        speaking = false;
                         pesanArray[indexKe]['menu']['useSpeaker'] = false;
                       });
                     },
@@ -1120,15 +1122,28 @@ class ChatPageState extends State<ChatPage> {
                                         ['useSpeaker'] = false
                                     : pesanArray[indexKe]['menu']
                                         ['useSpeaker'] = true;
+                                speaking = true;
                               });
-                              await qbotSpeak(
-                                  teks); /* menunggu selesai speaking */
+
+                              // split teks menjadi per paragraf supaya bisa baca teks panjang
+                              List paragraphs = teks.split('\n');
+
+                              for (var paragraph in paragraphs) {
+                                if (speaking) {
+                                  await qbotSpeak(paragraph);
+                                }
+                              }
+
+                              // await qbotSpeak(
+                              //     teks);
+                              /* menunggu selesai speaking */
                               // ketika selesai speaking, button kembali ke speaker
                               setState(() {
                                 pesanArray[indexKe]['menu']['isSpeaking'] =
                                     false;
                                 pesanArray[indexKe]['menu']['useSpeaker'] =
                                     false;
+                                speaking = false;
                               });
                             },
                             icon: Icon(
