@@ -50,13 +50,7 @@ class LoginPageState extends State<LoginPage> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                            arguments: ChatPageArguments(
-                              peerId: '111',
-                              peerAvatar: 'images/app_icon.png',
-                              peerNickname: 'IslamBot',
-                            ),
-                          ),
+                          builder: (context) => SubscriptionScreen()
                         ),
                       );
                     }
