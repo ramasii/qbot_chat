@@ -94,7 +94,8 @@ class _BoldAsterisState extends State<BoldAsteris> {
         return RichText(
           text: TextSpan(
               children: spans,
-              style: TextStyle(color: Colors.black, fontSize: AppSettings.regularTextSize)),
+              style: TextStyle(
+                  color: Colors.black, fontSize: AppSettings.regularTextSize)),
         );
       }
     });

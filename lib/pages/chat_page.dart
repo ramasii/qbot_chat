@@ -194,7 +194,8 @@ class ChatPageState extends State<ChatPage> {
   ];
   List csvData = [];
   late List selectedItems = [];
-  List labeledItems = [];
+  List labeledItems = [];  
+  List labelColors = [Color.fromARGB(255, 255, 155, 155),Color.fromARGB(255, 255, 217, 155),Color.fromARGB(255, 170, 255, 155),Color.fromARGB(255, 121, 255, 253),Color.fromARGB(255, 155, 158, 255),Color.fromARGB(255, 255, 155, 252)];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
 
@@ -346,9 +347,11 @@ class ChatPageState extends State<ChatPage> {
                                 onPressed: () async {
                                   if (labelName.isNotEmpty) {
                                     log('klik new label, pesan dipilih: ${selectedItems.length}');
+                                    await getLabeledItems();
                                     setState(() {
                                       labeledItems.add({
                                         "labelName": labelName,
+                                        "labelColor": labeledItems.length>5?labelColors[sisabagi(labeledItems.length, 5)]:labeledItems.length,
                                         "listPesan": selectedItems
                                       });
                                     });
@@ -1553,6 +1556,11 @@ class ChatPageState extends State<ChatPage> {
       );
       print('DONE open SETTINGS page');
     }
+  }
+
+  //fungsi sisa bagi
+  sisabagi(int a, int b){
+    return a%b;
   }
 
   // fungsi izin akses memori

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:IslamBot/pages/pages.dart';
 import 'package:flutter/material.dart';
 import '../utils/allpackages.dart';
 import '../qbotterminal.dart';
@@ -11,6 +12,14 @@ class LabelPage extends StatefulWidget {
 
 class _LabelPageState extends State<LabelPage> {
   late List labeledItems = [];
+  List labelColors = [
+    Color.fromARGB(255, 255, 155, 155),
+    Color.fromARGB(255, 255, 217, 155),
+    Color.fromARGB(255, 170, 255, 155),
+    Color.fromARGB(255, 121, 255, 253),
+    Color.fromARGB(255, 155, 158, 255),
+    Color.fromARGB(255, 255, 155, 252)
+  ];
 
   @override
   void initState() {
@@ -91,7 +100,11 @@ class _LabelPageState extends State<LabelPage> {
                     child: ListTile(
                       onTap: () {
                         log('tap index $index, isi pesan: ${labeledItems[index]['listPesan'][0]['pesanObj']['pesan']}');
-                        showDialog(
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailLabel(labelData: labeledItems[index],)));
+                        /* showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
@@ -102,10 +115,16 @@ class _LabelPageState extends State<LabelPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(labeledItems[index]['labelName']),
-                                        Container(width: 1,color: Colors.grey,),
+                                        Container(
+                                          width: 1,
+                                          color: Colors.grey,
+                                        ),
                                         IconButton(
                                           splashRadius: 25,
-                                          icon: Icon(Icons.close, size: 17,),
+                                          icon: Icon(
+                                            Icons.close,
+                                            size: 17,
+                                          ),
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
@@ -208,10 +227,20 @@ class _LabelPageState extends State<LabelPage> {
                                   ),
                                 ),
                               );
-                            });
+                            }); */
                       },
-                      leading: Icon(Icons.label),
-                      title: Text(labeledItems[index]['labelName']),
+                      leading: CircleAvatar(
+                        backgroundColor:
+                            labelColors[labeledItems[index]['labelColor']],
+                        radius: 25,
+                        child: Icon(Icons.label_outline, color: Colors.white),
+                      ),
+                      title: Text(
+                        labeledItems[index]['labelName'],
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      subtitle: Text(
+                          '${labeledItems[index]['listPesan'].length} items'),
                     ),
                   );
                 },
@@ -223,6 +252,11 @@ class _LabelPageState extends State<LabelPage> {
                   style: TextStyle(color: Colors.grey),
                 ),
               ));
+  }
+
+  //fungsi sisa bagi
+  sisabagi(int a, int b) {
+    return a % b;
   }
 
   // fungsi get labeledItems
