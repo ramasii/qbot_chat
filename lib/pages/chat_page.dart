@@ -316,10 +316,15 @@ class ChatPageState extends State<ChatPage> {
                                 labelName = value;
                               },
                               decoration: InputDecoration(
-                                hintText: 'Masukkan nama label',
-                                border: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 58, 86, 100))),
-                                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color.fromARGB(255, 58, 86, 100)))
-                              ),
+                                  hintText: 'Masukkan nama label',
+                                  border: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 58, 86, 100))),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color.fromARGB(
+                                              255, 58, 86, 100)))),
                             ),
                             actions: [
                               TextButton(
@@ -327,15 +332,15 @@ class ChatPageState extends State<ChatPage> {
                                   Navigator.pop(context);
                                 },
                                 child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Text(
-                              'Batal',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Batal',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () async {
@@ -365,15 +370,15 @@ class ChatPageState extends State<ChatPage> {
                                   }
                                 },
                                 child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Text(
-                              'Simpan',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Simpan',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
                             ],
                           );
@@ -434,7 +439,8 @@ class ChatPageState extends State<ChatPage> {
         // background
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage("images/bg.jpg"), repeat: ImageRepeat.repeatY)),
+                image: AssetImage("images/bg.jpg"),
+                repeat: ImageRepeat.repeatY)),
         child: SafeArea(
           child: Stack(
             children: <Widget>[
@@ -1541,7 +1547,7 @@ class ChatPageState extends State<ChatPage> {
     // about islambot
     else if (value == Options.settings.index) {
       print('START open SETTINGS page');
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => SettingsPage()),
       );

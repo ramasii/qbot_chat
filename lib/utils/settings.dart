@@ -12,11 +12,11 @@ class AppSettings {
 
   static Future loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    AppSettings.language = prefs.getString('language') ?? 'Indonesia';
-    AppSettings.arabicFont = prefs.getString('arabicFont') ?? 'LPMQ Isep Misbah';
-    AppSettings.regularTextSize = prefs.getDouble('regularTextSize') ?? 17;
-    AppSettings.arabicTextSize = prefs.getDouble('arabicTextSize') ?? 24;
-    AppSettings.enableTTS = prefs.getBool('enableTTS') ?? false;
+    AppSettings.language = prefs.getString('AppSettings.language') ?? 'Indonesia';
+    AppSettings.arabicFont = prefs.getString('AppSettings.arabicFont') ?? 'LPMQ Isep Misbah';
+    AppSettings.regularTextSize = prefs.getDouble('AppSettings.regularTextSize') ?? 17;
+    AppSettings.arabicTextSize = prefs.getDouble('AppSettings.arabicTextSize') ?? 24;
+    AppSettings.enableTTS = prefs.getBool('AppSettings.enableTTS') ?? false;
     print('loaded setting');
   }
 

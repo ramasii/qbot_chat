@@ -1,5 +1,7 @@
+import 'package:IslamBot/qbotterminal.dart';
 import 'package:flutter/material.dart';
 import '../utils/allpackages.dart';
+import 'pages.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -17,52 +19,109 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 58, 86, 100),
-        title: Text(
-          'Pengaturan',
-          style: TextStyle(color: Colors.white),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.white,
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(16),
-        children: [
-          subtitleSetting("Umum", bottom: 5),
-          TileSetting(
-              "Bahasa", Icons.language, selectedLanguage, _showLanguageDialog),
-          ListTile(
-            leading: Icon(Icons.volume_up_rounded),
-            title: Text('Auto Start TTS'),
-            trailing: Switch(
-              value: AppSettings.enableTTS,
-              onChanged: (value) async {
-                setState(() {
-                  AppSettings.enableTTS = value;
-                });
-                await AppSettings.saveSettings();
-              },
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              arguments: ChatPageArguments(
+                peerId: '111',
+                peerAvatar: 'images/app_icon.png',
+                peerNickname: 'IslamBot',
+              ),
             ),
           ),
-          subtitleSetting("Font", top: 5, bottom: 5),
-          TileSetting(
-              "Ukuran Font Latin",
-              Icons.text_fields_rounded,
-              AppSettings.regularTextSize.toInt().toString(),
-              _showRegularTextSizeDialog),
-          TileSetting(
-              "Ukuran Font Arab",
-              Icons.text_fields_rounded,
-              AppSettings.arabicTextSize.toInt().toString(),
-              _showArabicTextSizeDialog),
-          TileSetting("Font Arab", Icons.format_align_left_rounded,
-              AppSettings.arabicFont, _showArabicFontDialog),
-        ],
+        );
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 58, 86, 100),
+          title: Text(
+            'Pengaturan',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () => Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(
+                  arguments: ChatPageArguments(
+                    peerId: '111',
+                    peerAvatar: 'images/app_icon.png',
+                    peerNickname: 'IslamBot',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        body: ListView(
+          padding: EdgeInsets.all(16),
+          children: [
+            subtitleSetting("Umum", bottom: 5),
+            TileSetting("Bahasa", Icons.language, selectedLanguage,
+                _showLanguageDialog),
+            ListTile(
+              leading: Icon(Icons.volume_up_rounded),
+              title: Text('Auto Start TTS'),
+              trailing: Switch(
+                value: AppSettings.enableTTS,
+                onChanged: (value) async {
+                  setState(() {
+                    AppSettings.enableTTS = value;
+                  });
+                  await AppSettings.saveSettings();
+                },
+              ),
+            ),
+            subtitleSetting("Font", top: 5, bottom: 5),
+            TileSetting(
+                "Ukuran Font Latin",
+                Icons.text_fields_rounded,
+                AppSettings.regularTextSize.toInt().toString(),
+                _showRegularTextSizeDialog),
+            TileSetting(
+                "Ukuran Font Arab",
+                Icons.text_fields_rounded,
+                AppSettings.arabicTextSize.toInt().toString(),
+                _showArabicTextSizeDialog),
+            TileSetting("Font Arab", Icons.format_align_left_rounded,
+                AppSettings.arabicFont, _showArabicFontDialog),
+            subtitleSetting('Preview'),
+            previewFrame(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget previewFrame() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+              image: AssetImage("images/bg.jpg"), fit: BoxFit.cover)),
+      padding: EdgeInsets.all(20),
+      margin: EdgeInsets.only(top: 10, bottom: 10),
+      child: Container(
+        decoration: BoxDecoration(
+            color: Color.fromARGB(255, 255, 255, 255),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                  color: Color.fromARGB(255, 131, 131, 131),
+                  blurRadius: 2,
+                  spreadRadius: 1)
+            ]),
+      padding: EdgeInsets.all(10),
+
+        child: BoldAsteris(
+            text:
+                '**Al-Fatihah** (Pembukaan) surat ke 1 ayat **1** juz 1 halaman 1\n \nبِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ\n \nDengan nama Allah Yang Maha Pengasih, Maha Penyayang.'),
       ),
     );
   }
@@ -140,6 +199,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     });
                     await AppSettings.saveSettings();
                     Navigator.of(context).pop();
+                    refreshSettingPage();
                   },
                 ),
               ],
@@ -187,6 +247,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   });
                   await AppSettings.saveSettings();
                   Navigator.of(context).pop();
+                  refreshSettingPage();
                 },
               ),
             ],
@@ -208,38 +269,38 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return AlertDialog(
-              title: Text('Pilih Ukuran Font Latin'),
-              content: DropdownButton<int>(
-                value: selectedTextSize,
-                onChanged: (int? value) {
+            builder: (BuildContext context, StateSetter setState) {
+          return AlertDialog(
+            title: Text('Pilih Ukuran Font Latin'),
+            content: DropdownButton<int>(
+              value: selectedTextSize,
+              onChanged: (int? value) {
+                setState(() {
+                  selectedTextSize = value!;
+                });
+              },
+              items: textSizes.map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+            ),
+            actions: [
+              TextButton(
+                child: tombol('OK'),
+                onPressed: () async {
                   setState(() {
-                    selectedTextSize = value!;
+                    AppSettings.regularTextSize = selectedTextSize.toDouble();
                   });
+                  await AppSettings.saveSettings();
+                  Navigator.of(context).pop();
+                  refreshSettingPage();
                 },
-                items: textSizes.map<DropdownMenuItem<int>>((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
               ),
-              actions: [
-                TextButton(
-                  child: tombol('OK'),
-                  onPressed: () async {
-                    setState(() {
-                      AppSettings.regularTextSize = selectedTextSize.toDouble();
-                    });
-                    await AppSettings.saveSettings();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          }
-        );
+            ],
+          );
+        });
       },
     );
   }
@@ -256,40 +317,46 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, StateSetter setState) {
-            return AlertDialog(
-              title: Text('Pilih Ukuran Font Arab'),
-              content: DropdownButton<int>(
-                value: selectedTextSize,
-                onChanged: (int? value) {
+        return StatefulBuilder(builder: (context, StateSetter setState) {
+          return AlertDialog(
+            title: Text('Pilih Ukuran Font Arab'),
+            content: DropdownButton<int>(
+              value: selectedTextSize,
+              onChanged: (int? value) {
+                setState(() {
+                  selectedTextSize = value!;
+                });
+              },
+              items: textSizes.map<DropdownMenuItem<int>>((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+            ),
+            actions: [
+              TextButton(
+                child: tombol('OK'),
+                onPressed: () async {
                   setState(() {
-                    selectedTextSize = value!;
+                    AppSettings.arabicTextSize = selectedTextSize.toDouble();
                   });
+                  await AppSettings.saveSettings();
+                  Navigator.of(context).pop();
+                  refreshSettingPage();
                 },
-                items: textSizes.map<DropdownMenuItem<int>>((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
               ),
-              actions: [
-                TextButton(
-                  child: tombol('OK'),
-                  onPressed: () async {
-                    setState(() {
-                      AppSettings.arabicTextSize = selectedTextSize.toDouble();
-                    });
-                    await AppSettings.saveSettings();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          }
-        );
+            ],
+          );
+        });
       },
+    );
+  }
+
+  void refreshSettingPage() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => SettingsPage()),
     );
   }
 
