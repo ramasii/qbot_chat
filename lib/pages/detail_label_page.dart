@@ -17,10 +17,14 @@ class DetailLabel extends StatefulWidget {
 }
 
 class _DetailLabelState extends State<DetailLabel> {
+  late List pesanArray = [];
+
   @override
   void initState() {
     super.initState();
     log('in detail label page');
+
+    getPesanArray();
   }
 
   @override
@@ -55,23 +59,34 @@ class _DetailLabelState extends State<DetailLabel> {
                           List sortedPesan =
                               List.from(widget.labelData['listPesan']);
                           sortedPesan.sort((a, b) {
-                            DateTime timeA =
-                                DateTime.parse(a['pesanObj']['time']);
-                            DateTime timeB =
-                                DateTime.parse(b['pesanObj']['time']);
+                            DateTime timeA = DateTime.parse(a['pesanObj']);
+                            DateTime timeB = DateTime.parse(b['pesanObj']);
                             return timeA.compareTo(timeB);
                           });
 
-                          Map pesanObj = sortedPesan[index2]['pesanObj'];
+                          String msgTime = sortedPesan[index2]['pesanObj'];
+                          Map pesanObj = {};
+
+                          // menemukan index objek pesan yang time nya sama
+                          int indexPesan = pesanArray.indexWhere(
+                            (element) => element['time'] == msgTime,
+                          );
+                          if (indexPesan != -1) {
+                            setState(() {
+                              pesanObj = pesanArray[indexPesan];
+                            });
+                          }
+
+                          log('pesan array: ${pesanObj['pesan']}');
 
                           return InkWell(
                             onTap: () {
-                              log('tap pesan index  ke-$index2, time: ${pesanObj["time"]}');
+                              log('tap pesan index  ke-$index2, time: ${msgTime}');
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ChatPage(
-                                    messageStamp: pesanObj["time"],
+                                    messageStamp: msgTime,
                                     arguments: ChatPageArguments(
                                       peerId: '111',
                                       peerAvatar: 'images/app_icon.png',
@@ -109,6 +124,21 @@ class _DetailLabelState extends State<DetailLabel> {
                     ),
                   )));
   }
+
+  // fungsi ambil pesan
+  getPesanArray() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? items = await prefs.getString('pesanArray');
+    if (items != null) {
+      List mapList = jsonDecode(items);
+      print('------------ get pesan array');
+      setState(() {
+        pesanArray = mapList;
+      });
+    } else {
+      print('Nilai untuk pesanArray tidak ditemukan');
+    }
+  }
 }
 
 class pesanInLabel extends StatelessWidget {
@@ -121,21 +151,26 @@ class pesanInLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '${pesanObj['fromUser'] ? 'Anda' : 'IslamBot'}: ',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          TextSpan(
-            text: pesanObj['pesan'].replaceAll(RegExp(r'\*'), ''),
-          ),
-        ],
-      ),
-      maxLines: 6,
-      softWrap: true,
-      overflow: TextOverflow.ellipsis,
-    );
+    return
+
+        // Text('pesanTime: $pesanObj');
+        pesanObj['fromUser'] != null
+            ? Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '${pesanObj['fromUser'] ? 'Anda' : 'IslamBot'}: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    TextSpan(
+                      text: pesanObj['pesan'].replaceAll(RegExp(r'\*'), ''),
+                    ),
+                  ],
+                ),
+                maxLines: 6,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              )
+            : Container();
   }
 }

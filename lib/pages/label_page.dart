@@ -6,8 +6,8 @@ import '../utils/allpackages.dart';
 import '../qbotterminal.dart';
 
 class LabelPage extends StatefulWidget {
-  final List pesanArray;
-  LabelPage({required this.pesanArray});
+  /* final List pesanArray;
+  LabelPage({required this.pesanArray}); */
 
   @override
   _LabelPageState createState() => _LabelPageState();
@@ -30,7 +30,6 @@ class _LabelPageState extends State<LabelPage> {
     // TODO: implement initState
     super.initState();
     log('in label page');
-    log('panjang pesan array diterima: ${widget.pesanArray.length}');
     getLabeledItems();
   }
 
@@ -206,7 +205,7 @@ class _LabelPageState extends State<LabelPage> {
                             ),
                           );
                         } else {
-                          // jika index sudah ada di labeledItems, hapus dari list
+                          // jika index sudah ada di selectedItem, hapus dari list
                           if (selectedLabel.contains(index)) {
                             setState(() {
                               selectedLabel.remove(index);

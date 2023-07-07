@@ -712,11 +712,11 @@ class ChatPageState extends State<ChatPage> {
       // key: kunciGlobal,
       onLongPress: () async {
         if (pesan['isSelected'] == false && selectedItems.length == 0) {
-          await await getLabeledItems();
+          await getLabeledItems();
           setState(() {
             selectItem = true;
             pesan['isSelected'] = true;
-            selectedItems.add({"inx": index, "pesanObj": pesan});
+            selectedItems.add({"inx": index, "pesanObj": pesan['time']});
           });
           log('selectItem[$index] = ${pesan['isSelected']}');
         }
@@ -731,9 +731,10 @@ class ChatPageState extends State<ChatPage> {
         } else if (selectedItems.length != 0) {
           setState(() {
             pesan['isSelected'] = true;
-            selectedItems.add({"inx": index, "pesanObj": pesan});
+            selectedItems.add({"inx": index, "pesanObj": pesan['time']});
           });
           log('selectItem[$index] = ${pesan['isSelected']}');
+          log('isi selectedItem: ${selectedItems}');
         }
       },
       child: AutoScrollTag(
@@ -1591,12 +1592,7 @@ class ChatPageState extends State<ChatPage> {
       print('DONE open about us page');
     } else if (value == Options.labels.index) {
       log('START buka label page');
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (_) => LabelPage(
-                    pesanArray: pesanArray,
-                  )));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => LabelPage()));
       log('DONE buka label page');
     }
 
