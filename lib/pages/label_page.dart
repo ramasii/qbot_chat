@@ -6,12 +6,16 @@ import '../utils/allpackages.dart';
 import '../qbotterminal.dart';
 
 class LabelPage extends StatefulWidget {
+  final List pesanArray;
+  LabelPage({required this.pesanArray});
+
   @override
   _LabelPageState createState() => _LabelPageState();
 }
 
 class _LabelPageState extends State<LabelPage> {
   late List labeledItems = [];
+  List selectedLabel = [];
   List labelColors = [
     Color.fromARGB(255, 255, 155, 155),
     Color.fromARGB(255, 255, 217, 155),
@@ -25,233 +29,269 @@ class _LabelPageState extends State<LabelPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    log('in label page');
+    log('panjang pesan array diterima: ${widget.pesanArray.length}');
     getLabeledItems();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 58, 86, 100),
-          title: Text(
-            'Label Page',
-            style: TextStyle(color: Colors.white),
+    TextEditingController newLabelController = TextEditingController();
+
+    return WillPopScope(
+      onWillPop: () async {
+        if (selectedLabel.isNotEmpty) {
+          setState(() {
+            selectedLabel.clear();
+          });
+        }
+
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 58, 86, 100),
+            title: Text(
+              'Label Page',
+              style: TextStyle(color: Colors.white),
+            ),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () => Navigator.pop(context),
+            ),
+            actions: [
+              if (selectedLabel.isNotEmpty)
+                IconButton(
+                    onPressed: () {
+                      log('press hapus');
+                      for (var e in selectedLabel) {
+                        setState(() {
+                          labeledItems.removeAt(e);
+                        });
+                      }
+                      selectedLabel.clear();
+                      saveLabeledItems();
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ))
+            ],
           ),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.white,
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: labeledItems.length != 0
-            ? ListView.builder(
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: ObjectKey(labeledItems[index]),
-                    confirmDismiss: (direction) async {
-                      // Menampilkan konfirmasi dialog
-                      return await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Hapus label ini?'),
-                            content: Text(
-                                'Label yang dihapus tidak bisa dikembalikan.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(false),
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    'Batal',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+          floatingActionButton: selectedLabel.isEmpty
+              ? InkWell(
+                  onTap: () {
+                    log('new label');
+                    String labelName = '';
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Buat Label Baru'),
+                          content: TextField(
+                            controller: newLabelController,
+                            onChanged: (value) {
+                              labelName = value;
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Masukkan nama label',
+                                border: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 58, 86, 100))),
+                                focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color:
+                                            Color.fromARGB(255, 58, 86, 100)))),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Text(
+                                  'Batal',
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(true),
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.red,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    'Hapus',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                if (labelName.isNotEmpty) {
+                                  await getLabeledItems();
+                                  setState(() {
+                                    labeledItems.add({
+                                      "labelName": labelName,
+                                      "labelColor": labeledItems.length > 5
+                                          ? labelColors[
+                                              sisabagi(labeledItems.length, 5)]
+                                          : labeledItems.length,
+                                      "listPesan": []
+                                    });
+                                  });
+                                  await saveLabeledItems();
+                                  await getLabeledItems();
+
+                                  log('sukses melabel pesan: ${labeledItems.last}');
+                                  Fluttertoast.showToast(
+                                      msg: 'Disimpan dengan label "$labelName"',
+                                      backgroundColor: Colors.green,
+                                      textColor: Colors.white);
+                                  Navigator.pop(context);
+                                } else {
+                                  Fluttertoast.showToast(
+                                      msg: 'Nama label tidak boleh kosong',
+                                      textColor: Colors.black,
+                                      backgroundColor: Colors.yellow);
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Text(
+                                  'Simpan',
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    onDismissed: (direction) async {
-                      labeledItems.removeAt(index);
-                      await saveLabeledItems();
-                      await getLabeledItems(); // supaya variabel index tetap dinamis
-                    },
-                    child: ListTile(
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  radius: 30,
+                  borderRadius: BorderRadius.circular(30),
+                  child: CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.green[400],
+                    child: Icon(
+                      Icons.add_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              : Container(),
+          body: labeledItems.length != 0
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onLongPress: () {
+                        // jika tidak sedang memilih pesan, maka pesan akan terpilih
+                        if (selectedLabel.isEmpty) {
+                          log('start milih');
+                          setState(() {
+                            selectedLabel.add(index);
+                          });
+                        }
+                      },
                       onTap: () {
-                        log('tap index $index, isi pesan: ${labeledItems[index]['listPesan'][0]['pesanObj']['pesan']}');
-                        Navigator.push(
+                        log('tap index $index');
+                        // jika tidak sedang memilih pesan, maka akan masuk ke detail label
+                        if (selectedLabel.isEmpty) {
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => DetailLabel(labelData: labeledItems[index],)));
-                        /* showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(labeledItems[index]['labelName']),
-                                        Container(
-                                          width: 1,
-                                          color: Colors.grey,
-                                        ),
-                                        IconButton(
-                                          splashRadius: 25,
-                                          icon: Icon(
-                                            Icons.close,
-                                            size: 17,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                titlePadding:
-                                    EdgeInsets.fromLTRB(15, 15, 15, 15),
-                                contentPadding: EdgeInsets.all(5),
-                                content: SingleChildScrollView(
-                                  child: Container(
-                                    padding: EdgeInsets.only(
-                                        left: 8, right: 8, top: 5, bottom: 5),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        image: DecorationImage(
-                                            image: AssetImage("images/bg.jpg"),
-                                            fit: BoxFit.cover)),
-                                    child: Column(
-                                      children: List.generate(
-                                        labeledItems[index]['listPesan'].length,
-                                        (index2) {
-                                          List sortedPesan = List.from(
-                                              labeledItems[index]['listPesan']);
-                                          sortedPesan.sort((a, b) {
-                                            DateTime timeA = DateTime.parse(
-                                                a['pesanObj']['time']);
-                                            DateTime timeB = DateTime.parse(
-                                                b['pesanObj']['time']);
-                                            return timeA.compareTo(timeB);
-                                          });
-
-                                          Map pesanObj =
-                                              sortedPesan[index2]['pesanObj'];
-
-                                          return Row(
-                                            mainAxisAlignment:
-                                                pesanObj['fromUser']
-                                                    ? MainAxisAlignment.end
-                                                    : MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Color.fromARGB(
-                                                          100, 0, 0, 0),
-                                                      blurRadius: 2,
-                                                      spreadRadius: 0,
-                                                    ),
-                                                  ],
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft: Radius.circular(8),
-                                                    topRight:
-                                                        Radius.circular(8),
-                                                    bottomLeft: Radius.circular(
-                                                        pesanObj['fromUser']
-                                                            ? 8
-                                                            : 0),
-                                                    bottomRight:
-                                                        Radius.circular(
-                                                            pesanObj['fromUser']
-                                                                ? 0
-                                                                : 8),
-                                                  ),
-                                                  color: pesanObj['fromUser']
-                                                      ? Color.fromARGB(
-                                                          255, 231, 255, 219)
-                                                      : Colors.white,
-                                                ),
-                                                padding: EdgeInsets.fromLTRB(
-                                                    10, 5, 10, 5),
-                                                margin: EdgeInsets.only(
-                                                    top: 2, bottom: 2),
-                                                constraints: BoxConstraints(
-                                                  maxWidth: MediaQuery.of(
-                                                                  context)
-                                                              .orientation ==
-                                                          Orientation.landscape
-                                                      ? MediaQuery.of(context)
-                                                              .size
-                                                              .width -
-                                                          135
-                                                      : MediaQuery.of(context)
-                                                              .size
-                                                              .width -
-                                                          125,
-                                                ),
-                                                child: BoldAsteris(
-                                                    text: pesanObj['pesan']),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }); */
+                              builder: (context) => DetailLabel(
+                                labelData: labeledItems[index],
+                              ),
+                            ),
+                          );
+                        } else {
+                          // jika index sudah ada di labeledItems, hapus dari list
+                          if (selectedLabel.contains(index)) {
+                            setState(() {
+                              selectedLabel.remove(index);
+                            });
+                            log('index $index removed from labeledItems');
+                          } else {
+                            setState(() {
+                              selectedLabel.add(index);
+                            });
+                            log('add index ${index}');
+                          }
+                        }
                       },
-                      leading: CircleAvatar(
-                        backgroundColor:
-                            labelColors[labeledItems[index]['labelColor']],
-                        radius: 25,
-                        child: Icon(Icons.label_outline, color: Colors.white),
+                      child: Row(
+                        children: [
+                          Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: CircleAvatar(
+                                  backgroundColor: labelColors[
+                                      labeledItems[index]['labelColor']],
+                                  radius: 25,
+                                  child: Icon(Icons.label_outline,
+                                      color: Colors.white),
+                                ),
+                              ),
+                              // centang saat dipilih
+                              selectedLabel.contains(index)
+                                  ? Container(
+                                      padding: EdgeInsets.all(8),
+                                      child: Stack(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 12,
+                                            backgroundColor: Colors.white,
+                                            child: CircleAvatar(
+                                              radius: 10,
+                                              backgroundColor: Colors.green,
+                                              child: Icon(
+                                                Icons.check_rounded,
+                                                size: 18,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : Container(),
+                              
+                            ],
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  labeledItems[index]['labelName'],
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                Text(
+                                  '${labeledItems[index]['listPesan'].length} items',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Divider(
+                                  endIndent: 20,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      title: Text(
-                        labeledItems[index]['labelName'],
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      subtitle: Text(
-                          '${labeledItems[index]['listPesan'].length} items'),
-                    ),
-                  );
-                },
-                itemCount: labeledItems.length,
-              )
-            : Center(
-                child: Text(
-                  'Anda belum menambahkan label',
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ));
+                    );
+                  },
+                  itemCount: labeledItems.length,
+                )
+              : Center(
+                  child: Text(
+                    'Anda belum menambahkan label',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )),
+    );
   }
 
   //fungsi sisa bagi

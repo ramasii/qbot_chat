@@ -13,12 +13,14 @@ import '../utils/allpackages.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
-enum Options { clear, exit, export, about, settings, import }
+enum Options { clear, exit, export, about, settings, import, labels }
 
 class ChatPage extends StatefulWidget {
-  ChatPage({Key? key, required this.arguments}) : super(key: key);
+  ChatPage({Key? key, required this.arguments, this.messageStamp = ''})
+      : super(key: key);
 
   final ChatPageArguments arguments;
+  var messageStamp;
 
   @override
   ChatPageState createState() => ChatPageState();
@@ -44,7 +46,7 @@ class ChatPageState extends State<ChatPage> {
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
-  late ScrollController listScrollController;
+  late AutoScrollController _autoScrollController;
   final stt.SpeechToText speechToText = stt.SpeechToText();
   final FocusNode focusNode = FocusNode();
   late List pesanArray = [
@@ -53,7 +55,7 @@ class ChatPageState extends State<ChatPage> {
           "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
       "fromUser": false,
       "share": false,
-      "time": "10",
+      "time": "1",
       "isSelected": false,
       "isFavourite": false,
       "menu": {
@@ -72,7 +74,7 @@ class ChatPageState extends State<ChatPage> {
           "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
       "fromUser": false,
       "share": false,
-      "time": "10",
+      "time": "2",
       "isFavourite": false,
       "isSelected": false,
       "menu": {
@@ -194,28 +196,59 @@ class ChatPageState extends State<ChatPage> {
   ];
   List csvData = [];
   late List selectedItems = [];
-  List labeledItems = [];  
-  List labelColors = [Color.fromARGB(255, 255, 155, 155),Color.fromARGB(255, 255, 217, 155),Color.fromARGB(255, 170, 255, 155),Color.fromARGB(255, 121, 255, 253),Color.fromARGB(255, 155, 158, 255),Color.fromARGB(255, 255, 155, 252)];
+  List labeledItems = [];
+  List labelColors = [
+    Color.fromARGB(255, 255, 155, 155),
+    Color.fromARGB(255, 255, 217, 155),
+    Color.fromARGB(255, 170, 255, 155),
+    Color.fromARGB(255, 121, 255, 253),
+    Color.fromARGB(255, 155, 158, 255),
+    Color.fromARGB(255, 255, 155, 252)
+  ];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
+  late Map<String, GlobalKey> _itemKeys = {};
 
   late ChatProvider chatProvider;
   late AuthProvider authProvider;
 
   @override
   void initState() {
-    listScrollController = ScrollController()
+    log('in chat page');
+    _autoScrollController = AutoScrollController()
       ..addListener(() {
         setState(() {
-          if (listScrollController.offset <=
-              listScrollController.position.maxScrollExtent - 20) {
+          if (_autoScrollController.offset >=
+              _autoScrollController.position.minScrollExtent + 20) {
             showUpButton = false;
           } else {
             showUpButton = true;
           }
         });
       });
-    getArray('pesanArray');
+
+    getArray('pesanArray', objKey: widget.messageStamp);
+    /* for (int i = 0; i < pesanArray.length; i++) {
+      _itemKeys[ObjectKey(pesanArray[i]["time"])] = GlobalKey();
+    } */
+    /* if (widget.messageStamp != null) {
+      log('stamp: ${widget.messageStamp}');
+
+      /* final itemKey = ObjectKey(widget.messageStamp);
+      final itemContext = _itemKeys[0]?.currentContext;
+      if (itemContext != null) {
+        listScrollController.animateTo(
+          itemContext
+              .findRenderObject()!
+              .getTransformTo(null)
+              .getTranslation()
+              .y,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      } */
+    } */
+
     AppSettings.loadSettings();
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
@@ -272,24 +305,6 @@ class ChatPageState extends State<ChatPage> {
       currentUserId,
       {FirestoreConstants.chattingWith: peerId},
     );
-  }
-
-  void onKirimPesan(
-    String content,
-    int type,
-  ) {
-    if (content.trim().isNotEmpty) {
-      textEditingController.clear();
-      chatProvider.sendMessage(
-          content, type, groupChatId, currentUserId, widget.arguments.peerId);
-      if (listScrollController.hasClients) {
-        listScrollController.animateTo(0,
-            duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-      }
-    } else {
-      Fluttertoast.showToast(
-          msg: 'Nothing to send', backgroundColor: ColorConstants.greyColor);
-    }
   }
 
   @override
@@ -351,7 +366,10 @@ class ChatPageState extends State<ChatPage> {
                                     setState(() {
                                       labeledItems.add({
                                         "labelName": labelName,
-                                        "labelColor": labeledItems.length>5?labelColors[sisabagi(labeledItems.length, 5)]:labeledItems.length,
+                                        "labelColor": labeledItems.length > 5
+                                            ? labelColors[sisabagi(
+                                                labeledItems.length, 5)]
+                                            : labeledItems.length,
                                         "listPesan": selectedItems
                                       });
                                     });
@@ -392,16 +410,7 @@ class ChatPageState extends State<ChatPage> {
                       Icons.new_label_rounded,
                       color: Colors.white,
                     ))
-                : IconButton(
-                    onPressed: () {
-                      log('klik page label');
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => LabelPage()));
-                    },
-                    icon: Icon(
-                      Icons.label_rounded,
-                      color: Colors.white,
-                    )),
+                : Container(),
             selectedItems.length == 0
                 ? PopupMenuButton(
                     color: Colors.white,
@@ -420,6 +429,8 @@ class ChatPageState extends State<ChatPage> {
                               'Clear Messages',
                               Icons.cleaning_services_rounded,
                               Options.clear.index),
+                          _buildPopupMenuItem(
+                              'Labels', Icons.label, Options.labels.index),
                           _buildPopupMenuItem('Pengaturan', Icons.settings,
                               Options.settings.index),
                           _buildPopupMenuItem('About IslamBot',
@@ -617,15 +628,15 @@ class ChatPageState extends State<ChatPage> {
                       await qbotStop();
                       await saveArray();
 
-                      listScrollController.jumpTo(
-                          listScrollController.position.maxScrollExtent +
-                              (pakaiTeks ? 50 : 0));
+                      // listScrollController.jumpTo(
+                      //     listScrollController.position.minScrollExtent +
+                      //         (pakaiTeks ? 50 : 0));
 
                       await islamBot('Text', newTeks);
 
                       // Scroll ke bawah
-                      listScrollController.animateTo(
-                        listScrollController.position.maxScrollExtent + 600,
+                      _autoScrollController.animateTo(
+                        _autoScrollController.position.minScrollExtent,
                         duration: Duration(milliseconds: 500),
                         curve: Curves.easeIn,
                       );
@@ -694,7 +705,11 @@ class ChatPageState extends State<ChatPage> {
 
   // buat block pesan
   Widget buatItem(Map pesan, int index, {bool fromUser = true}) {
+    // log('index: $index - ${_itemKeys[pesanArray[index]["time"]]}');
+    /* final kunciGlobal = ValueKey<String>('${pesanArray[index]["time"]}');
+    log('$kunciGlobal'); */
     return InkWell(
+      // key: kunciGlobal,
       onLongPress: () async {
         if (pesan['isSelected'] == false && selectedItems.length == 0) {
           await await getLabeledItems();
@@ -721,184 +736,189 @@ class ChatPageState extends State<ChatPage> {
           log('selectItem[$index] = ${pesan['isSelected']}');
         }
       },
-      child: Row(
-        mainAxisAlignment:
-            fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            foregroundDecoration: BoxDecoration(
-                color: pesan['isSelected']
-                    ? Color.fromARGB(50, 0, 168, 132)
-                    : Color.fromARGB(0, 0, 168, 132),
-                backgroundBlendMode: BlendMode.darken),
-            child: Container(
-              // cek apakah pesan dari user?
-              child: fromUser
-                  // jika pesan dari user
-                  ? RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: pesan['pesan'],
-                          style: TextStyle(
-                            fontFamily: "IslamBot",
+      child: AutoScrollTag(
+        key: ValueKey(index),
+        controller: _autoScrollController,
+        index: index,
+        child: Row(
+          mainAxisAlignment:
+              fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              foregroundDecoration: BoxDecoration(
+                  color: pesan['isSelected']
+                      ? Color.fromARGB(50, 0, 168, 132)
+                      : Color.fromARGB(0, 0, 168, 132),
+                  backgroundBlendMode: BlendMode.darken),
+              child: Container(
+                // cek apakah pesan dari user?
+                child: fromUser
+                    // jika pesan dari user
+                    ? RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                            text: pesan['pesan'],
+                            style: TextStyle(
+                              fontFamily: "IslamBot",
+                            ),
                           ),
-                        ),
-                      ], style: TextStyle(color: Colors.black, fontSize: 17)),
-                    )
+                        ], style: TextStyle(color: Colors.black, fontSize: 17)),
+                      )
 
-                  // jika pesan dari bot
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // tombol favorit
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: IconButton(
-                              onPressed: () {
-                                print('tekan favorit');
-                                setState(() {
-                                  pesan['isFavourite'] =
-                                      pesan['isFavourite'] == true
-                                          ? false
-                                          : true;
-                                  saveArray();
-                                });
-                                print('is favorit? ${pesan['isFavourite']}');
-                              },
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              icon: pesan['isFavourite']
-                                  ? Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border_rounded,
-                                      color: Colors.grey[400],
-                                    )),
-                        ),
-                        // cek apakah share ayat?
-                        pesan['share']
-                            ? FullScreenImage(imageUrl: pesan['imgUrl'])
-                            : BoldAsteris(text: pesan['pesan']),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          height: 1,
-                          color: Colors.black12,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: pesan['share']
-                              // button menu untuk pesan share
-                              ? [
-                                  Expanded(
-                                    flex: 3,
-                                    child: listButton(pesan),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: Colors.grey[300],
-                                  ),
-                                  Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                        child: IconButton(
-                                            icon: Icon(
-                                              Icons.share_rounded,
-                                              size: 35,
-                                              color: Colors.grey,
-                                            ),
-                                            onPressed: () async {
-                                              showDialog(
-                                                context: context,
-                                                builder: (_) => Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              );
-                                              try {
-                                                final url =
-                                                    Uri.parse(pesan['imgUrl']);
-                                                final response =
-                                                    await http.get(url);
-                                                final bytes =
-                                                    response.bodyBytes;
-
-                                                final temp =
-                                                    await getTemporaryDirectory();
-                                                final path =
-                                                    '${temp.path}/image.jpg';
-                                                File(path)
-                                                    .writeAsBytesSync(bytes);
-
-                                                await Share.shareFiles([path],
-                                                    text:
-                                                        'Gunakan IslamBot untuk membuat share seperti ini.');
-                                              } catch (e) {
-                                                // handle error
-                                              } finally {
-                                                Navigator.of(context).pop();
-                                              }
-                                            }),
+                    // jika pesan dari bot
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // tombol favorit
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                                onPressed: () {
+                                  print('tekan favorit');
+                                  setState(() {
+                                    pesan['isFavourite'] =
+                                        pesan['isFavourite'] == true
+                                            ? false
+                                            : true;
+                                    saveArray();
+                                  });
+                                  print('is favorit? ${pesan['isFavourite']}');
+                                },
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                icon: pesan['isFavourite']
+                                    ? Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                      )
+                                    : Icon(
+                                        Icons.favorite_border_rounded,
+                                        color: Colors.grey[400],
                                       )),
-                                ]
-                              // button menu untuk pesan teks
-                              : [
-                                  Expanded(
-                                      flex:
-                                          MediaQuery.of(context).orientation ==
-                                                  Orientation.landscape
-                                              ? 6
-                                              : 3,
-                                      child: listButton(pesan)),
-                                  Container(
-                                    width: 1,
-                                    height: 30,
-                                    color: Colors.grey[300],
-                                  ),
-                                  Expanded(
-                                      flex: 2,
-                                      child: buttonTts(pesan['pesan'], index))
-                                ],
-                        )
-                      ],
-                    ),
-              padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-              // ini untuk ngatur max size
-              constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).orientation ==
-                          Orientation.landscape
-                      // (langscape)
-                      ? pesan['share']
-                          ? 315 // ukuran untuk block share ayat
-                          : MediaQuery.of(context).size.width -
-                              80 // ukuran block pesan
-                      // (potrait)
-                      : pesan['share']
-                          ? 315 // ukuran block share
-                          : MediaQuery.of(context).size.width -
-                              80), //ukuran block pesan
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 1,
-                        color: Colors.black26,
-                        offset: Offset(0, 2))
-                  ],
-                  color: fromUser
-                      ? Color.fromARGB(255, 231, 255, 219)
-                      : Colors.white,
-                  borderRadius: BorderRadius.circular(8)),
-              margin:
-                  MediaQuery.of(context).orientation == Orientation.landscape
-                      ? EdgeInsets.only(bottom: 5, right: 15, left: 15, top: 5)
-                      : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
-            ),
-          )
-        ],
+                          ),
+                          // cek apakah share ayat?
+                          pesan['share']
+                              ? FullScreenImage(imageUrl: pesan['imgUrl'])
+                              : BoldAsteris(text: pesan['pesan']),
+                          Container(
+                            margin: EdgeInsets.only(top: 10),
+                            height: 1,
+                            color: Colors.black12,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: pesan['share']
+                                // button menu untuk pesan share
+                                ? [
+                                    Expanded(
+                                      flex: 3,
+                                      child: listButton(pesan),
+                                    ),
+                                    Container(
+                                      width: 1,
+                                      height: 30,
+                                      color: Colors.grey[300],
+                                    ),
+                                    Expanded(
+                                        flex: 2,
+                                        child: Container(
+                                          child: IconButton(
+                                              icon: Icon(
+                                                Icons.share_rounded,
+                                                size: 35,
+                                                color: Colors.grey,
+                                              ),
+                                              onPressed: () async {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (_) => Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                );
+                                                try {
+                                                  final url = Uri.parse(
+                                                      pesan['imgUrl']);
+                                                  final response =
+                                                      await http.get(url);
+                                                  final bytes =
+                                                      response.bodyBytes;
+
+                                                  final temp =
+                                                      await getTemporaryDirectory();
+                                                  final path =
+                                                      '${temp.path}/image.jpg';
+                                                  File(path)
+                                                      .writeAsBytesSync(bytes);
+
+                                                  await Share.shareFiles([path],
+                                                      text:
+                                                          'Gunakan IslamBot untuk membuat share seperti ini.');
+                                                } catch (e) {
+                                                  // handle error
+                                                } finally {
+                                                  Navigator.of(context).pop();
+                                                }
+                                              }),
+                                        )),
+                                  ]
+                                // button menu untuk pesan teks
+                                : [
+                                    Expanded(
+                                        flex: MediaQuery.of(context)
+                                                    .orientation ==
+                                                Orientation.landscape
+                                            ? 6
+                                            : 3,
+                                        child: listButton(pesan)),
+                                    Container(
+                                      width: 1,
+                                      height: 30,
+                                      color: Colors.grey[300],
+                                    ),
+                                    Expanded(
+                                        flex: 2,
+                                        child: buttonTts(pesan['pesan'], index))
+                                  ],
+                          )
+                        ],
+                      ),
+                padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                // ini untuk ngatur max size
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).orientation ==
+                            Orientation.landscape
+                        // (langscape)
+                        ? pesan['share']
+                            ? 315 // ukuran untuk block share ayat
+                            : MediaQuery.of(context).size.width -
+                                80 // ukuran block pesan
+                        // (potrait)
+                        : pesan['share']
+                            ? 315 // ukuran block share
+                            : MediaQuery.of(context).size.width -
+                                80), //ukuran block pesan
+                decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 1,
+                          color: Colors.black26,
+                          offset: Offset(0, 2))
+                    ],
+                    color: fromUser
+                        ? Color.fromARGB(255, 231, 255, 219)
+                        : Colors.white,
+                    borderRadius: BorderRadius.circular(8)),
+                margin: MediaQuery.of(context).orientation ==
+                        Orientation.landscape
+                    ? EdgeInsets.only(bottom: 5, right: 15, left: 15, top: 5)
+                    : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -1029,16 +1049,14 @@ class ChatPageState extends State<ChatPage> {
                             await saveArray();
 
                             Navigator.of(context).pop();
-                            listScrollController.jumpTo(
-                                listScrollController.position.maxScrollExtent +
-                                    50);
+                            _autoScrollController.jumpTo(
+                                _autoScrollController.position.minScrollExtent);
                             await islamBot('Menu',
                                 pesanItem['menu']['actions'][index]['action']);
 
                             // scroll ke bawah
-                            listScrollController.animateTo(
-                                listScrollController.position.maxScrollExtent +
-                                    600,
+                            _autoScrollController.animateTo(
+                                _autoScrollController.position.minScrollExtent,
                                 duration: Duration(milliseconds: 500),
                                 curve: Curves.easeIn);
                           }
@@ -1167,66 +1185,73 @@ class ChatPageState extends State<ChatPage> {
 
   // buat list pesan, berisi item dari fungsi buatItem()
   Widget buatListPesan() {
-    return Flexible(
-      child: ListView.builder(
-        controller: listScrollController,
-        itemBuilder: (context, index) {
-          // Dismissible untuk drag and delete, hapus pesan
-          return Dismissible(
-              key: ObjectKey(pesanArray[index]),
-              confirmDismiss: (direction) async {
-                await clearSelectedItems();
-                // Menampilkan konfirmasi dialog
-                return await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text('Hapus pesan ini?'),
-                      content:
-                          Text('Pesan yang dihapus tidak bisa dikembalikan.'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
+    return Expanded(
+      child: SingleChildScrollView(
+        reverse: true,
+        controller: _autoScrollController,
+        child: Column(
+          children: List.generate(
+            pesanArray.length,
+            (index) {
+              // Dismissible untuk drag and delete, hapus pesan
+              return Dismissible(
+                key: ObjectKey(pesanArray[index]),
+                confirmDismiss: (direction) async {
+                  await clearSelectedItems();
+                  // Menampilkan konfirmasi dialog
+                  return await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Hapus pesan ini?'),
+                        content:
+                            Text('Pesan yang dihapus tidak bisa dikembalikan.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
                                 color: Colors.grey,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Text(
-                              'Batal',
-                              style: TextStyle(color: Colors.white),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                'Batal',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
                                 color: Colors.red,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Text(
-                              'Hapus',
-                              style: TextStyle(color: Colors.white),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                'Hapus',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              onDismissed: (direction) {
-                setState(() {
-                  pesanArray.removeAt(index);
-                });
-                saveArray();
-              },
-              child: buatItem(pesanArray[index], index,
-                  fromUser: pesanArray[index]['fromUser']));
-        },
-        itemCount: pesanArray.length,
-        reverse: false,
+                        ],
+                      );
+                    },
+                  );
+                },
+                onDismissed: (direction) {
+                  setState(() {
+                    pesanArray.removeAt(index);
+                  });
+                  saveArray();
+                },
+                child: buatItem(pesanArray[index], index,
+                    fromUser: pesanArray[index]['fromUser']),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -1262,7 +1287,7 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // read array yang disimpan | get array yang disimpan
-  getArray(String kunci) async {
+  getArray(String kunci, {String objKey = ''}) async {
     print('START get array');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? items = await prefs.getString(kunci);
@@ -1270,7 +1295,6 @@ class ChatPageState extends State<ChatPage> {
     if (items != null) {
       List mapList = jsonDecode(items);
       print('------------ get array');
-
       setState(() {
         pesanArray = mapList;
       });
@@ -1279,16 +1303,36 @@ class ChatPageState extends State<ChatPage> {
       print('Nilai untuk kunci $kunci tidak ditemukan');
     }
 
-    // scroll ke bawah saat buka
-    if (pesanArray.length > 2) {
-      print('max scroll');
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        listScrollController
-            .jumpTo(listScrollController.position.maxScrollExtent);
+    // jika objKey tidak kosong
+    if (objKey != '') {
+      await Future.delayed(const Duration(milliseconds: 100), () {
+        var theIndex = pesanArray.indexWhere((e) => e['time'] == objKey);
+        /* for (var e in pesanArray) {
+          setState(() {
+            _itemKeys[e["time"]] = GlobalKey();
+          });
+        } */
+        if (theIndex != -1) {
+          scrollToRow(theIndex);
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Pesan tidak ditemukan',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
+        log('dari get array, objKey: $objKey, theIndex: $theIndex');
       });
-    } else {
-      print('pesanarray.length: ${pesanArray.length}');
+      // scrollToItem(objKey);
     }
+    // kembalikan stamp jadi null
+    setState(() {
+      widget.messageStamp = null;
+    });
   }
 
   // cek pertama kali dibuka
@@ -1405,13 +1449,13 @@ class ChatPageState extends State<ChatPage> {
     print('START scroll to bottom');
 
     if (pesanArray.length > 2) {
-      listScrollController
-          .jumpTo(listScrollController.position.maxScrollExtent);
+      _autoScrollController
+          .jumpTo(_autoScrollController.position.minScrollExtent);
     } else {
       print('object ${pesanArray.length}');
     }
     print(
-        'DONE scroll to bottom ${listScrollController.position.maxScrollExtent}');
+        'DONE scroll to bottom ${_autoScrollController.position.minScrollExtent}');
   }
 
   // fungsi scroll to bottom
@@ -1419,13 +1463,13 @@ class ChatPageState extends State<ChatPage> {
     print('START scroll to top');
 
     if (pesanArray.length > 2) {
-      listScrollController
-          .jumpTo(listScrollController.position.minScrollExtent);
+      _autoScrollController
+          .jumpTo(_autoScrollController.position.maxScrollExtent);
     } else {
       print('object ${pesanArray.length}');
     }
     print(
-        'DONE scroll to top, ${listScrollController.position.maxScrollExtent}');
+        'DONE scroll to top, ${_autoScrollController.position.minScrollExtent}');
   }
 
   //widget popup menu button
@@ -1545,9 +1589,18 @@ class ChatPageState extends State<ChatPage> {
         MaterialPageRoute(builder: (context) => AboutUsScreen()),
       );
       print('DONE open about us page');
+    } else if (value == Options.labels.index) {
+      log('START buka label page');
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (_) => LabelPage(
+                    pesanArray: pesanArray,
+                  )));
+      log('DONE buka label page');
     }
 
-    // about islambot
+    // settings
     else if (value == Options.settings.index) {
       print('START open SETTINGS page');
       Navigator.pushReplacement(
@@ -1559,8 +1612,8 @@ class ChatPageState extends State<ChatPage> {
   }
 
   //fungsi sisa bagi
-  sisabagi(int a, int b){
-    return a%b;
+  sisabagi(int a, int b) {
+    return a % b;
   }
 
   // fungsi izin akses memori
@@ -1756,6 +1809,32 @@ class ChatPageState extends State<ChatPage> {
       selectedItems.clear();
       selectItem = false;
     });
+  }
+
+  // fungsi scroll ke pesan spesifik
+  /*  void scrollToItem(String objKey) {
+    log('start scroll to item $objKey');
+    final itemKey = objKey;
+    final gloKey = _itemKeys[itemKey];
+    log('itemkey: $itemKey');
+    log('_itemsKeys: $_itemKeys');
+    log('glokey: $gloKey');
+    if (gloKey != null) {
+      final itemContext = gloKey.currentContext;
+      log('itemcontex: $itemContext');
+      if (itemContext != null) {
+        listScrollController.jumpTo(itemContext
+            .findRenderObject()!
+            .getTransformTo(null)
+            .getTranslation()
+            .y);
+        log('posisi item: ${itemContext.findRenderObject()!.getTransformTo(null).getTranslation().y}');
+      }
+    }
+  } */
+  void scrollToRow(int index) {
+    _autoScrollController.scrollToIndex(index,
+        preferPosition: AutoScrollPosition.middle);
   }
 }
 

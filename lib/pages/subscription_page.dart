@@ -73,7 +73,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 Expanded(
                   child: InkWell(
                       onTap: () {
-                        Navigator.pushReplacement(
+                        Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ChatPage(
@@ -84,6 +84,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               ),
                             ),
                           ),
+                          (route)=>false
                         );
                       },
                       child: ProductCard(
@@ -226,18 +227,18 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         setState(() {
           alreadyMembership = true;
         });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatPage(
-              arguments: ChatPageArguments(
-                peerId: '111',
-                peerAvatar: 'images/app_icon.png',
-                peerNickname: 'IslamBot',
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                arguments: ChatPageArguments(
+                  peerId: '111',
+                  peerAvatar: 'images/app_icon.png',
+                  peerNickname: 'IslamBot',
+                ),
               ),
             ),
-          ),
-        );
+            (route) => false);
       } else {
         await usersCollection.doc(uid!).update({
           'isPremium': false,
@@ -280,7 +281,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       } else {
         print('Member sudah Premium / Trial');
       }
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => ChatPage(
@@ -291,6 +292,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
             ),
           ),
         ),
+        (route)=>false
       );
     } catch (e) {
       print('Error updating Member status: $e');
