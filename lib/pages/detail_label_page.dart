@@ -8,9 +8,10 @@ import '../utils/bold.dart';
 import 'pages.dart';
 
 class DetailLabel extends StatefulWidget {
-  final Map labelData;
+  Map labelData;
+  final int indexLabel;
 
-  DetailLabel({required this.labelData});
+  DetailLabel({required this.labelData, required this.indexLabel});
 
   @override
   _DetailLabelState createState() => _DetailLabelState();
@@ -18,6 +19,8 @@ class DetailLabel extends StatefulWidget {
 
 class _DetailLabelState extends State<DetailLabel> {
   late List pesanArray = [];
+  List selectedMsg = [];
+  late List labeledItems = [];
 
   @override
   void initState() {
@@ -29,100 +32,247 @@ class _DetailLabelState extends State<DetailLabel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 58, 86, 100),
-          title: Text(
-            '${widget.labelData['labelName']}',
-            style: TextStyle(color: Colors.white),
-          ),
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () => Navigator.of(context).pop()),
-        ),
-        body: Container(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 5, bottom: 5),
-            child: widget.labelData['listPesan'].isEmpty
-                ? Center(
-                    child: Text(
-                      'Anda belum menambahkan pesan untuk label ini',
-                      style: TextStyle(color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : SingleChildScrollView(
-                    child: Column(
-                      children: List.generate(
-                        widget.labelData['listPesan'].length,
-                        (index2) {
-                          List sortedPesan =
-                              List.from(widget.labelData['listPesan']);
-                          sortedPesan.sort((a, b) {
-                            DateTime timeA = DateTime.parse(a['pesanObj']);
-                            DateTime timeB = DateTime.parse(b['pesanObj']);
-                            return timeA.compareTo(timeB);
-                          });
+    return WillPopScope(
+      onWillPop: () async {
+        if (selectedMsg.isNotEmpty) {
+          setState(() {
+            selectedMsg.clear();
+          });
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LabelPage()),
+              (route) => false);
+        }
 
-                          String msgTime = sortedPesan[index2]['pesanObj'];
-                          Map pesanObj = {};
-
-                          // menemukan index objek pesan yang time nya sama
-                          int indexPesan = pesanArray.indexWhere(
-                            (element) => element['time'] == msgTime,
-                          );
-                          if (indexPesan != -1) {
-                            setState(() {
-                              pesanObj = pesanArray[indexPesan];
-                            });
-                          }
-
-                          log('pesan array: ${pesanObj['pesan']}');
-
-                          return InkWell(
-                            onTap: () {
-                              log('tap pesan index  ke-$index2, time: ${msgTime}');
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ChatPage(
-                                    messageStamp: msgTime,
-                                    arguments: ChatPageArguments(
-                                      peerId: '111',
-                                      peerAvatar: 'images/app_icon.png',
-                                      peerNickname: 'IslamBot',
-                                    ),
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 58, 86, 100),
+            title: Text(
+              '${widget.labelData['labelName']}',
+              style: TextStyle(color: Colors.white),
+            ),
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => LabelPage()),
+                      (Route<dynamic> route) => false,
+                    )),
+            actions: [
+              if (selectedMsg.isNotEmpty)
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Hapus label ini?'),
+                            content: Text(
+                                'Label yang dihapus tidak bisa dikembalikan.'),
+                            actions: [
+                              TextButton(
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Batal',
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
-                                (route) =>
-                                    false, // Menghapus semua halaman di atasnya dalam stack halaman
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        child: pesanInLabel(pesanObj: pesanObj),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Hapus',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  log('press hapus');
+                                  await getLabeledItems();
+                                  if (labeledItems.isNotEmpty) {
+                                    log('isi selectMsg: $selectedMsg');
+                                    log('isi labeleditems: $labeledItems');
+                                    selectedMsg.forEach((element) {
+                                      log('yang dihapus index-$element: ${labeledItems[widget.indexLabel]['listPesan']}');
+                                      setState(() {
+                                        List listPesan =
+                                            labeledItems[widget.indexLabel]
+                                                ['listPesan'];
+                                        listPesan.removeWhere(
+                                            (e) => e['pesanObj'] == element);
+                                      });
+                                    });
+                                    /* for (var e in selectedMsg) {
+                                      log('yang dihapus ${labeledItems[widget.indexLabel]['listPesan'][e]}');
+                                      setState(() {
+                                        labeledItems[widget.indexLabel]
+                                                ['listPesan']
+                                            .removeAt(e);
+                                      });
+                                    } */
+                                    selectedMsg.clear();
+                                    await saveLabeledItems();
+                                  }
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailLabel(
+                                        labelData:
+                                            labeledItems[widget.indexLabel],
+                                        indexLabel: widget.indexLabel,
                                       ),
-                                      Divider(
-                                        indent: 20,
-                                        endIndent: 20,
-                                      )
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    icon: Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ))
+            ],
+          ),
+          body: Container(
+              padding: EdgeInsets.only(left: 8, right: 8, top: 5, bottom: 5),
+              child: widget.labelData['listPesan'].isEmpty
+                  ? Center(
+                      child: Text(
+                        'Anda belum menambahkan pesan untuk label ini',
+                        style: TextStyle(color: Colors.grey),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: List.generate(
+                          widget.labelData['listPesan'].length,
+                          (index2) {
+                            List sortedPesan =
+                                List.from(widget.labelData['listPesan']);
+                            sortedPesan.sort((a, b) {
+                              DateTime timeA = DateTime.parse(a['pesanObj']);
+                              DateTime timeB = DateTime.parse(b['pesanObj']);
+                              return timeA.compareTo(timeB);
+                            });
+
+                            String msgTime = sortedPesan[index2]['pesanObj'];
+                            Map pesanObj = {};
+
+                            // menemukan index objek pesan yang time nya sama
+                            int indexPesan = pesanArray.indexWhere(
+                              (element) => element['time'] == msgTime,
+                            );
+                            if (indexPesan != -1) {
+                              setState(() {
+                                pesanObj = pesanArray[indexPesan];
+                              });
+                            }
+
+                            // log('pesan array: ${pesanObj['pesan']}');
+
+                            return Container(
+                              margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(
+                                      selectedMsg.contains(msgTime) ? 255 : 0,
+                                      188,
+                                      225,
+                                      255),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(10),
+                                onLongPress: () {
+                                  // jika sedang tidak memilih
+                                  if (selectedMsg.isEmpty) {
+                                    log('start milih');
+                                    setState(() {
+                                      selectedMsg.add(msgTime);
+                                    });
+                                  }
+                                },
+                                onTap: () {
+                                  log('tap pesan index  ke-$index2, time: ${msgTime}');
+                                  // jika sedang tidak memilih pesan
+                                  if (selectedMsg.isEmpty) {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatPage(
+                                          messageStamp: msgTime,
+                                          arguments: ChatPageArguments(
+                                            peerId: '111',
+                                            peerAvatar: 'images/app_icon.png',
+                                            peerNickname: 'IslamBot',
+                                          ),
+                                        ),
+                                      ),
+                                      (route) =>
+                                          false, // Menghapus semua halaman di atasnya dalam stack halaman
+                                    );
+                                  } else {
+                                    // jika sudah dipilih, maka un-select
+                                    if (selectedMsg.contains(msgTime)) {
+                                      setState(() {
+                                        selectedMsg.remove(msgTime);
+                                      });
+                                      log('index $msgTime removed from selectedMsg');
+                                    } else {
+                                      setState(() {
+                                        selectedMsg.add(msgTime);
+                                      });
+                                      log('add index ${msgTime}');
+                                    }
+                                  }
+                                },
+                                child: Container(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  5, 5, 5, 5),
+                                              child: pesanInLabel(
+                                                  pesanObj: pesanObj),
+                                            ),
+                                            Divider(
+                                              indent: 20,
+                                              endIndent: 20,
+                                            )
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        },
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  )));
+                    ))),
+    );
   }
 
   // fungsi ambil pesan
@@ -137,6 +287,30 @@ class _DetailLabelState extends State<DetailLabel> {
       });
     } else {
       print('Nilai untuk pesanArray tidak ditemukan');
+    }
+  }
+
+  // fungsi save labeledItems
+  saveLabeledItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('labeledItems', jsonEncode(labeledItems));
+    log('saved labeledItems');
+  }
+
+  // fungsi get labeledItems
+  getLabeledItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? a = await prefs.getString('labeledItems');
+    if (a != null) {
+      setState(() {
+        labeledItems = jsonDecode(a);
+      });
+      log('labeledItems ditemukan, length:${labeledItems.length}',
+          name: 'getLabeledItems');
+    } else {
+      log('labeledItems tidak ditemukan', name: 'getLabeledItems');
     }
   }
 }

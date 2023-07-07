@@ -43,6 +43,19 @@ class _LabelPageState extends State<LabelPage> {
           setState(() {
             selectedLabel.clear();
           });
+        } else {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatPage(
+                  arguments: ChatPageArguments(
+                    peerId: '111',
+                    peerAvatar: 'images/app_icon.png',
+                    peerNickname: 'IslamBot',
+                  ),
+                ),
+              ),
+              (route) => false);
         }
 
         return false;
@@ -57,7 +70,18 @@ class _LabelPageState extends State<LabelPage> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               color: Colors.white,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(
+                      arguments: ChatPageArguments(
+                        peerId: '111',
+                        peerAvatar: 'images/app_icon.png',
+                        peerNickname: 'IslamBot',
+                      ),
+                    ),
+                  ),
+                  (route) => false),
             ),
             actions: [
               if (selectedLabel.isNotEmpty)
@@ -113,14 +137,6 @@ class _LabelPageState extends State<LabelPage> {
                           );
                         },
                       );
-                      /* log('press hapus');
-                      for (var e in selectedLabel) {
-                        setState(() {
-                          labeledItems.removeAt(e);
-                        });
-                      }
-                      selectedLabel.clear();
-                      saveLabeledItems(); */
                     },
                     icon: Icon(
                       Icons.delete,
@@ -251,6 +267,7 @@ class _LabelPageState extends State<LabelPage> {
                             MaterialPageRoute(
                               builder: (context) => DetailLabel(
                                 labelData: labeledItems[index],
+                                indexLabel: index,
                               ),
                             ),
                           );
