@@ -63,14 +63,64 @@ class _LabelPageState extends State<LabelPage> {
               if (selectedLabel.isNotEmpty)
                 IconButton(
                     onPressed: () {
-                      log('press hapus');
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Hapus label ini?'),
+                            content: Text(
+                                'Label yang dihapus tidak bisa dikembalikan.'),
+                            actions: [
+                              TextButton(
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Batal',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Hapus',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  log('press hapus');
+                                  for (var e in selectedLabel) {
+                                    setState(() {
+                                      labeledItems.removeAt(e);
+                                    });
+                                  }
+                                  selectedLabel.clear();
+                                  saveLabeledItems();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      /* log('press hapus');
                       for (var e in selectedLabel) {
                         setState(() {
                           labeledItems.removeAt(e);
                         });
                       }
                       selectedLabel.clear();
-                      saveLabeledItems();
+                      saveLabeledItems(); */
                     },
                     icon: Icon(
                       Icons.delete,
@@ -257,7 +307,6 @@ class _LabelPageState extends State<LabelPage> {
                                       ),
                                     )
                                   : Container(),
-                              
                             ],
                           ),
                           Expanded(

@@ -360,7 +360,7 @@ class ChatPageState extends State<ChatPage> {
                               ),
                               TextButton(
                                 onPressed: () async {
-                                  if (labelName.isNotEmpty) {
+                                  if (labelName.trim().isNotEmpty) {
                                     log('klik new label, pesan dipilih: ${selectedItems.length}');
                                     await getLabeledItems();
                                     setState(() {
@@ -1199,6 +1199,7 @@ class ChatPageState extends State<ChatPage> {
                 key: ObjectKey(pesanArray[index]),
                 confirmDismiss: (direction) async {
                   await clearSelectedItems();
+                  await getLabeledItems(); //panggil item terlabel untuk menghapus juga id di dalamnya
                   // Menampilkan konfirmasi dialog
                   return await showDialog(
                     context: context,
@@ -1243,8 +1244,17 @@ class ChatPageState extends State<ChatPage> {
                 },
                 onDismissed: (direction) {
                   setState(() {
+                    // hapus pesan yang di label dulu
+                    labeledItems.forEach((item) {
+                      final List listPesan = item['listPesan'];
+                      listPesan.removeWhere((pesan) =>
+                          pesan['pesanObj'] == pesanArray[index]['time']);
+                    });
+
+                    // lalu hapus pesan di chatpage
                     pesanArray.removeAt(index);
                   });
+                  saveLabeledItems();
                   saveArray();
                 },
                 child: buatItem(pesanArray[index], index,
@@ -1537,6 +1547,13 @@ class ChatPageState extends State<ChatPage> {
                 onPressed: () async {
                   // clear chat
                   await clearArray();
+                  // clear label item
+                  setState(() {
+                    labeledItems.forEach((item) {
+                      item['listPesan'].clear();
+                    });
+                  });
+                  saveLabeledItems();
                   Navigator.of(context).pop();
                 },
               ),
