@@ -1007,38 +1007,47 @@ class ChatPageState extends State<ChatPage> {
 
                           // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 2
-                          if (pesanItem['menu']['actions'][arr.length - 1]
-                                      ['action'] ==
-                                  "Bantuan"
-                              ? index == arr.length - 3
-                              : index == arr.length - 2) {
-                            print('START copy to clipborad');
+                          if (pesanItem['menu']['actions'].indexWhere((e) {
+                                if (e.containsValue("Copy to Clipboard")) {
+                                  return true;
+                                } else {
+                                  return false;
+                                }
+                              }) !=
+                              -1) {
+                            if (pesanItem['menu']['actions'][arr.length - 1]
+                                        ['action'] ==
+                                    "Bantuan"
+                                ? index == arr.length - 3
+                                : index == arr.length - 2) {
+                              print('START copy to clipborad');
 
-                            await Clipboard.setData(
-                                ClipboardData(text: pesanAnswer));
-                            Navigator.of(context).pop(); // close dialog menu
+                              await Clipboard.setData(
+                                  ClipboardData(text: pesanAnswer));
+                              Navigator.of(context).pop(); // close dialog menu
 
-                            print('DONE copy to clipboard');
-                          }
+                              print('DONE copy to clipboard');
+                            }
 
-                          // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
-                          // jika tiada tombol bantuan maka arr.length - 1
-                          else if (pesanItem['menu']['actions'][arr.length - 1]
-                                      ['action'] ==
-                                  "Bantuan"
-                              ? index == arr.length - 2
-                              : index == arr.length - 1) {
-                            print('START share teks');
+                            // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
+                            // jika tiada tombol bantuan maka arr.length - 1
+                            else if (pesanItem['menu']['actions']
+                                        [arr.length - 1]['action'] ==
+                                    "Bantuan"
+                                ? index == arr.length - 2
+                                : index == arr.length - 1) {
+                              print('START share teks');
 
-                            // munculkan dialog share teks
-                            await Share.share(pesanAnswer,
-                                subject: pesanAnswer
-                                    .split('\n')
-                                    .first
-                                    .replaceAll(RegExp(r'\*'), ''));
-                            Navigator.of(context).pop(); // close dialog menu
+                              // munculkan dialog share teks
+                              await Share.share(pesanAnswer,
+                                  subject: pesanAnswer
+                                      .split('\n')
+                                      .first
+                                      .replaceAll(RegExp(r'\*'), ''));
+                              Navigator.of(context).pop(); // close dialog menu
 
-                            print('DONE share teks');
+                              print('DONE share teks');
+                            }
                           }
 
                           //user kirim pesan melalui menu
