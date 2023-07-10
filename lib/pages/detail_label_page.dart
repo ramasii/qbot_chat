@@ -332,11 +332,20 @@ class pesanInLabel extends StatelessWidget {
             ? Text.rich(
                 TextSpan(
                   children: [
+                    // teks pengirim
                     TextSpan(
                       text: '${pesanObj['fromUser'] ? 'Anda' : 'IslamBot'}: ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    TextSpan(
+                    // teks pesan
+                    if (pesanObj['share'] == true)
+                      WidgetSpan(
+                        child: Image.network(
+                          pesanObj['imgUrl'],
+                          width: 180,
+                        ),
+                      )
+                    else TextSpan(
                       text: pesanObj['pesan'].replaceAll(RegExp(r'\*'), ''),
                     ),
                   ],
