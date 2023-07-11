@@ -910,125 +910,154 @@ class ChatPageState extends State<ChatPage> {
                       )
 
                     // jika pesan dari bot
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // tombol favorit
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: IconButton(
-                                onPressed: () {
-                                  print('tekan favorit');
-                                  setState(() {
-                                    pesan['isFavourite'] =
-                                        pesan['isFavourite'] == true
-                                            ? false
-                                            : true;
-                                    saveArray();
-                                  });
-                                  print('is favorit? ${pesan['isFavourite']}');
-                                },
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                                icon: pesan['isFavourite']
-                                    ? Icon(
-                                        Icons.favorite,
-                                        color: Colors.red,
-                                      )
-                                    : Icon(
-                                        Icons.favorite_border_rounded,
-                                        color: Colors.grey[400],
-                                      )),
-                          ),
-                          // cek apakah share ayat?
-                          pesan['share']
-                              ? FullScreenImage(imageUrl: pesan['imgUrl'])
-                              : BoldAsteris(text: pesan['pesan']),
-                          Container(
-                            margin: EdgeInsets.only(top: 10),
-                            height: 1,
-                            color: Colors.black12,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: pesan['share']
-                                // button menu untuk pesan share
-                                ? [
-                                    Expanded(
-                                      flex: 3,
-                                      child: listButton(pesan),
-                                    ),
-                                    Container(
-                                      width: 1,
-                                      height: 30,
-                                      color: Colors.grey[300],
-                                    ),
-                                    Expanded(
-                                        flex: 2,
-                                        child: Container(
-                                          child: IconButton(
-                                              icon: Icon(
-                                                Icons.share_rounded,
-                                                size: 35,
-                                                color: Colors.grey,
-                                              ),
-                                              onPressed: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (_) => Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                );
-                                                try {
-                                                  final url = Uri.parse(
-                                                      pesan['imgUrl']);
-                                                  final response =
-                                                      await http.get(url);
-                                                  final bytes =
-                                                      response.bodyBytes;
-
-                                                  final temp =
-                                                      await getTemporaryDirectory();
-                                                  final path =
-                                                      '${temp.path}/image.jpg';
-                                                  File(path)
-                                                      .writeAsBytesSync(bytes);
-
-                                                  await Share.shareFiles([path],
-                                                      text:
-                                                          'Gunakan IslamBot untuk membuat share seperti ini.');
-                                                } catch (e) {
-                                                  // handle error
-                                                } finally {
-                                                  Navigator.of(context).pop();
-                                                }
-                                              }),
+                    : Stack(alignment: Alignment.topRight, children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            /* // tombol favorit
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: IconButton(
+                                  onPressed: () {
+                                    print('tekan favorit');
+                                    setState(() {
+                                      pesan['isFavourite'] =
+                                          pesan['isFavourite'] == true
+                                              ? false
+                                              : true;
+                                      saveArray();
+                                    });
+                                    print('is favorit? ${pesan['isFavourite']}');
+                                  },
+                                  padding: EdgeInsets.zero,
+                                  constraints: BoxConstraints(),
+                                  icon: pesan['isFavourite']
+                                      ? Icon(
+                                          Icons.favorite,
+                                          color: Colors.red,
+                                        )
+                                      : Icon(
+                                          Icons.favorite_border_rounded,
+                                          color: Colors.grey[400],
                                         )),
-                                  ]
-                                // button menu untuk pesan teks
-                                : [
-                                    Expanded(
-                                        flex: MediaQuery.of(context)
-                                                    .orientation ==
-                                                Orientation.landscape
-                                            ? 6
-                                            : 3,
-                                        child: listButton(pesan)),
-                                    Container(
-                                      width: 1,
-                                      height: 30,
-                                      color: Colors.grey[300],
-                                    ),
-                                    Expanded(
-                                        flex: 2,
-                                        child: buttonTts(pesan['pesan'], index))
-                                  ],
-                          )
-                        ],
-                      ),
+                            ), */
+                            // cek apakah share ayat?
+                            pesan['share']
+                                ? FullScreenImage(imageUrl: pesan['imgUrl'])
+                                : BoldAsteris(text: pesan['pesan']),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              height: 1,
+                              color: Colors.black12,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: pesan['share']
+                                  // button menu untuk pesan share
+                                  ? [
+                                      Expanded(
+                                        flex: 3,
+                                        child: listButton(pesan),
+                                      ),
+                                      Container(
+                                        width: 1,
+                                        height: 30,
+                                        color: Colors.grey[300],
+                                      ),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Container(
+                                            child: IconButton(
+                                                icon: Icon(
+                                                  Icons.share_rounded,
+                                                  size: 35,
+                                                  color: Colors.grey,
+                                                ),
+                                                onPressed: () async {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (_) => Center(
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  );
+                                                  try {
+                                                    final url = Uri.parse(
+                                                        pesan['imgUrl']);
+                                                    final response =
+                                                        await http.get(url);
+                                                    final bytes =
+                                                        response.bodyBytes;
+
+                                                    final temp =
+                                                        await getTemporaryDirectory();
+                                                    final path =
+                                                        '${temp.path}/image.jpg';
+                                                    File(path).writeAsBytesSync(
+                                                        bytes);
+
+                                                    await Share.shareFiles(
+                                                        [path],
+                                                        text:
+                                                            'Gunakan IslamBot untuk membuat share seperti ini.');
+                                                  } catch (e) {
+                                                    // handle error
+                                                  } finally {
+                                                    Navigator.of(context).pop();
+                                                  }
+                                                }),
+                                          )),
+                                    ]
+                                  // button menu untuk pesan teks
+                                  : [
+                                      Expanded(
+                                          flex: MediaQuery.of(context)
+                                                      .orientation ==
+                                                  Orientation.landscape
+                                              ? 6
+                                              : 3,
+                                          child: listButton(pesan)),
+                                      Container(
+                                        width: 1,
+                                        height: 30,
+                                        color: Colors.grey[300],
+                                      ),
+                                      Expanded(
+                                          flex: 2,
+                                          child:
+                                              buttonTts(pesan['pesan'], index))
+                                    ],
+                            )
+                          ],
+                        ),
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 10,
+                          child: IconButton(
+                              onPressed: () {
+                                print('tekan favorit');
+                                setState(() {
+                                  pesan['isFavourite'] =
+                                      pesan['isFavourite'] == true ? false : true;
+                                  saveArray();
+                                });
+                                print('is favorit? ${pesan['isFavourite']}');
+                              },
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(),
+                              icon: pesan['isFavourite']
+                                  ? Icon(
+                                      Icons.favorite,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border_rounded,
+                                      color: Colors.grey[400],
+                                    )),
+                        )
+                      ]),
                 padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                 // ini untuk ngatur max size
                 constraints: BoxConstraints(
@@ -1152,35 +1181,35 @@ class ChatPageState extends State<ChatPage> {
 
                           // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 2
-                         if (index ==
-                                arr.indexWhere((element) => element
-                                    .containsValue('Copy to Clipboard'))) {
-                              print('START copy to clipborad');
+                          if (index ==
+                              arr.indexWhere((element) =>
+                                  element.containsValue('Copy to Clipboard'))) {
+                            print('START copy to clipborad');
 
-                              await Clipboard.setData(
-                                  ClipboardData(text: pesanAnswer));
-                              Navigator.of(context).pop(); // close dialog menu
+                            await Clipboard.setData(
+                                ClipboardData(text: pesanAnswer));
+                            Navigator.of(context).pop(); // close dialog menu
 
-                              print('DONE copy to clipboard');
-                            }
+                            print('DONE copy to clipboard');
+                          }
 
-                            // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
-                            // jika tiada tombol bantuan maka arr.length - 1
-                            else if (index ==
-                                arr.indexWhere((element) =>
-                                    element.containsValue('Share'))) {
-                              print('START share teks');
+                          // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
+                          // jika tiada tombol bantuan maka arr.length - 1
+                          else if (index ==
+                              arr.indexWhere((element) =>
+                                  element.containsValue('Share'))) {
+                            print('START share teks');
 
-                              // munculkan dialog share teks
-                              await Share.share(pesanAnswer,
-                                  subject: pesanAnswer
-                                      .split('\n')
-                                      .first
-                                      .replaceAll(RegExp(r'\*'), ''));
-                              Navigator.of(context).pop(); // close dialog menu
+                            // munculkan dialog share teks
+                            await Share.share(pesanAnswer,
+                                subject: pesanAnswer
+                                    .split('\n')
+                                    .first
+                                    .replaceAll(RegExp(r'\*'), ''));
+                            Navigator.of(context).pop(); // close dialog menu
 
-                              print('DONE share teks');
-                            }
+                            print('DONE share teks');
+                          }
 
                           //user kirim pesan melalui menu
                           else {
