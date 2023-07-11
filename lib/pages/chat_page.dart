@@ -258,14 +258,14 @@ class ChatPageState extends State<ChatPage> {
     super.initState();
   }
 
-  pushPesanArray(
-    String pesan,
-    Map menu, {
-    bool fromUser = true,
-    bool isShare = false,
-    String suratAyat = "",
-    bool isFavourite = false,
-  }) async {
+  pushPesanArray(String pesan, Map menu,
+      {bool fromUser = true,
+      bool isShare = false,
+      String suratAyat = "",
+      bool isFavourite = false,
+      String intent = "",
+      int pageNow = 0,
+      int pageMax = 0}) async {
     String imgUrl = isShare
         ? "http://15.235.156.254:5111/api/v1/bots/islambot/share/${suratAyat}?&client=islambot&apikey=uxwMtiFW63oPC0QD"
         : "noUrl";
@@ -279,7 +279,10 @@ class ChatPageState extends State<ChatPage> {
         "imgUrl": imgUrl,
         "isFavourite": isFavourite,
         "isSelected": false,
-        "menu": menu
+        "menu": menu,
+        "intent": intent,
+        "pageNow": pageNow,
+        "pageMax": pageMax,
       });
     });
     print('--------- 219: pushPesanArray');
@@ -334,7 +337,9 @@ class ChatPageState extends State<ChatPage> {
                           return StatefulBuilder(builder:
                               (BuildContext context, StateSetter setState) {
                             return AlertDialog(
-                              title: Text('Label Pesan',),
+                              title: Text(
+                                'Label Pesan',
+                              ),
                               contentPadding: EdgeInsets.all(0),
                               content: SingleChildScrollView(
                                 physics: ClampingScrollPhysics(),
@@ -343,67 +348,67 @@ class ChatPageState extends State<ChatPage> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: List.generate(
-                                              labeledItems.length, (index) {
-                                            String labelName =
-                                                labeledItems[index]['labelName'];
-                                            bool isChecked = false;
-                                            return ListTile(
-                                              leading: SizedBox(
-                                                width:
-                                                    20, // Atur lebar leading widget sesuai kebutuhan
-                                                child: Container(
-                                                  alignment: Alignment.centerLeft,
-                                                  child: Icon(
-                                                    Icons.label,
-                                                    color: labelColors[
-                                                        labeledItems[index]
-                                                            ['labelColor']],
-                                                  ),
-                                                ),
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: List.generate(
+                                          labeledItems.length, (index) {
+                                        String labelName =
+                                            labeledItems[index]['labelName'];
+                                        bool isChecked = false;
+                                        return ListTile(
+                                          leading: SizedBox(
+                                            width:
+                                                20, // Atur lebar leading widget sesuai kebutuhan
+                                            child: Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Icon(
+                                                Icons.label,
+                                                color: labelColors[
+                                                    labeledItems[index]
+                                                        ['labelColor']],
                                               ),
-                                              minLeadingWidth: 5,
-                                              title: Text(
-                                                labelName,
-                                                maxLines: 2,
-                                                softWrap: true,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              trailing: SizedBox(
-                                                width:
-                                                    20, // Lebar yang sesuai dengan kebutuhanmu
-                                                child: Checkbox(
-                                                  // Menggunakan labelIndex untuk menentukan nilai checkbox
-                                                  value: labelIndex
+                                            ),
+                                          ),
+                                          minLeadingWidth: 5,
+                                          title: Text(
+                                            labelName,
+                                            maxLines: 2,
+                                            softWrap: true,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          trailing: SizedBox(
+                                            width:
+                                                20, // Lebar yang sesuai dengan kebutuhanmu
+                                            child: Checkbox(
+                                              // Menggunakan labelIndex untuk menentukan nilai checkbox
+                                              value: labelIndex
+                                                      .contains(index) &&
+                                                  textLabelNameController.text
+                                                      .trim()
+                                                      .isEmpty,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  if (!labelIndex
                                                           .contains(index) &&
-                                                      textLabelNameController.text
+                                                      textLabelNameController
+                                                          .text
                                                           .trim()
-                                                          .isEmpty,
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if (!labelIndex
-                                                              .contains(index) &&
-                                                          textLabelNameController
-                                                              .text
-                                                              .trim()
-                                                              .isEmpty) {
-                                                        log('true');
-                                                        labelIndex.add(
-                                                            index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
-                                                      } else {
-                                                        log('false');
-                                                        labelIndex.remove(
-                                                            index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
-                                                      }
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                            );
-                                          }),
-                                        ),
+                                                          .isEmpty) {
+                                                    log('true');
+                                                    labelIndex.add(
+                                                        index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
+                                                  } else {
+                                                    log('false');
+                                                    labelIndex.remove(
+                                                        index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: TextButton(
@@ -424,11 +429,12 @@ class ChatPageState extends State<ChatPage> {
                                                           'Masukkan nama label',
                                                       border: UnderlineInputBorder(
                                                           borderSide: BorderSide(
-                                                              color: Color.fromARGB(
-                                                                  255,
-                                                                  58,
-                                                                  86,
-                                                                  100))),
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      58,
+                                                                      86,
+                                                                      100))),
                                                       focusedBorder:
                                                           UnderlineInputBorder(
                                                               borderSide: BorderSide(
@@ -449,34 +455,37 @@ class ChatPageState extends State<ChatPage> {
                                                       });
                                                     },
                                                     child: Container(
-                                                      padding: EdgeInsets.all(10),
+                                                      padding:
+                                                          EdgeInsets.all(10),
                                                       decoration: BoxDecoration(
                                                           color: Colors.grey,
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5)),
+                                                              BorderRadius
+                                                                  .circular(5)),
                                                       child: Text(
                                                         'Batal',
                                                         style: TextStyle(
-                                                            color: Colors.white),
+                                                            color:
+                                                                Colors.white),
                                                       ),
                                                     ),
                                                   ),
                                                   TextButton(
                                                     onPressed: () async {
-                                                      if (labelName.isNotEmpty) {
+                                                      if (labelName
+                                                          .isNotEmpty) {
                                                         await getLabeledItems();
                                                         setState(() {
                                                           labeledItems.add({
-                                                            "labelName": labelName,
+                                                            "labelName":
+                                                                labelName,
                                                             "labelColor": labeledItems
                                                                         .length >
                                                                     5
-                                                                ? 
-                                                                    sisabagi(
-                                                                        labeledItems
-                                                                            .length,
-                                                                        5)
+                                                                ? sisabagi(
+                                                                    labeledItems
+                                                                        .length,
+                                                                    5)
                                                                 : labeledItems
                                                                     .length,
                                                             "listPesan": []
@@ -484,7 +493,7 @@ class ChatPageState extends State<ChatPage> {
                                                         });
                                                         await saveLabeledItems();
                                                         await getLabeledItems();
-                                                                  
+
                                                         log('sukses melabel pesan: ${labeledItems.last}');
                                                         Fluttertoast.showToast(
                                                             msg:
@@ -502,22 +511,25 @@ class ChatPageState extends State<ChatPage> {
                                                         Fluttertoast.showToast(
                                                             msg:
                                                                 'Nama label tidak boleh kosong',
-                                                            textColor: Colors.black,
+                                                            textColor:
+                                                                Colors.black,
                                                             backgroundColor:
                                                                 Colors.yellow);
                                                       }
                                                     },
                                                     child: Container(
-                                                      padding: EdgeInsets.all(10),
+                                                      padding:
+                                                          EdgeInsets.all(10),
                                                       decoration: BoxDecoration(
                                                           color: Colors.green,
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                                  5)),
+                                                              BorderRadius
+                                                                  .circular(5)),
                                                       child: Text(
                                                         'Simpan',
                                                         style: TextStyle(
-                                                            color: Colors.white),
+                                                            color:
+                                                                Colors.white),
                                                       ),
                                                     ),
                                                   ),
@@ -528,8 +540,10 @@ class ChatPageState extends State<ChatPage> {
                                         },
                                         child: Container(
                                             child: Text('+ Label Baru',
-                                                style:
-                                                    TextStyle(color: Colors.teal, fontWeight: FontWeight.bold))),
+                                                style: TextStyle(
+                                                    color: Colors.teal,
+                                                    fontWeight:
+                                                        FontWeight.bold))),
                                       ),
                                     )
                                   ],
@@ -1301,8 +1315,7 @@ class ChatPageState extends State<ChatPage> {
 
                           log('tap menu di index: $index');
 
-                          // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
-                          // jika tiada tombol bantuan maka arr.length - 2
+                          // jika pencet menu copy to clipboard
                           if (index ==
                               arr.indexWhere((element) =>
                                   element.containsValue('Copy to Clipboard'))) {
@@ -1315,8 +1328,7 @@ class ChatPageState extends State<ChatPage> {
                             print('DONE copy to clipboard');
                           }
 
-                          // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
-                          // jika tiada tombol bantuan maka arr.length - 1
+                          // jika pencet menu share
                           else if (index ==
                               arr.indexWhere((element) =>
                                   element.containsValue('Share'))) {
@@ -1331,6 +1343,44 @@ class ChatPageState extends State<ChatPage> {
                             Navigator.of(context).pop(); // close dialog menu
 
                             print('DONE share teks');
+                          }
+
+                          // jika pencet menu share
+                          else if (index ==
+                              arr.indexWhere((element) => element
+                                  .containsValue('Halaman Selanjutnya'))) {
+                            print('tekan menu: halaman selanjutnya');
+                            var match = RegExp(
+                                    r'(?<=(Teks|Text) \*).+(?=\* (di|in) Al-Quran)')
+                                .firstMatch(pesanAnswer)!;
+                            String teksToSend = match[0]!;
+
+                            await pushPesanArray(
+                                "Cari $teksToSend:${pesanItem['pageNow']+1}",
+                                {});
+                            await qbotStop();
+                            await saveArray();
+
+                            Navigator.of(context).pop();
+                            _autoScrollController.jumpTo(
+                                _autoScrollController.position.minScrollExtent);
+                            await islamBot('Menu','Cari $teksToSend:${pesanItem['pageNow']+1}');
+
+                            // scroll ke bawah
+                            _autoScrollController.animateTo(
+                                _autoScrollController.position.minScrollExtent,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeIn);
+
+                            /* // munculkan dialog share teks
+                            await Share.share(pesanAnswer,
+                                subject: pesanAnswer
+                                    .split('\n')
+                                    .first
+                                    .replaceAll(RegExp(r'\*'), ''));
+                            Navigator.of(context).pop(); // close dialog menu */
+
+                            print('DONE halaman selanjutnya');
                           }
 
                           //user kirim pesan melalui menu
@@ -1673,6 +1723,7 @@ class ChatPageState extends State<ChatPage> {
         teks.contains(RegExp(r'^(share|bagi(kan|))', caseSensitive: false));
     Map resQBot = await toAPI(teks);
     String jawabQBot = resQBot['answer'];
+    String intent = resQBot['intent'];
 
     // buat variabel list menu dengan kondisi jika null
     List listMenu = resQBot['actions'] == null
@@ -1701,6 +1752,13 @@ class ChatPageState extends State<ChatPage> {
                 {"action": "Share"},
               ]);
 
+    if (intent == "qurani.cariTeks" &&
+        resQBot['pageNow'] < resQBot['pageMax']) {
+      listMenu.insertAll(listMenu.length, [
+        {"action": "Halaman Selanjutnya"}
+      ]);
+    }
+
     await pushPesanArray(
         jawabQBot,
         {
@@ -1711,7 +1769,10 @@ class ChatPageState extends State<ChatPage> {
         },
         fromUser: false,
         isShare: isShare,
-        suratAyat: jawabQBot);
+        suratAyat: jawabQBot,
+        intent: intent,
+        pageNow: resQBot['pageNow'],
+        pageMax: resQBot['pageMax']);
     // jika share ayat, tidak perlu autostart TTS
     isShare
         ? print('SHARE AYAT, tanpa TTS')
