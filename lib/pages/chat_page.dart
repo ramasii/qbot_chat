@@ -362,12 +362,19 @@ class ChatPageState extends State<ChatPage> {
                                                   20, // Lebar yang sesuai dengan kebutuhanmu
                                               child: Checkbox(
                                                 // Menggunakan labelIndex untuk menentukan nilai checkbox
-                                                value: labelIndex.contains(
-                                                    index) && textLabelNameController.text.trim().isEmpty, 
+                                                value: labelIndex
+                                                        .contains(index) &&
+                                                    textLabelNameController.text
+                                                        .trim()
+                                                        .isEmpty,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     if (!labelIndex
-                                                        .contains(index) && textLabelNameController.text.trim().isEmpty) {
+                                                            .contains(index) &&
+                                                        textLabelNameController
+                                                            .text
+                                                            .trim()
+                                                            .isEmpty) {
                                                       log('true');
                                                       labelIndex.add(
                                                           index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
@@ -473,7 +480,8 @@ class ChatPageState extends State<ChatPage> {
 
                                             int indexKeberadaan =
                                                 listPesan.indexWhere((e3) {
-                                              if (e3.containsValue(e2['pesanObj'])) {
+                                              if (e3.containsValue(
+                                                  e2['pesanObj'])) {
                                                 return true;
                                               } else {
                                                 return false;
@@ -1140,21 +1148,13 @@ class ChatPageState extends State<ChatPage> {
                           // ini digunakan untuk copy dan share
                           String pesanAnswer = pesanItem['pesan'];
 
+                          log('tap menu di index: $index');
+
                           // arr.length - 3, berarti di index "Copy to Clipboard" (terdapat tombol bantuan)
                           // jika tiada tombol bantuan maka arr.length - 2
-                          if (pesanItem['menu']['actions'].indexWhere((e) {
-                                if (e.containsValue("Copy to Clipboard")) {
-                                  return true;
-                                } else {
-                                  return false;
-                                }
-                              }) !=
-                              -1) {
-                            if (pesanItem['menu']['actions'][arr.length - 1]
-                                        ['action'] ==
-                                    "Bantuan"
-                                ? index == arr.length - 3
-                                : index == arr.length - 2) {
+                         if (index ==
+                                arr.indexWhere((element) => element
+                                    .containsValue('Copy to Clipboard'))) {
                               print('START copy to clipborad');
 
                               await Clipboard.setData(
@@ -1166,11 +1166,9 @@ class ChatPageState extends State<ChatPage> {
 
                             // arr.length - 2, berarti di index "Share", share teks (terdapat tombol bantuan)
                             // jika tiada tombol bantuan maka arr.length - 1
-                            else if (pesanItem['menu']['actions']
-                                        [arr.length - 1]['action'] ==
-                                    "Bantuan"
-                                ? index == arr.length - 2
-                                : index == arr.length - 1) {
+                            else if (index ==
+                                arr.indexWhere((element) =>
+                                    element.containsValue('Share'))) {
                               print('START share teks');
 
                               // munculkan dialog share teks
@@ -1183,7 +1181,6 @@ class ChatPageState extends State<ChatPage> {
 
                               print('DONE share teks');
                             }
-                          }
 
                           //user kirim pesan melalui menu
                           else {
