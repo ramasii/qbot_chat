@@ -194,8 +194,7 @@ class _LabelPageState extends State<LabelPage> {
                                     labeledItems.add({
                                       "labelName": labelName,
                                       "labelColor": labeledItems.length > 5
-                                          ? labelColors[
-                                              sisabagi(labeledItems.length, 5)]
+                                          ? sisabagi(labeledItems.length, 5)
                                           : labeledItems.length,
                                       "listPesan": []
                                     });

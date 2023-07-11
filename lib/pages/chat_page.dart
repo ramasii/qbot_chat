@@ -334,86 +334,206 @@ class ChatPageState extends State<ChatPage> {
                           return StatefulBuilder(builder:
                               (BuildContext context, StateSetter setState) {
                             return AlertDialog(
-                              title: Text('Label Pesan'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(maxHeight: 200),
-                                    child: SingleChildScrollView(
-                                      physics: AlwaysScrollableScrollPhysics(),
-                                      child: Column(
-                                        children: List.generate(
-                                            labeledItems.length, (index) {
-                                          String labelName =
-                                              labeledItems[index]['labelName'];
-                                          bool isChecked = false;
-                                          return ListTile(
-                                            leading: Icon(
-                                              Icons.label,
-                                              color: labelColors[
-                                                  labeledItems[index]
-                                                      ['labelColor']],
-                                            ),
-                                            minLeadingWidth: 5,
-                                            title: Text(labelName),
-                                            trailing: SizedBox(
-                                              width:
-                                                  20, // Lebar yang sesuai dengan kebutuhanmu
-                                              child: Checkbox(
-                                                // Menggunakan labelIndex untuk menentukan nilai checkbox
-                                                value: labelIndex
-                                                        .contains(index) &&
-                                                    textLabelNameController.text
-                                                        .trim()
-                                                        .isEmpty,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if (!labelIndex
-                                                            .contains(index) &&
-                                                        textLabelNameController
-                                                            .text
-                                                            .trim()
-                                                            .isEmpty) {
-                                                      log('true');
-                                                      labelIndex.add(
-                                                          index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
-                                                    } else {
-                                                      log('false');
-                                                      labelIndex.remove(
-                                                          index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
-                                                    }
-                                                  });
-                                                },
+                              title: Text('Label Pesan',),
+                              contentPadding: EdgeInsets.all(0),
+                              content: SingleChildScrollView(
+                                physics: ClampingScrollPhysics(),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: List.generate(
+                                              labeledItems.length, (index) {
+                                            String labelName =
+                                                labeledItems[index]['labelName'];
+                                            bool isChecked = false;
+                                            return ListTile(
+                                              leading: SizedBox(
+                                                width:
+                                                    20, // Atur lebar leading widget sesuai kebutuhan
+                                                child: Container(
+                                                  alignment: Alignment.centerLeft,
+                                                  child: Icon(
+                                                    Icons.label,
+                                                    color: labelColors[
+                                                        labeledItems[index]
+                                                            ['labelColor']],
+                                                  ),
+                                                ),
                                               ),
-                                            ),
+                                              minLeadingWidth: 5,
+                                              title: Text(
+                                                labelName,
+                                                maxLines: 2,
+                                                softWrap: true,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              trailing: SizedBox(
+                                                width:
+                                                    20, // Lebar yang sesuai dengan kebutuhanmu
+                                                child: Checkbox(
+                                                  // Menggunakan labelIndex untuk menentukan nilai checkbox
+                                                  value: labelIndex
+                                                          .contains(index) &&
+                                                      textLabelNameController.text
+                                                          .trim()
+                                                          .isEmpty,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      if (!labelIndex
+                                                              .contains(index) &&
+                                                          textLabelNameController
+                                                              .text
+                                                              .trim()
+                                                              .isEmpty) {
+                                                        log('true');
+                                                        labelIndex.add(
+                                                            index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
+                                                      } else {
+                                                        log('false');
+                                                        labelIndex.remove(
+                                                            index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
+                                                      }
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          log('new label');
+                                          String labelName = '';
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Buat Label Baru'),
+                                                content: TextField(
+                                                  onChanged: (value) {
+                                                    labelName = value;
+                                                  },
+                                                  decoration: InputDecoration(
+                                                      hintText:
+                                                          'Masukkan nama label',
+                                                      border: UnderlineInputBorder(
+                                                          borderSide: BorderSide(
+                                                              color: Color.fromARGB(
+                                                                  255,
+                                                                  58,
+                                                                  86,
+                                                                  100))),
+                                                      focusedBorder:
+                                                          UnderlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          58,
+                                                                          86,
+                                                                          100)))),
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                      setState(() {
+                                                        textLabelNameController
+                                                            .clear();
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(10),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.grey,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  5)),
+                                                      child: Text(
+                                                        'Batal',
+                                                        style: TextStyle(
+                                                            color: Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      if (labelName.isNotEmpty) {
+                                                        await getLabeledItems();
+                                                        setState(() {
+                                                          labeledItems.add({
+                                                            "labelName": labelName,
+                                                            "labelColor": labeledItems
+                                                                        .length >
+                                                                    5
+                                                                ? 
+                                                                    sisabagi(
+                                                                        labeledItems
+                                                                            .length,
+                                                                        5)
+                                                                : labeledItems
+                                                                    .length,
+                                                            "listPesan": []
+                                                          });
+                                                        });
+                                                        await saveLabeledItems();
+                                                        await getLabeledItems();
+                                                                  
+                                                        log('sukses melabel pesan: ${labeledItems.last}');
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                'Disimpan dengan label "$labelName"',
+                                                            backgroundColor:
+                                                                Colors.green,
+                                                            textColor:
+                                                                Colors.white);
+                                                        Navigator.pop(context);
+                                                        setState(() {
+                                                          textLabelNameController
+                                                              .clear();
+                                                        });
+                                                      } else {
+                                                        Fluttertoast.showToast(
+                                                            msg:
+                                                                'Nama label tidak boleh kosong',
+                                                            textColor: Colors.black,
+                                                            backgroundColor:
+                                                                Colors.yellow);
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      padding: EdgeInsets.all(10),
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.green,
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  5)),
+                                                      child: Text(
+                                                        'Simpan',
+                                                        style: TextStyle(
+                                                            color: Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           );
-                                        }),
+                                        },
+                                        child: Container(
+                                            child: Text('+ Label Baru',
+                                                style:
+                                                    TextStyle(color: Colors.teal, fontWeight: FontWeight.bold))),
                                       ),
-                                    ),
-                                  ),
-                                  TextField(
-                                    onChanged: (value) {
-                                      labelName = value;
-                                    },
-                                    controller: textLabelNameController,
-                                    decoration: InputDecoration(
-                                      hintText: '+ Label baru',
-                                      border: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color:
-                                              Color.fromARGB(255, 58, 86, 100),
-                                        ),
-                                      ),
-                                      focusedBorder: UnderlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color:
-                                              Color.fromARGB(255, 58, 86, 100),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                    )
+                                  ],
+                                ),
                               ),
                               actions: [
                                 TextButton(
@@ -1040,7 +1160,9 @@ class ChatPageState extends State<ChatPage> {
                                 print('tekan favorit');
                                 setState(() {
                                   pesan['isFavourite'] =
-                                      pesan['isFavourite'] == true ? false : true;
+                                      pesan['isFavourite'] == true
+                                          ? false
+                                          : true;
                                   saveArray();
                                 });
                                 print('is favorit? ${pesan['isFavourite']}');
