@@ -115,14 +115,6 @@ class _DetailLabelState extends State<DetailLabel> {
                                             (e) => e['pesanObj'] == element);
                                       });
                                     });
-                                    /* for (var e in selectedMsg) {
-                                      log('yang dihapus ${labeledItems[widget.indexLabel]['listPesan'][e]}');
-                                      setState(() {
-                                        labeledItems[widget.indexLabel]
-                                                ['listPesan']
-                                            .removeAt(e);
-                                      });
-                                    } */
                                     selectedMsg.clear();
                                     await saveLabeledItems();
                                   }

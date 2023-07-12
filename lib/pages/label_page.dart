@@ -123,11 +123,14 @@ class _LabelPageState extends State<LabelPage> {
                                 ),
                                 onPressed: () async {
                                   log('press hapus');
-                                  for (var e in selectedLabel) {
-                                    setState(() {
-                                      labeledItems.removeAt(e);
-                                    });
-                                  }
+                                  log('labeledItems: $labeledItems');
+                                  selectedLabel.sort();
+                                  setState(() {
+                                    for (var e in selectedLabel) {
+                                      labeledItems.removeWhere((element) => element['time'] == e);
+                                    }
+                                  });
+
                                   selectedLabel.clear();
                                   saveLabeledItems();
                                   Navigator.of(context).pop();
@@ -196,7 +199,8 @@ class _LabelPageState extends State<LabelPage> {
                                       "labelColor": labeledItems.length > 5
                                           ? sisabagi(labeledItems.length, 5)
                                           : labeledItems.length,
-                                      "listPesan": []
+                                      "listPesan": [],
+                                                            "time":DateTime.now().toString()
                                     });
                                   });
                                   await saveLabeledItems();
@@ -253,7 +257,7 @@ class _LabelPageState extends State<LabelPage> {
                         if (selectedLabel.isEmpty) {
                           log('start milih');
                           setState(() {
-                            selectedLabel.add(index);
+                            selectedLabel.add(labeledItems[index]['time']);
                           });
                         }
                       },
@@ -272,14 +276,14 @@ class _LabelPageState extends State<LabelPage> {
                           );
                         } else {
                           // jika index sudah ada di selectedItem, hapus dari list
-                          if (selectedLabel.contains(index)) {
+                          if (selectedLabel.contains(labeledItems[index]['time'])) {
                             setState(() {
-                              selectedLabel.remove(index);
+                              selectedLabel.remove(labeledItems[index]['time']);
                             });
                             log('index $index removed from labeledItems');
                           } else {
                             setState(() {
-                              selectedLabel.add(index);
+                              selectedLabel.add(labeledItems[index]['time']);
                             });
                             log('add index ${index}');
                           }
@@ -301,7 +305,7 @@ class _LabelPageState extends State<LabelPage> {
                                 ),
                               ),
                               // centang saat dipilih
-                              selectedLabel.contains(index)
+                              selectedLabel.contains(labeledItems[index]['time'])
                                   ? Container(
                                       padding: EdgeInsets.all(8),
                                       child: Stack(

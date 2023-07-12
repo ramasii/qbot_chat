@@ -332,7 +332,8 @@ class ChatPageState extends State<ChatPage> {
                         context: context,
                         builder: (BuildContext context) {
                           List<int> labelIndex =
-                              []; // label yang dipilih nanti dimasukkan ke sini
+                              []; // label yang dipilih nanti indexnya dimasukkan ke sini
+                          bool disturbedCheck = false;
 
                           return StatefulBuilder(builder:
                               (BuildContext context, StateSetter setState) {
@@ -354,7 +355,45 @@ class ChatPageState extends State<ChatPage> {
                                           labeledItems.length, (index) {
                                         String labelName =
                                             labeledItems[index]['labelName'];
-                                        bool isChecked = false;
+                                        List listPesan =
+                                            labeledItems[index]['listPesan'];
+                                        // log(listPesan.toString(),
+                                        // name: labelName);
+                                        // log(selectedItems.toString()); // [{inx: 3, pesanObj: 2023-07-12 15:49:22.032284}, {inx: 2, pesanObj: 2023-07-12 15:49:21.548758}]
+
+                                        List<bool> boolList = [];
+
+                                        for (var pesan1 in listPesan) {
+                                          var pesanTime = pesan1['pesanObj'];
+                                          for (var item1 in selectedItems) {
+                                            var itemTime = item1['pesanObj'];
+                                            if (pesanTime == itemTime) {
+                                              // log('sudah ada, $itemTime',
+                                              //     name: labelName);
+                                              boolList.add(true);
+                                            } else {
+                                              // log('gaada, $itemTime',
+                                              //     name: labelName);
+                                              boolList.add(false);
+                                            }
+                                          }
+                                        }
+                                        // log(boolList.toString(),
+                                        //     name: labelName);
+
+                                        // log(checkAllTrue(boolList).toString(),
+                                        //     name: labelName);
+
+                                        // var thisState = null;
+
+                                        // jika checkAlltrue == true, maka tambah ke labelIndex
+                                        if (checkAllTrue(boolList) == true ||
+                                            checkAllTrue(boolList) == null &&
+                                                disturbedCheck == false &&
+                                                selectedItems.length <= 1) {
+                                          labelIndex.add(index);
+                                        }
+
                                         return ListTile(
                                           leading: SizedBox(
                                             width:
@@ -380,28 +419,26 @@ class ChatPageState extends State<ChatPage> {
                                             width:
                                                 20, // Lebar yang sesuai dengan kebutuhanmu
                                             child: Checkbox(
-                                              // Menggunakan labelIndex untuk menentukan nilai checkbox
-                                              value: labelIndex
-                                                      .contains(index) &&
-                                                  textLabelNameController.text
-                                                      .trim()
-                                                      .isEmpty,
+                                              tristate: true,
+                                              value: labelIndex.contains(index),
                                               onChanged: (value) {
                                                 setState(() {
+                                                  // log('$labeledItems');
+                                                  // log('$selectedItems');
+                                                  setState(() {
+                                                    disturbedCheck = true;
+                                                  });
                                                   if (!labelIndex
-                                                          .contains(index) &&
-                                                      textLabelNameController
-                                                          .text
-                                                          .trim()
-                                                          .isEmpty) {
-                                                    log('true');
+                                                      .contains(index)) {
+                                                    // log('add labelindex true');
                                                     labelIndex.add(
                                                         index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
                                                   } else {
-                                                    log('false');
+                                                    // log('add labelindex false');
                                                     labelIndex.remove(
                                                         index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
                                                   }
+                                                  // log('labelindex $labelIndex');
                                                 });
                                               },
                                             ),
@@ -488,7 +525,10 @@ class ChatPageState extends State<ChatPage> {
                                                                     5)
                                                                 : labeledItems
                                                                     .length,
-                                                            "listPesan": []
+                                                            "listPesan": [],
+                                                            "time":
+                                                                DateTime.now()
+                                                                    .toString()
                                                           });
                                                         });
                                                         await saveLabeledItems();
@@ -578,7 +618,8 @@ class ChatPageState extends State<ChatPage> {
                                               ? labelColors[sisabagi(
                                                   labeledItems.length, 5)]
                                               : labeledItems.length,
-                                          "listPesan": selectedItems
+                                          "listPesan": selectedItems,
+                                          "time": DateTime.now().toString()
                                         });
                                       });
 
@@ -594,6 +635,49 @@ class ChatPageState extends State<ChatPage> {
                                       Fluttertoast.showToast(
                                           msg:
                                               'Disimpan dengan label "$labelName"',
+                                          backgroundColor: Colors.green,
+                                          textColor: Colors.white);
+                                      Navigator.pop(context);
+                                    } else if (labelIndex.isNotEmpty &&
+                                        selectedItems.length <= 1) {
+                                      await getLabeledItems();
+                                      log('labelIndex: $labelIndex');
+
+                                      labelIndex.forEach((element) {
+                                        labeledItems
+                                            .asMap()
+                                            .forEach((index, element2) {
+                                          List listPesan =
+                                              element2['listPesan'];
+                                          log(listPesan.toString());
+
+                                          if (!labelIndex.contains(index)) {
+                                            element2['listPesan'].removeWhere(
+                                                (pesan) =>
+                                                    pesan['pesanObj'] ==
+                                                    selectedItems[0]
+                                                        ['pesanObj']);
+                                          } else if (element2['listPesan'].any(
+                                              (pesan) =>
+                                                  pesan['pesanObj'] ==
+                                                  selectedItems[0]
+                                                      ['pesanObj'])) {
+                                            // do nothing, pesan sudah ada di labeled item
+                                          } else {
+                                            element2['listPesan']
+                                                .add(selectedItems[0]);
+                                          }
+                                        });
+                                      });
+
+                                      await saveLabeledItems();
+                                      await clearSelectedItems();
+                                      setState(() {
+                                        labeledItems.clear();
+                                      });
+
+                                      Fluttertoast.showToast(
+                                          msg: 'Perubahan disimpan',
                                           backgroundColor: Colors.green,
                                           textColor: Colors.white);
                                       Navigator.pop(context);
@@ -613,14 +697,9 @@ class ChatPageState extends State<ChatPage> {
                                                 labeledItems[e]["listPesan"];
 
                                             int indexKeberadaan =
-                                                listPesan.indexWhere((e3) {
-                                              if (e3.containsValue(
-                                                  e2['pesanObj'])) {
-                                                return true;
-                                              } else {
-                                                return false;
-                                              }
-                                            });
+                                                listPesan.indexWhere((e3) =>
+                                                    e3.containsValue(
+                                                        e2['pesanObj']));
 
                                             // jika pesan belum ditambahkan ke label, maka tambahkan ke label
                                             // jika sudah, tidak perlu
@@ -649,9 +728,36 @@ class ChatPageState extends State<ChatPage> {
                                           backgroundColor: Colors.green,
                                           textColor: Colors.white);
                                       Navigator.pop(context);
+                                    }
+                                    // hapus pesan dari label
+                                    else if (labelIndex.isEmpty &&
+                                        selectedItems.length <= 1) {
+                                      await getLabeledItems();
+                                      // setiap elemen di labeledItems
+                                      var itemTime =
+                                          selectedItems[0]['pesanObj'];
+                                      setState(() {
+                                        labeledItems.forEach((element) {
+                                          List listPesan = element['listPesan'];
+                                          listPesan.removeWhere((element2) =>
+                                              element2['pesanObj'] == itemTime);
+                                        });
+                                      });
+
+                                      await saveLabeledItems();
+                                      await clearSelectedItems();
+
+                                      setState(() {
+                                        labeledItems.clear();
+                                      });
+                                      Fluttertoast.showToast(
+                                          msg: 'Perubahan disimpan',
+                                          backgroundColor: Colors.green,
+                                          textColor: Colors.white);
+                                      Navigator.pop(context);
                                     } else {
                                       Fluttertoast.showToast(
-                                          msg: 'Nama label tidak boleh kosong',
+                                          msg: 'Label tidak boleh kosong',
                                           textColor: Colors.black,
                                           backgroundColor: Colors.yellow);
                                     }
@@ -1356,7 +1462,7 @@ class ChatPageState extends State<ChatPage> {
                             String teksToSend = match[0]!;
 
                             await pushPesanArray(
-                                "Cari $teksToSend:${pesanItem['pageNow']+1}",
+                                "Cari $teksToSend:${pesanItem['pageNow'] + 1}",
                                 {});
                             await qbotStop();
                             await saveArray();
@@ -1364,22 +1470,14 @@ class ChatPageState extends State<ChatPage> {
                             Navigator.of(context).pop();
                             _autoScrollController.jumpTo(
                                 _autoScrollController.position.minScrollExtent);
-                            await islamBot('Menu','Cari $teksToSend:${pesanItem['pageNow']+1}');
+                            await islamBot('Menu',
+                                'Cari $teksToSend:${pesanItem['pageNow'] + 1}');
 
                             // scroll ke bawah
                             _autoScrollController.animateTo(
                                 _autoScrollController.position.minScrollExtent,
                                 duration: Duration(milliseconds: 500),
                                 curve: Curves.easeIn);
-
-                            /* // munculkan dialog share teks
-                            await Share.share(pesanAnswer,
-                                subject: pesanAnswer
-                                    .split('\n')
-                                    .first
-                                    .replaceAll(RegExp(r'\*'), ''));
-                            Navigator.of(context).pop(); // close dialog menu */
-
                             print('DONE halaman selanjutnya');
                           }
 
@@ -2183,29 +2281,57 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // fungsi scroll ke pesan spesifik
-  /*  void scrollToItem(String objKey) {
-    log('start scroll to item $objKey');
-    final itemKey = objKey;
-    final gloKey = _itemKeys[itemKey];
-    log('itemkey: $itemKey');
-    log('_itemsKeys: $_itemKeys');
-    log('glokey: $gloKey');
-    if (gloKey != null) {
-      final itemContext = gloKey.currentContext;
-      log('itemcontex: $itemContext');
-      if (itemContext != null) {
-        listScrollController.jumpTo(itemContext
-            .findRenderObject()!
-            .getTransformTo(null)
-            .getTranslation()
-            .y);
-        log('posisi item: ${itemContext.findRenderObject()!.getTransformTo(null).getTranslation().y}');
-      }
-    }
-  } */
   void scrollToRow(int index) {
     _autoScrollController.scrollToIndex(index,
         preferPosition: AutoScrollPosition.middle);
+  }
+
+  // fungsi apakah pesan yang dipilih ada di dalam labeledItems
+  checkSelectedItems(Map itemLabel, List selectedItems) {
+    List listPesan = itemLabel['listPesan'];
+    int selectedItemsLength = selectedItems.length;
+    List<bool> boolList = [];
+
+    // setiap item yang dipilih, maka ...
+    for (var itemSelected in selectedItems) {
+      // setiap pesan dari pesan pada label, maka ...
+      for (var pesan in listPesan) {
+        // jika pesan pada label terdapat timestamp yang sama pada pesan terpilih, maka true
+        if (pesan['pesanObj'] == itemSelected['pesanObj']) {
+          boolList.add(true);
+        }
+        // jika tidak maka false
+        else {
+          boolList.add(false);
+        }
+      }
+    }
+    log('boolList: $boolList');
+
+    // cek boolean, jika semua true maka true, jika beda maka null, jika semua false maka false
+    return checkAllTrue(boolList);
+  }
+
+  // fungsi untuk mengecek apakah isi dari List<bool> itu true/false
+  checkAllTrue(List<bool> boolList) {
+    // Hitung jumlah false dalam boolList
+    int falseCount = boolList.where((element) => element == false).length;
+
+    // Jika tidak ada false dalam boolList, return true
+    if (falseCount == 0 && boolList.isNotEmpty) {
+      log('checkAllTrue: true');
+      return true;
+    }
+
+    // Jika semua nilai dalam boolList adalah false, return false
+    if (falseCount == boolList.length) {
+      log('checkAllTrue: false');
+      return false;
+    }
+
+    // Jika ada beberapa nilai true dan beberapa nilai false dalam boolList, return null
+    log('checkAllTrue: null');
+    return null;
   }
 }
 
