@@ -1345,7 +1345,7 @@ class ChatPageState extends State<ChatPage> {
                             print('DONE share teks');
                           }
 
-                          // jika pencet menu share
+                          // jika pencet menu halaman selanjutnya
                           else if (index ==
                               arr.indexWhere((element) => element
                                   .containsValue('Halaman Selanjutnya'))) {
@@ -1771,8 +1771,8 @@ class ChatPageState extends State<ChatPage> {
         isShare: isShare,
         suratAyat: jawabQBot,
         intent: intent,
-        pageNow: resQBot['pageNow'],
-        pageMax: resQBot['pageMax']);
+        pageNow: resQBot['pageNow'] ?? 0,
+        pageMax: resQBot['pageMax'] ?? 0);
     // jika share ayat, tidak perlu autostart TTS
     isShare
         ? print('SHARE AYAT, tanpa TTS')
