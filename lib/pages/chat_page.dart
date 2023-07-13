@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -56,7 +55,7 @@ class ChatPageState extends State<ChatPage> {
           "Assalamualaikum... **IslamBot** siap menjawab sejumlah pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan ketik pertanyaan sesuai format yang disediakan. Ketik *bantuan* jika perlu panduan cara menggunakan IslamBot.\n \n*IslamBot* dibuat oleh **Pesantren Teknologi Modern Assalaam**",
       "fromUser": false,
       "share": false,
-      "time": "1",
+      "time": "2000-07-12 12:53:03.262942",
       "isSelected": false,
       "isFavourite": false,
       "menu": {
@@ -75,7 +74,7 @@ class ChatPageState extends State<ChatPage> {
           "**IslamBot** adalah chatbot berbasis Artificial Intelligence (AI) yang membantu menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nSilahkan kirim chat dengan teks, suara, dan gambar dengan format sebagai berikut\n \n1. Ayat tertentu. Sebutkan nama/nomor surat dan nomor ayat\n     Contoh: **Al-Baqarah:183**\n     Contoh: **Al-Baqarah ayat 183**\n     Contoh: **2:183**\n     Contoh: **2 ayat 183**\n \n2. Ayat sekian sampai sekian. Sebutkan nama/nomor surat dan nomor ayat awal sampai akhir\n     Contoh: **Al-Baqarah:183-185**\n     Contoh: **Al-Baqarah ayat 183-185**\n     Contoh: **Al-Baqarah ayat 183 sampai 185**\n     Contoh: **2:183-185**\n     Contoh: **2 ayat 183-185**\n     Contoh: **2:183 sampai 185**\n     Contoh: **2 ayat 183 sampai 185**\n \n3. Tafsir ayat tertentu\n     Contoh: **Tafsir 2:183**\n     Contoh: **Tafsir Al-Baqarah:183**\n     Contoh: **Tafsir Al-Baqarah ayat 183**\n \n4. Informasi surat. Sebutkan nama/nomor surat\n     Contoh: **Al-Baqarah surat ke berapa?**\n     Contoh: **Surat ke 2 surat apa?**\n     Contoh: **Al-Baqarah**\n     Contoh: **Tentang Al-Baqarah**\n     Contoh: **Tentang surat Al-Baqarah**\n \n5. Ayat secara acak\n     Contoh: **Acak**\n \n6. Share (bagikan) ayat secara acak atau ayat tertentu\n     Contoh: **Share acak**\n     Contoh: **Share Al-Baqarah:183**\n     Contoh: **Share Al-Baqarah ayat 183**\n     Contoh: **Share 2:183**\n     Contoh: **Share 2 ayat 183**\n \n7. Cari teks di terjemah atau teks Arab\n     Contoh: **Cari surga**\n     Contoh: **Cari surga#2**\n \n8. Set terjemahan: Indonesia, Melayu\n     Contoh: **Set terjemahan melayu**\n \n9. Set tafsir: Jalalayn, Kemenag, Muyassar, Ringkas\n     Contoh: **Set tafsir kemenag**\n \n10. Lainnya: Ayat terpendek, ayat terpanjang, surat terpendek, surat terpanjang, surat makiyah, surat madaniyah, surat makiyah dan madaniyah\n\n*IslamBot* dibuat oleh *Pesantren Teknologi Modern Assalaam*",
       "fromUser": false,
       "share": false,
-      "time": "2",
+      "time": "2000-07-12 12:53:04.262942",
       "isFavourite": false,
       "isSelected": false,
       "menu": {
@@ -229,26 +228,6 @@ class ChatPageState extends State<ChatPage> {
       });
 
     getArray('pesanArray', objKey: widget.messageStamp);
-    /* for (int i = 0; i < pesanArray.length; i++) {
-      _itemKeys[ObjectKey(pesanArray[i]["time"])] = GlobalKey();
-    } */
-    /* if (widget.messageStamp != null) {
-      log('stamp: ${widget.messageStamp}');
-
-      /* final itemKey = ObjectKey(widget.messageStamp);
-      final itemContext = _itemKeys[0]?.currentContext;
-      if (itemContext != null) {
-        listScrollController.animateTo(
-          itemContext
-              .findRenderObject()!
-              .getTransformTo(null)
-              .getTranslation()
-              .y,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      } */
-    } */
 
     AppSettings.loadSettings();
     checkFirstRun();
@@ -1274,7 +1253,7 @@ class ChatPageState extends State<ChatPage> {
                         ),
                         CircleAvatar(
                           backgroundColor: Colors.white,
-                          radius: 10,
+                          radius: 12,
                           child: IconButton(
                               onPressed: () {
                                 print('tekan favorit');
@@ -1293,10 +1272,12 @@ class ChatPageState extends State<ChatPage> {
                                   ? Icon(
                                       Icons.favorite,
                                       color: Colors.red,
+                                      size: 20,
                                     )
                                   : Icon(
                                       Icons.favorite_border_rounded,
                                       color: Colors.grey[400],
+                                      size: 20,
                                     )),
                         )
                       ]),

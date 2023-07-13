@@ -1,11 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:IslamBot/utils/allpackages.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import '../qbotterminal.dart';
-import '../utils/bold.dart';
 import 'pages.dart';
+import 'package:flutter_excel/excel.dart';
 
 class DetailLabel extends StatefulWidget {
   Map labelData;
@@ -69,9 +68,9 @@ class _DetailLabelState extends State<DetailLabel> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Hapus label ini?'),
+                            title: Text('Hapus pesan ini?'),
                             content: Text(
-                                'Label yang dihapus tidak bisa dikembalikan.'),
+                                'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
                             actions: [
                               TextButton(
                                 child: Container(
@@ -139,7 +138,40 @@ class _DetailLabelState extends State<DetailLabel> {
                     icon: Icon(
                       Icons.delete,
                       color: Colors.white,
-                    ))
+                    )),
+              if (selectedMsg.isNotEmpty)
+                IconButton(
+                    onPressed: () async {
+                      log('copy Msg');
+                      List listMsgToCopy = [];
+                      String joinedListMsgToCopy = '';
+
+                      selectedMsg.forEach((msgTime) {
+                        // menemukan index objek pesan yang time nya sama
+                        int indexPesan = pesanArray.indexWhere(
+                          (element) => element['time'] == msgTime,
+                        );
+                        listMsgToCopy.add(pesanArray[indexPesan]['pesan']);
+                      });
+
+                      joinedListMsgToCopy = listMsgToCopy.join("\n \n");
+                      await Clipboard.setData(
+                          ClipboardData(text: joinedListMsgToCopy));
+
+                      Fluttertoast.showToast(
+                          msg: 'Pesan disalin',
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white);
+
+                      setState(() {
+                        selectedMsg.clear();
+                      });
+                    },
+                    icon: Icon(
+                      Icons.copy_rounded,
+                      color: Colors.white,
+                    )),
+              if (selectedMsg.isNotEmpty) ExportToExcel(context)
             ],
           ),
           body: Container(
@@ -249,6 +281,9 @@ class _DetailLabelState extends State<DetailLabel> {
                                                   pesanObj: pesanObj),
                                             ),
                                             Divider(
+                                              thickness: 2,
+                                              color: Color.fromARGB(
+                                                  255, 190, 190, 190),
                                               indent: 20,
                                               endIndent: 20,
                                             )
@@ -265,6 +300,81 @@ class _DetailLabelState extends State<DetailLabel> {
                       ),
                     ))),
     );
+  }
+
+  IconButton ExportToExcel(BuildContext context) {
+    return IconButton(
+        onPressed: () async {
+          log('export excel Msg');
+          List listMsgForExcel = [];
+
+          selectedMsg.forEach((msgTime) {
+            // menemukan index objek pesan yang time nya sama
+            int indexPesan = pesanArray.indexWhere(
+              (element) => element['time'] == msgTime,
+            );
+            listMsgForExcel.add(pesanArray[indexPesan]);
+          });
+
+          var selectedData = listMsgForExcel
+              .map((e) => {
+                    "pengirim": e["fromUser"] ? "Anda" : "Islambot",
+                    "pesan": e["pesan"],
+                    "time": e["time"]
+                  })
+              .toList();
+
+          // Membuat file excel dan menambahkan data pada sheet
+          var excel = Excel.createExcel();
+          Sheet sheetObject = excel['Sheet1'];
+          List<String> header = ["pengirim","pesan", "time"];
+          sheetObject.appendRow(header);
+          for (var i = 0; i < selectedData.length; i++) {
+            List<dynamic> row = [];
+            for (var j = 0; j < header.length; j++) {
+              row.add(selectedData[i][header[j]]);
+            }
+            sheetObject.appendRow(row);
+          }
+
+          // Mendapatkan path Documents/IslamBot pada memori internal
+          String tgl = DateFormat('yyyyMMdd').format(DateTime.now());
+          String filePath =
+              "/storage/emulated/0/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx";
+
+          // Mengecek apakah folder sudah ada, jika belum maka buat folder tersebut
+          if (!await Directory('/storage/emulated/0/Documents/IslamBot')
+              .exists()) {
+            await Directory('/storage/emulated/0/Documents/IslamBot')
+                .create(recursive: true);
+          }
+
+          // izin akses memori
+          var statusAkses = await Permission.storage.request();
+          if (statusAkses.isGranted) {
+            // Menulis file excel ke direktori tersebut
+            File file = File(filePath);
+            await file.writeAsBytes(excel.encode()!);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Exported to Excel"),
+            ));
+          } else {
+            // Tampilkan snackbar dengan pesan izin ditolak
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                behavior: SnackBarBehavior.floating,
+                content: Text('Izin penyimpanan ditolak'),
+                backgroundColor: Colors.red,
+                showCloseIcon: true,
+                closeIconColor: Colors.white,
+              ),
+            );
+          }
+        },
+        icon: Icon(
+          Icons.file_download_rounded,
+          color: Colors.white,
+        ));
   }
 
   // fungsi ambil pesan
@@ -337,9 +447,10 @@ class pesanInLabel extends StatelessWidget {
                           width: 180,
                         ),
                       )
-                    else TextSpan(
-                      text: pesanObj['pesan'].replaceAll(RegExp(r'\*'), ''),
-                    ),
+                    else
+                      TextSpan(
+                        text: pesanObj['pesan'].replaceAll(RegExp(r'\*'), ''),
+                      ),
                   ],
                 ),
                 maxLines: 6,
