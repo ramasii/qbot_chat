@@ -995,9 +995,9 @@ class ChatPageState extends State<ChatPage> {
 
                       if (newTeks.isNotEmpty) {
                         // String encodedTeks = encodeArabicText(newTeks);
-                        log(toUnicode(newTeks));
+                        /* log(toUnicode(newTeks));
                         log(newTeks);
-                        log('${utf8.encode(newTeks)}');
+                        log('${utf8.encode(newTeks)}'); */
                         await islamBot('Text', newTeks);
 
                         // Scroll ke bawah

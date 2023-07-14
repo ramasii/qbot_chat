@@ -46,7 +46,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
     // List untuk ditampilkan di akhir, jangan lupa digabung dengan myReadmore()
     List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
       // ubah font arab
-      if (arabicRegex.hasMatch(arabs[index]) && index > 0) { // diberi index > 0 untuk antisipasi
+      if (arabicRegex.hasMatch(arabs[index]) && index > 0 && index < arabs.length-1) { // diberi index > 0 untuk antisipasi
         return RichText(
             // textAlign: TextAlign.end, // alignment
             textDirection: TextDirection.rtl, // direction
