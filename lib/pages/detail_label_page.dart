@@ -6,6 +6,8 @@ import 'package:IslamBot/utils/allpackages.dart';
 import 'pages.dart';
 import 'package:flutter_excel/excel.dart';
 
+enum LabeledOptions { copy, export, edit, delete }
+
 class DetailLabel extends StatefulWidget {
   Map labelData;
   final int indexLabel;
@@ -20,6 +22,7 @@ class _DetailLabelState extends State<DetailLabel> {
   late List pesanArray = [];
   List selectedMsg = [];
   late List labeledItems = [];
+  var _popupMenuItemIndex = 0;
 
   @override
   void initState() {
@@ -171,7 +174,26 @@ class _DetailLabelState extends State<DetailLabel> {
                       Icons.copy_rounded,
                       color: Colors.white,
                     )),
-              if (selectedMsg.isNotEmpty) ExportToExcel(context)
+              if (selectedMsg.isNotEmpty) ExportToExcel(context),
+              if (selectedMsg.isEmpty)
+                PopupMenuButton(
+                    color: Colors.white,
+                    onSelected: (value) {
+                      print('klik {$value} di popup menu, pojok kanan atas');
+                      _onMenuItemSelected(value as int);
+                    },
+                    itemBuilder: (ctx) => [
+                          _buildPopupMenuItem('Salin Pesan', Icons.copy_rounded,
+                              LabeledOptions.copy.index),
+                          _buildPopupMenuItem(
+                              'Ekspor Pesan',
+                              Icons.file_upload_rounded,
+                              LabeledOptions.export.index),
+                          _buildPopupMenuItem('Edit Label', Icons.edit_rounded,
+                              LabeledOptions.edit.index),
+                          _buildPopupMenuItem('Hapus Label',
+                              Icons.delete_rounded, LabeledOptions.delete.index)
+                        ])
             ],
           ),
           body: Container(
@@ -316,60 +338,7 @@ class _DetailLabelState extends State<DetailLabel> {
             listMsgForExcel.add(pesanArray[indexPesan]);
           });
 
-          var selectedData = listMsgForExcel
-              .map((e) => {
-                    "pengirim": e["fromUser"] ? "Anda" : "Islambot",
-                    "pesan": e["pesan"],
-                    "time": e["time"]
-                  })
-              .toList();
-
-          // Membuat file excel dan menambahkan data pada sheet
-          var excel = Excel.createExcel();
-          Sheet sheetObject = excel['Sheet1'];
-          List<String> header = ["pengirim","pesan", "time"];
-          sheetObject.appendRow(header);
-          for (var i = 0; i < selectedData.length; i++) {
-            List<dynamic> row = [];
-            for (var j = 0; j < header.length; j++) {
-              row.add(selectedData[i][header[j]]);
-            }
-            sheetObject.appendRow(row);
-          }
-
-          // Mendapatkan path Documents/IslamBot pada memori internal
-          String tgl = DateFormat('yyyyMMdd').format(DateTime.now());
-          String filePath =
-              "/storage/emulated/0/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx";
-
-          // Mengecek apakah folder sudah ada, jika belum maka buat folder tersebut
-          if (!await Directory('/storage/emulated/0/Documents/IslamBot')
-              .exists()) {
-            await Directory('/storage/emulated/0/Documents/IslamBot')
-                .create(recursive: true);
-          }
-
-          // izin akses memori
-          var statusAkses = await Permission.storage.request();
-          if (statusAkses.isGranted) {
-            // Menulis file excel ke direktori tersebut
-            File file = File(filePath);
-            await file.writeAsBytes(excel.encode()!);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text("Exported to Excel"),
-            ));
-          } else {
-            // Tampilkan snackbar dengan pesan izin ditolak
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                behavior: SnackBarBehavior.floating,
-                content: Text('Izin penyimpanan ditolak'),
-                backgroundColor: Colors.red,
-                showCloseIcon: true,
-                closeIconColor: Colors.white,
-              ),
-            );
-          }
+          await exportExcelNew(listMsgForExcel);
         },
         icon: Icon(
           Icons.file_download_rounded,
@@ -413,6 +382,126 @@ class _DetailLabelState extends State<DetailLabel> {
           name: 'getLabeledItems');
     } else {
       log('labeledItems tidak ditemukan', name: 'getLabeledItems');
+    }
+  }
+
+  //widget popup menu button
+  PopupMenuItem _buildPopupMenuItem(
+      String title, IconData iconData, int position) {
+    return PopupMenuItem(
+      value: position,
+      child: Row(
+        children: [
+          Icon(
+            iconData,
+            color: Colors.teal,
+          ),
+          Container(
+            width: 10,
+          ),
+          Text(title),
+        ],
+      ),
+    );
+  }
+
+  // fungsi jika select di popup menu
+  _onMenuItemSelected(int value) async {
+    setState(() {
+      _popupMenuItemIndex = value;
+    });
+
+    // copy
+    if (value == LabeledOptions.copy.index) {
+      log('copy pesan');
+    }
+
+    // export
+    else if (value == LabeledOptions.export.index) {
+      log('export pesan');
+      List listMsgForExcel = [];
+      List listPesan = widget.labelData['listPesan'];
+
+      await getPesanArray();
+
+      listPesan.forEach((element) {
+        // menemukan index objek pesan yang time nya sama
+        int indexPesan = pesanArray.indexWhere(
+          (element2) => element2['time'] == element['pesanObj'],
+        );
+        listMsgForExcel.add(pesanArray[indexPesan]);
+      });
+
+      // expor to excel new
+      await exportExcelNew(listMsgForExcel);
+    }
+
+    // edit
+    else if (value == LabeledOptions.edit.index) {
+      log('edit nama label');
+    }
+
+    // hapus
+    else if (value == LabeledOptions.delete.index) {
+      log('delete label');
+    }
+  }
+
+  // expor excel new
+  exportExcelNew(List listMsgForExcel) async {
+    var selectedData = listMsgForExcel
+        .map((e) => {
+              "pengirim": e["fromUser"] ? "Anda" : "Islambot",
+              "pesan": e["pesan"],
+              "time": e["time"]
+            })
+        .toList();
+
+    // membuat file excel dan menambahkan data pada sheet
+    var excel = Excel.createExcel();
+    Sheet sheetObject = excel['Sheet1'];
+    List<String> header = ["pengirim", "pesan", "time"];
+    sheetObject.appendRow(header);
+    for (var i = 0; i < selectedData.length; i++) {
+      List<dynamic> row = [];
+      for (var j = 0; j < header.length; j++) {
+        row.add(selectedData[i][header[j]]);
+      }
+      sheetObject.appendRow(row);
+    }
+
+    // Mendapatkan path Documents/IslamBot pada memori internal
+    String tgl = DateFormat('yyyyMMdd').format(DateTime.now());
+    String filePath =
+        "/storage/emulated/0/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx";
+
+    // Mengecek apakah folder sudah ada, jika belum maka buat folder tersebut
+    if (!await Directory('/storage/emulated/0/Documents/IslamBot').exists()) {
+      await Directory('/storage/emulated/0/Documents/IslamBot')
+          .create(recursive: true);
+    }
+
+    // izin akses memori
+    var statusAkses = await Permission.storage.request();
+    if (statusAkses.isGranted) {
+      // Menulis file excel ke direktori tersebut
+      File file = File(filePath);
+      await file.writeAsBytes(excel.encode()!);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+            "Disimpan di memori internal/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx"),
+      ));
+    } else {
+      // Tampilkan snackbar dengan pesan izin ditolak
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          content: Text('Izin penyimpanan ditolak'),
+          backgroundColor: Colors.red,
+          showCloseIcon: true,
+          closeIconColor: Colors.white,
+        ),
+      );
     }
   }
 }
