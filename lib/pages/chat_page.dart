@@ -981,27 +981,33 @@ class ChatPageState extends State<ChatPage> {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
                       String newTeks = textEditingController.text
                           .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
-                      await pushPesanArray(newTeks, {});
+
+                      if (newTeks.isNotEmpty) await pushPesanArray(newTeks, {});
+
                       textEditingController.clear();
                       // Set ulang pakaiTeks menjadi false
                       setState(() {
                         pakaiTeks = false;
                       });
-                      await qbotStop();
+                      await qbotStop(); // stop speaking
                       await saveArray();
 
                       // listScrollController.jumpTo(
                       //     listScrollController.position.minScrollExtent +
                       //         (pakaiTeks ? 50 : 0));
 
-                      await islamBot('Text', newTeks);
+                      if (newTeks.isNotEmpty) {
+                        String encodedTeks = encodeArabicText(newTeks);
+                        log('$newTeks');
+                        await islamBot('Text', newTeks);
 
-                      // Scroll ke bawah
-                      _autoScrollController.animateTo(
-                        _autoScrollController.position.minScrollExtent,
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.easeIn,
-                      );
+                        // Scroll ke bawah
+                        _autoScrollController.animateTo(
+                          _autoScrollController.position.minScrollExtent,
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                        );
+                      }
                     }
 
                     // ini pakai speech-to-text
@@ -1133,33 +1139,6 @@ class ChatPageState extends State<ChatPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            /* // tombol favorit
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: IconButton(
-                                  onPressed: () {
-                                    print('tekan favorit');
-                                    setState(() {
-                                      pesan['isFavourite'] =
-                                          pesan['isFavourite'] == true
-                                              ? false
-                                              : true;
-                                      saveArray();
-                                    });
-                                    print('is favorit? ${pesan['isFavourite']}');
-                                  },
-                                  padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
-                                  icon: pesan['isFavourite']
-                                      ? Icon(
-                                          Icons.favorite,
-                                          color: Colors.red,
-                                        )
-                                      : Icon(
-                                          Icons.favorite_border_rounded,
-                                          color: Colors.grey[400],
-                                        )),
-                            ), */
                             // cek apakah share ayat?
                             pesan['share']
                                 ? FullScreenImage(imageUrl: pesan['imgUrl'])
@@ -2314,6 +2293,23 @@ class ChatPageState extends State<ChatPage> {
     log('checkAllTrue: null');
     return null;
   }
+
+  // fungsi encode teks arab
+  String encodeArabicText(String text) {
+  // Filter karakter Arab dari teks menggunakan regular expression
+  String arabicText = text.replaceAll(RegExp(r'[^\u0600-\u06FF\s]'), '');
+
+  // Encode teks Arab menjadi Unicode
+  List<int> bytes = utf8.encode(arabicText);
+  String encodedText = '';
+
+  for (int byte in bytes) {
+    encodedText += '\\u' + byte.toRadixString(16).padLeft(2, '0');
+  }
+
+  return encodedText;
+}
+
 }
 
 // class photo view

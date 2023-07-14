@@ -64,7 +64,7 @@ class _LabelPageState extends State<LabelPage> {
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 58, 86, 100),
             title: Text(
-              'Label Page',
+              'Labels',
               style: TextStyle(color: Colors.white),
             ),
             leading: IconButton(
@@ -248,115 +248,127 @@ class _LabelPageState extends State<LabelPage> {
                 )
               : Container(),
           body: labeledItems.length != 0
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onLongPress: () {
-                        // jika tidak sedang memilih pesan, maka pesan akan terpilih
-                        if (selectedLabel.isEmpty) {
-                          log('start milih');
-                          setState(() {
-                            selectedLabel.add(labeledItems[index]['time']);
-                          });
-                        }
-                      },
-                      onTap: () {
-                        log('tap index $index');
-                        // jika tidak sedang memilih pesan, maka akan masuk ke detail label
-                        if (selectedLabel.isEmpty) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailLabel(
-                                labelData: labeledItems[index],
-                                indexLabel: index,
-                              ),
-                            ),
-                          );
-                        } else {
-                          // jika index sudah ada di selectedItem, hapus dari list
-                          if (selectedLabel.contains(labeledItems[index]['time'])) {
-                            setState(() {
-                              selectedLabel.remove(labeledItems[index]['time']);
-                            });
-                            log('index $index removed from labeledItems');
-                          } else {
-                            setState(() {
-                              selectedLabel.add(labeledItems[index]['time']);
-                            });
-                            log('add index ${index}');
-                          }
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Stack(
-                            alignment: Alignment.bottomRight,
+              ? Column(
+                children: [
+                  ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onLongPress: () {
+                            // jika tidak sedang memilih pesan, maka pesan akan terpilih
+                            if (selectedLabel.isEmpty) {
+                              log('start milih');
+                              setState(() {
+                                selectedLabel.add(labeledItems[index]['time']);
+                              });
+                            }
+                          },
+                          onTap: () {
+                            log('tap index $index');
+                            // jika tidak sedang memilih pesan, maka akan masuk ke detail label
+                            if (selectedLabel.isEmpty) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailLabel(
+                                    labelData: labeledItems[index],
+                                    indexLabel: index,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              // jika index sudah ada di selectedItem, hapus dari list
+                              if (selectedLabel.contains(labeledItems[index]['time'])) {
+                                setState(() {
+                                  selectedLabel.remove(labeledItems[index]['time']);
+                                });
+                                log('index $index removed from labeledItems');
+                              } else {
+                                setState(() {
+                                  selectedLabel.add(labeledItems[index]['time']);
+                                });
+                                log('add index ${index}');
+                              }
+                            }
+                          },
+                          child: Row(
                             children: [
-                              Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: CircleAvatar(
-                                  backgroundColor: labelColors[
-                                      labeledItems[index]['labelColor']],
-                                  radius: 25,
-                                  child: Icon(Icons.label_outline,
-                                      color: Colors.white),
+                              Stack(
+                                alignment: Alignment.bottomRight,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    child: CircleAvatar(
+                                      backgroundColor: labelColors[
+                                          labeledItems[index]['labelColor']],
+                                      radius: 25,
+                                      child: Icon(Icons.label_outline,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  // centang saat dipilih
+                                  selectedLabel.contains(labeledItems[index]['time'])
+                                      ? Container(
+                                          padding: EdgeInsets.all(8),
+                                          child: Stack(
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 12,
+                                                backgroundColor: Colors.white,
+                                                child: CircleAvatar(
+                                                  radius: 10,
+                                                  backgroundColor: Colors.green,
+                                                  child: Icon(
+                                                    Icons.check_rounded,
+                                                    size: 18,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        )
+                                      : Container(),
+                                ],
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      labeledItems[index]['labelName'],
+                                      style: TextStyle(fontSize: 18),
+                                    ),
+                                    Text(
+                                      '${labeledItems[index]['listPesan'].length} messages',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    Divider(
+                                      endIndent: 20,
+                                    )
+                                  ],
                                 ),
                               ),
-                              // centang saat dipilih
-                              selectedLabel.contains(labeledItems[index]['time'])
-                                  ? Container(
-                                      padding: EdgeInsets.all(8),
-                                      child: Stack(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 12,
-                                            backgroundColor: Colors.white,
-                                            child: CircleAvatar(
-                                              radius: 10,
-                                              backgroundColor: Colors.green,
-                                              child: Icon(
-                                                Icons.check_rounded,
-                                                size: 18,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  : Container(),
                             ],
                           ),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  labeledItems[index]['labelName'],
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  '${labeledItems[index]['listPesan'].length} items',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                Divider(
-                                  endIndent: 20,
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                  itemCount: labeledItems.length,
-                )
+                        );
+                      },
+                      itemCount: labeledItems.length,
+                    ),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                ],
+              )
               : Center(
                   child: Text(
-                    'Anda belum menambahkan label',
+                    'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
                     style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
                   ),
                 )),
     );
