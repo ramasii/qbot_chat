@@ -154,21 +154,11 @@ class _DetailLabelState extends State<DetailLabel> {
                         int indexPesan = pesanArray.indexWhere(
                           (element) => element['time'] == msgTime,
                         );
-                        listMsgToCopy.add(pesanArray[indexPesan]['pesan']);
+                        listMsgToCopy.add(pesanArray[indexPesan]['pesan']
+                            .replaceAll(RegExp(r'\*\*'), '*'));
                       });
 
-                      joinedListMsgToCopy = listMsgToCopy.join("\n \n");
-                      await Clipboard.setData(
-                          ClipboardData(text: joinedListMsgToCopy));
-
-                      Fluttertoast.showToast(
-                          msg: 'Pesan disalin',
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white);
-
-                      setState(() {
-                        selectedMsg.clear();
-                      });
+                      await copyMsg(listMsgToCopy, '\n-----------------\n');
                     },
                     icon: Icon(
                       Icons.copy_rounded,
@@ -414,6 +404,23 @@ class _DetailLabelState extends State<DetailLabel> {
     // copy
     if (value == LabeledOptions.copy.index) {
       log('copy pesan');
+      List listMsgToCopy = [];
+      List listPesan = widget.labelData['listPesan'];
+
+      // Mengurutkan listPesan berdasarkan waktu pesan
+      listPesan.sort((a, b) => DateTime.parse(a['pesanObj'])
+          .compareTo(DateTime.parse(b['pesanObj'])));
+
+      listPesan.forEach((element) {
+        // Menemukan index objek pesan yang waktu pesannya sama
+        int indexPesan = pesanArray.indexWhere(
+          (element2) => element2['time'] == element['pesanObj'],
+        );
+        listMsgToCopy.add(
+            pesanArray[indexPesan]['pesan'].replaceAll(RegExp(r'\*\*'), '*'));
+      });
+
+      await copyMsg(listMsgToCopy, '\n-----------------\n');
     }
 
     // export
@@ -421,8 +428,6 @@ class _DetailLabelState extends State<DetailLabel> {
       log('export pesan');
       List listMsgForExcel = [];
       List listPesan = widget.labelData['listPesan'];
-
-      await getPesanArray();
 
       listPesan.forEach((element) {
         // menemukan index objek pesan yang time nya sama
@@ -503,6 +508,21 @@ class _DetailLabelState extends State<DetailLabel> {
         ),
       );
     }
+  }
+
+  // copy msg
+  copyMsg(List listMsgToCopy, String strJoin) async {
+    await Clipboard.setData(
+        ClipboardData(text: listMsgToCopy.join("\n-----------------\n")));
+
+    Fluttertoast.showToast(
+        msg: 'Pesan disalin',
+        backgroundColor: Colors.green,
+        textColor: Colors.white);
+
+    setState(() {
+      selectedMsg.clear();
+    });
   }
 }
 
