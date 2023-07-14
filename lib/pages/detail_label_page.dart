@@ -301,7 +301,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                               ],
                                             ),
                                           ),
-                                          IconButton(
+                                          if(selectedMsg.isEmpty) IconButton(
                                               onPressed: () async {
                                                 log('delete this: {$msgTime}');
                                                 showDialog(

@@ -979,8 +979,9 @@ class ChatPageState extends State<ChatPage> {
                     // ini pakai inputan teks
                     if (pakaiTeks) {
                       // Lakukan logika pengiriman pesan seperti sebelumnya
-                      String newTeks = textEditingController.text
-                          .replaceAll(RegExp(r'\n+|\s(?!\w)'), '');
+                      String newTeks = textEditingController.text.trim();
+                      /* String newTeks = textEditingController.text
+                          .replaceAll(RegExp(r'\n+|\s(?!\w)'), ''); */
 
                       if (newTeks.isNotEmpty) await pushPesanArray(newTeks, {});
 
@@ -992,13 +993,11 @@ class ChatPageState extends State<ChatPage> {
                       await qbotStop(); // stop speaking
                       await saveArray();
 
-                      // listScrollController.jumpTo(
-                      //     listScrollController.position.minScrollExtent +
-                      //         (pakaiTeks ? 50 : 0));
-
                       if (newTeks.isNotEmpty) {
-                        String encodedTeks = encodeArabicText(newTeks);
-                        log('$newTeks');
+                        // String encodedTeks = encodeArabicText(newTeks);
+                        log(toUnicode(newTeks));
+                        log(newTeks);
+                        log('${utf8.encode(newTeks)}');
                         await islamBot('Text', newTeks);
 
                         // Scroll ke bawah
@@ -2294,22 +2293,17 @@ class ChatPageState extends State<ChatPage> {
     return null;
   }
 
-  // fungsi encode teks arab
-  String encodeArabicText(String text) {
-  // Filter karakter Arab dari teks menggunakan regular expression
-  String arabicText = text.replaceAll(RegExp(r'[^\u0600-\u06FF\s]'), '');
-
-  // Encode teks Arab menjadi Unicode
-  List<int> bytes = utf8.encode(arabicText);
-  String encodedText = '';
-
-  for (int byte in bytes) {
-    encodedText += '\\u' + byte.toRadixString(16).padLeft(2, '0');
+// Fungsi untuk mengubah sebuah string menjadi bentuk Unicode
+  String toUnicode(String text) {
+    List<String> unicodeList = [];
+    for (int i = 0; i < text.length; i++) {
+      int unicode = text.codeUnitAt(i);
+      String unicodeHex =
+          unicode.toRadixString(16).toUpperCase().padLeft(4, '0');
+      unicodeList.add("\\u$unicodeHex");
+    }
+    return unicodeList.join("");
   }
-
-  return encodedText;
-}
-
 }
 
 // class photo view
