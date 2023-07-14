@@ -444,11 +444,135 @@ class _DetailLabelState extends State<DetailLabel> {
     // edit
     else if (value == LabeledOptions.edit.index) {
       log('edit nama label');
+      await getLabeledItems();
+
+      String newLabelName = widget.labelData['labelName'];
+
+      // Membuat dialog untuk mengedit nama label
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Edit Nama Label'),
+            content: TextFormField(
+              initialValue: widget.labelData['labelName'],
+              autofocus: true,
+              onChanged: (value) {
+                newLabelName = value.trim();
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    'Batal',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  // jika field terisi
+                  if (newLabelName.trim().isNotEmpty) {
+                    if (newLabelName != widget.labelData['labelName']) {
+                      setState(() {
+                        // Mengubah nama label pada labeledItems
+                        labeledItems[widget.indexLabel]['labelName'] =
+                            newLabelName;
+                        // ngubah judul scaffold
+                        widget.labelData['labelName'] = newLabelName;
+                        // Menyimpan labeledItems
+                        saveLabeledItems();
+                      });
+                    }
+                    Navigator.pop(context);
+                  }
+                  // jika field kosong
+                  else {
+                    Fluttertoast.showToast(
+                        msg: 'Nama label tidak boleh kosong',
+                        textColor: Colors.black,
+                        backgroundColor: Colors.yellow);
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    'Simpan',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
     }
 
     // hapus
     else if (value == LabeledOptions.delete.index) {
       log('delete label');
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Hapus label ini?'),
+            content: Text(
+                'Label yang dihapus tidak bisa dikembalikan, namun pesan tidak akan terhapus.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    'Batal',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  await getLabeledItems();
+
+                  labeledItems.removeAt(widget.indexLabel);
+
+                  await saveLabeledItems();
+                  Navigator.pop(context);
+
+                  // kembali ke halaman sebelumnya
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LabelPage()),
+                      (route) => false);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text(
+                    'Hapus',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -492,21 +616,17 @@ class _DetailLabelState extends State<DetailLabel> {
       // Menulis file excel ke direktori tersebut
       File file = File(filePath);
       await file.writeAsBytes(excel.encode()!);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "Disimpan di memori internal/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx"),
-      ));
+      Fluttertoast.showToast(
+          msg:
+              "Disimpan di memori internal/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx",
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
     } else {
       // Tampilkan snackbar dengan pesan izin ditolak
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text('Izin penyimpanan ditolak'),
+      Fluttertoast.showToast(
+          msg: 'Izin penyimpanan ditolak',
           backgroundColor: Colors.red,
-          showCloseIcon: true,
-          closeIconColor: Colors.white,
-        ),
-      );
+          textColor: Colors.white);
     }
   }
 
