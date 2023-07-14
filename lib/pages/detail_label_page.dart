@@ -197,6 +197,7 @@ class _DetailLabelState extends State<DetailLabel> {
                       ),
                     )
                   : SingleChildScrollView(
+                      padding: EdgeInsets.zero,
                       child: Column(
                         children: List.generate(
                           widget.labelData['listPesan'].length,
@@ -224,88 +225,196 @@ class _DetailLabelState extends State<DetailLabel> {
 
                             // log('pesan array: ${pesanObj['pesan']}');
 
-                            return Container(
-                              margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
-                              decoration: BoxDecoration(
-                                  color: Color.fromARGB(
-                                      selectedMsg.contains(msgTime) ? 255 : 0,
-                                      188,
-                                      225,
-                                      255),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(10),
-                                onLongPress: () {
-                                  // jika sedang tidak memilih
-                                  if (selectedMsg.isEmpty) {
-                                    log('start milih');
-                                    setState(() {
-                                      selectedMsg.add(msgTime);
-                                    });
-                                  }
-                                },
-                                onTap: () {
-                                  log('tap pesan index  ke-$index2, time: ${msgTime}');
-                                  // jika sedang tidak memilih pesan
-                                  if (selectedMsg.isEmpty) {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ChatPage(
-                                          messageStamp: msgTime,
-                                          arguments: ChatPageArguments(
-                                            peerId: '111',
-                                            peerAvatar: 'images/app_icon.png',
-                                            peerNickname: 'IslamBot',
-                                          ),
-                                        ),
-                                      ),
-                                      (route) =>
-                                          false, // Menghapus semua halaman di atasnya dalam stack halaman
-                                    );
-                                  } else {
-                                    // jika sudah dipilih, maka un-select
-                                    if (selectedMsg.contains(msgTime)) {
-                                      setState(() {
-                                        selectedMsg.remove(msgTime);
-                                      });
-                                      log('index $msgTime removed from selectedMsg');
-                                    } else {
-                                      setState(() {
-                                        selectedMsg.add(msgTime);
-                                      });
-                                      log('add index ${msgTime}');
-                                    }
-                                  }
-                                },
-                                child: Container(
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  5, 5, 5, 5),
-                                              child: pesanInLabel(
-                                                  pesanObj: pesanObj),
+                            return Column(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
+                                  decoration: BoxDecoration(
+                                      color: Color.fromARGB(
+                                          selectedMsg.contains(msgTime)
+                                              ? 255
+                                              : 0,
+                                          188,
+                                          225,
+                                          255),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    onLongPress: () {
+                                      // jika sedang tidak memilih
+                                      if (selectedMsg.isEmpty) {
+                                        log('start milih');
+                                        setState(() {
+                                          selectedMsg.add(msgTime);
+                                        });
+                                      }
+                                    },
+                                    onTap: () {
+                                      log('tap pesan index  ke-$index2, time: ${msgTime}');
+                                      // jika sedang tidak memilih pesan
+                                      if (selectedMsg.isEmpty) {
+                                        Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ChatPage(
+                                              messageStamp: msgTime,
+                                              arguments: ChatPageArguments(
+                                                peerId: '111',
+                                                peerAvatar:
+                                                    'images/app_icon.png',
+                                                peerNickname: 'IslamBot',
+                                              ),
                                             ),
-                                            Divider(
-                                              thickness: 2,
-                                              color: Color.fromARGB(
-                                                  255, 190, 190, 190),
-                                              indent: 20,
-                                              endIndent: 20,
-                                            )
-                                          ],
-                                        ),
+                                          ),
+                                          (route) =>
+                                              false, // Menghapus semua halaman di atasnya dalam stack halaman
+                                        );
+                                      } else {
+                                        // jika sudah dipilih, maka un-select
+                                        if (selectedMsg.contains(msgTime)) {
+                                          setState(() {
+                                            selectedMsg.remove(msgTime);
+                                          });
+                                          log('index $msgTime removed from selectedMsg');
+                                        } else {
+                                          setState(() {
+                                            selectedMsg.add(msgTime);
+                                          });
+                                          log('add index ${msgTime}');
+                                        }
+                                      }
+                                    },
+                                    child: Container(
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      5, 5, 5, 5),
+                                                  child: pesanInLabel(
+                                                      pesanObj: pesanObj),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          IconButton(
+                                              onPressed: () async {
+                                                log('delete this: {$msgTime}');
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'Hapus pesan ini?'),
+                                                      content: Text(
+                                                          'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.grey,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Text(
+                                                              'Batal',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.red,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                            child: Text(
+                                                              'Hapus',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          onPressed: () async {
+                                                            await getLabeledItems();
+                                                            setState(() {
+                                                              List listPesan =
+                                                                  labeledItems[
+                                                                          widget
+                                                                              .indexLabel]
+                                                                      [
+                                                                      'listPesan'];
+                                                              listPesan.removeWhere(
+                                                                  (element) =>
+                                                                      element[
+                                                                          'pesanObj'] ==
+                                                                      msgTime);
+                                                            });
+                                                            await saveLabeledItems();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        DetailLabel(
+                                                                  labelData:
+                                                                      labeledItems[
+                                                                          widget
+                                                                              .indexLabel],
+                                                                  indexLabel: widget
+                                                                      .indexLabel,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.delete_rounded,
+                                                color: Colors.red,
+                                              ))
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
+                                Divider(
+                                  thickness: 2,
+                                  color: Color.fromARGB(255, 190, 190, 190),
+                                  indent: 0,
+                                  endIndent: 0,
+                                )
+                              ],
                             );
                           },
                         ),
