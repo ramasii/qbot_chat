@@ -781,23 +781,23 @@ class ChatPageState extends State<ChatPage> {
                       _onMenuItemSelected(value as int);
                     },
                     itemBuilder: (ctx) => [
-                          _buildPopupMenuItem('Export Messages',
+                          _buildPopupMenuItem('Expor Pesan',
                               Icons.upload_file_rounded, Options.export.index),
                           _buildPopupMenuItem(
-                              'Import Messages',
+                              'Impor Pesan',
                               Icons.file_download_rounded,
                               Options.import.index),
                           _buildPopupMenuItem(
-                              'Clear Messages',
+                              'Bersihkan Pesan',
                               Icons.cleaning_services_rounded,
                               Options.clear.index),
                           _buildPopupMenuItem(
                               'Labels', Icons.label, Options.labels.index),
                           _buildPopupMenuItem('Pengaturan', Icons.settings,
                               Options.settings.index),
-                          _buildPopupMenuItem('About IslamBot',
+                          _buildPopupMenuItem('Tentang IslamBot',
                               Icons.info_outline_rounded, Options.about.index),
-                          _buildPopupMenuItem('Exit Application',
+                          _buildPopupMenuItem('Keluar Aplikasi',
                               Icons.exit_to_app_rounded, Options.exit.index),
                         ])
                 : IconButton(

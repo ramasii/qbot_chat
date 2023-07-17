@@ -301,108 +301,109 @@ class _DetailLabelState extends State<DetailLabel> {
                                               ],
                                             ),
                                           ),
-                                          if(selectedMsg.isEmpty) IconButton(
-                                              onPressed: () async {
-                                                log('delete this: {$msgTime}');
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          'Hapus pesan ini?'),
-                                                      content: Text(
-                                                          'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
-                                                      actions: [
-                                                        TextButton(
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    10),
-                                                            decoration: BoxDecoration(
-                                                                color:
-                                                                    Colors.grey,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            child: Text(
-                                                              'Batal',
-                                                              style: TextStyle(
+                                          if (selectedMsg.isEmpty)
+                                            IconButton(
+                                                onPressed: () async {
+                                                  log('delete this: {$msgTime}');
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text(
+                                                            'Hapus pesan ini?'),
+                                                        content: Text(
+                                                            'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
+                                                        actions: [
+                                                          TextButton(
+                                                            child: Container(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                              decoration: BoxDecoration(
                                                                   color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                        ),
-                                                        TextButton(
-                                                          child: Container(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    10),
-                                                            decoration: BoxDecoration(
-                                                                color:
-                                                                    Colors.red,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5)),
-                                                            child: Text(
-                                                              'Hapus',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white),
-                                                            ),
-                                                          ),
-                                                          onPressed: () async {
-                                                            await getLabeledItems();
-                                                            setState(() {
-                                                              List listPesan =
-                                                                  labeledItems[
-                                                                          widget
-                                                                              .indexLabel]
-                                                                      [
-                                                                      'listPesan'];
-                                                              listPesan.removeWhere(
-                                                                  (element) =>
-                                                                      element[
-                                                                          'pesanObj'] ==
-                                                                      msgTime);
-                                                            });
-                                                            await saveLabeledItems();
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        DetailLabel(
-                                                                  labelData:
-                                                                      labeledItems[
-                                                                          widget
-                                                                              .indexLabel],
-                                                                  indexLabel: widget
-                                                                      .indexLabel,
-                                                                ),
+                                                                      .grey,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                              child: Text(
+                                                                'Batal',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
                                                               ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              icon: Icon(
-                                                Icons.delete_rounded,
-                                                color: Colors.red,
-                                              ))
+                                                            ),
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                          ),
+                                                          TextButton(
+                                                            child: Container(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(10),
+                                                              decoration: BoxDecoration(
+                                                                  color: Colors
+                                                                      .red,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                              child: Text(
+                                                                'Hapus',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                              ),
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              await getLabeledItems();
+                                                              setState(() {
+                                                                List listPesan =
+                                                                    labeledItems[
+                                                                            widget.indexLabel]
+                                                                        [
+                                                                        'listPesan'];
+                                                                listPesan.removeWhere(
+                                                                    (element) =>
+                                                                        element[
+                                                                            'pesanObj'] ==
+                                                                        msgTime);
+                                                              });
+                                                              await saveLabeledItems();
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DetailLabel(
+                                                                    labelData:
+                                                                        labeledItems[
+                                                                            widget.indexLabel],
+                                                                    indexLabel:
+                                                                        widget
+                                                                            .indexLabel,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete_rounded,
+                                                  color: Colors.red,
+                                                ))
                                         ],
                                       ),
                                     ),
@@ -535,19 +536,26 @@ class _DetailLabelState extends State<DetailLabel> {
     // export
     else if (value == LabeledOptions.export.index) {
       log('export pesan');
-      List listMsgForExcel = [];
-      List listPesan = widget.labelData['listPesan'];
+        List listMsgForExcel = [];
+        List listPesan = widget.labelData['listPesan'];
 
-      listPesan.forEach((element) {
-        // menemukan index objek pesan yang time nya sama
-        int indexPesan = pesanArray.indexWhere(
-          (element2) => element2['time'] == element['pesanObj'],
-        );
-        listMsgForExcel.add(pesanArray[indexPesan]);
-      });
+        listPesan.forEach((element) {
+          // menemukan index objek pesan yang time nya sama
+          int indexPesan = pesanArray.indexWhere(
+            (element2) => element2['time'] == element['pesanObj'],
+          );
+          listMsgForExcel.add(pesanArray[indexPesan]);
+        });
+      if (widget.labelData.isEmpty || listMsgForExcel.isEmpty) {
+        Fluttertoast.showToast(
+            msg: 'Label ini tidak memilik pesan',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
+      } else {
 
-      // expor to excel new
-      await exportExcelNew(listMsgForExcel);
+        // expor to excel new
+        await exportExcelNew(listMsgForExcel);
+      }
     }
 
     // edit
