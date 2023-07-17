@@ -286,6 +286,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                     },
                                     child: Container(
                                       child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
                                             child: Column(
@@ -401,7 +402,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                                   );
                                                 },
                                                 icon: Icon(
-                                                  Icons.delete_rounded,
+                                                  Icons.clear_rounded,
                                                   color: Colors.red,
                                                 ))
                                         ],
