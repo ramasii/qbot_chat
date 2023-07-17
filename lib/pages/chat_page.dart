@@ -902,7 +902,7 @@ class ChatPageState extends State<ChatPage> {
                           openCamera();
                         },
                         child: Icon(
-                          Icons.panorama_fish_eye,
+                          Icons.camera_alt_rounded,
                           color: Colors.grey,
                         ),
                       ),
