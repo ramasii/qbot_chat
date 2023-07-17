@@ -365,10 +365,13 @@ class _LabelPageState extends State<LabelPage> {
                 ],
               )
               : Center(
-                  child: Text(
-                    'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
-                    style: TextStyle(color: Colors.grey),
-                    textAlign: TextAlign.center,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: Text(
+                      'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
+                      style: TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 )),
     );
