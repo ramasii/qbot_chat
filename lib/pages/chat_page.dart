@@ -1798,16 +1798,19 @@ class ChatPageState extends State<ChatPage> {
             {"action": "Share Acak"},
             {"action": "Bantuan"}
           ]
-        : // jika memiliki isi, tambah menu Copy dan Share teks
-        // jika list terakhir "bantuan" maka di-insert sebelum bantuan, jika bukan maka di-insert di bagian terakhir
-        listMenu.insertAll(
-            listMenu[listMenu.length - 1]["action"] == "Bantuan"
-                ? listMenu.length - 1
-                : listMenu.length,
-            [
-                {"action": "Copy to Clipboard"},
-                {"action": "Share"},
-              ]);
+        : intent != 'qurani.shareAyat'
+            ?
+            // jika memiliki isi, tambah menu Copy dan Share teks
+            // jika list terakhir "bantuan" maka di-insert sebelum bantuan, jika bukan maka di-insert di bagian terakhir
+            listMenu.insertAll(
+                listMenu[listMenu.length - 1]["action"] == "Bantuan"
+                    ? listMenu.length - 1
+                    : listMenu.length,
+                [
+                    {"action": "Copy to Clipboard"},
+                    {"action": "Share"},
+                  ])
+            : print('ini share');
 
     if (intent == "qurani.cariTeks" &&
         resQBot['pageNow'] < resQBot['pageMax']) {
@@ -2229,7 +2232,9 @@ class ChatPageState extends State<ChatPage> {
     if (a != null) {
       setState(() {
         labeledItems = jsonDecode(a);
-        labeledItems.sort((a, b) => a['labelName'].toLowerCase().compareTo(b['labelName'].toLowerCase()));
+        labeledItems.sort((a, b) => a['labelName']
+            .toLowerCase()
+            .compareTo(b['labelName'].toLowerCase()));
       });
       log('labeledItems ditemukan', name: 'getLabeledItems');
     } else {

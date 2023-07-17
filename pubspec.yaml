@@ -1,5 +1,6 @@
 name: IslamBot
 description: This is the demo for chat app by Flutter
+version: 1.0.0+1
 
 dependencies:
   flutter:
@@ -28,6 +29,9 @@ dependencies:
   scroll_to_index: any
   flutter_excel: any
   csv:
+  package_info: ^2.0.2
+  fluttericon: ^2.0.0
+  url_launcher: ^6.1.11
 
 
 dev_dependencies:
