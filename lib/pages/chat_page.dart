@@ -1995,22 +1995,32 @@ class ChatPageState extends State<ChatPage> {
     else if (value == Options.export.index) {
       print('START export message');
       var isi = '';
-
-      for (var e in pesanArray) {
-        var pesan = '${e["pesan"]}';
-        var fromUser = '${e["fromUser"]}';
-        var time = '${e["time"]}';
-        var share = '${e["share"]}';
-        var imgUrl = '${e["imgUrl"]}';
-        var isFavourite = '${e["isFavourite"]}';
-        var menu = '${e["menu"]}';
-
-        isi = isi +
-            '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
+      // jika pesan kosong
+      if (pesanArray.isEmpty) {
+        Fluttertoast.showToast(
+            msg: 'Anda belum memiliki pesan',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
       }
-      print(isi);
-      var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
-      if (await checkStoragePermission()) await createTextFile(toCSV);
+
+      // jika pesan TIDAK KOSONG
+      else {
+        for (var e in pesanArray) {
+          var pesan = '${e["pesan"]}';
+          var fromUser = '${e["fromUser"]}';
+          var time = '${e["time"]}';
+          var share = '${e["share"]}';
+          var imgUrl = '${e["imgUrl"]}';
+          var isFavourite = '${e["isFavourite"]}';
+          var menu = '${e["menu"]}';
+
+          isi = isi +
+              '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
+        }
+        print(isi);
+        var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
+        if (await checkStoragePermission()) await createTextFile(toCSV);
+      }
       print('DONE export message');
     }
 
