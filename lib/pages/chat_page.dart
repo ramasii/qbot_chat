@@ -1963,12 +1963,13 @@ class ChatPageState extends State<ChatPage> {
                   // clear chat
                   await clearArray();
                   // clear label item
+                  await getLabeledItems();
                   setState(() {
                     labeledItems.forEach((item) {
                       item['listPesan'].clear();
                     });
                   });
-                  saveLabeledItems();
+                  await saveLabeledItems();
                   Navigator.of(context).pop();
                 },
               ),
