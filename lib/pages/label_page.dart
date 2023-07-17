@@ -253,6 +253,7 @@ class _LabelPageState extends State<LabelPage> {
                   ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
+
                         return InkWell(
                           onLongPress: () {
                             // jika tidak sedang memilih pesan, maka pesan akan terpilih
@@ -352,6 +353,7 @@ class _LabelPageState extends State<LabelPage> {
                             ],
                           ),
                         );
+                        
                       },
                       itemCount: labeledItems.length,
                     ),
@@ -390,6 +392,7 @@ class _LabelPageState extends State<LabelPage> {
     if (a != null) {
       setState(() {
         labeledItems = jsonDecode(a);
+        labeledItems.sort((a, b) => a['labelName'].toLowerCase().compareTo(b['labelName'].toLowerCase()));
       });
       log('labeledItems ditemukan, length:${labeledItems.length}',
           name: 'getLabeledItems');

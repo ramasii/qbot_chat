@@ -2229,6 +2229,7 @@ class ChatPageState extends State<ChatPage> {
     if (a != null) {
       setState(() {
         labeledItems = jsonDecode(a);
+        labeledItems.sort((a, b) => a['labelName'].toLowerCase().compareTo(b['labelName'].toLowerCase()));
       });
       log('labeledItems ditemukan', name: 'getLabeledItems');
     } else {
