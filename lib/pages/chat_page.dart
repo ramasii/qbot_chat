@@ -67,7 +67,10 @@ class ChatPageState extends State<ChatPage> {
         ],
         "isSpeaking": false,
         "useSpeaker": false
-      }
+      },
+      "intent": "qurani.salam",
+      "pageNow": 0,
+      "pageMax": 0,
     },
     {
       "pesan":
@@ -191,7 +194,10 @@ class ChatPageState extends State<ChatPage> {
         ],
         "isSpeaking": false,
         "useSpeaker": false
-      }
+      },
+      "intent": "qurani.bantuan",
+      "pageNow": 0,
+      "pageMax": 0,
     }
   ];
   List csvData = [];
@@ -1258,36 +1264,35 @@ class ChatPageState extends State<ChatPage> {
                     : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
               ),
             ),
-            !fromUser ? CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 18,
-                          child: IconButton(
-                              onPressed: () {
-                                print('tekan favorit');
-                                setState(() {
-                                  pesan['isFavourite'] =
-                                      pesan['isFavourite'] == true
-                                          ? false
-                                          : true;
-                                  saveArray();
-                                });
-                                print('is favorit? ${pesan['isFavourite']}');
-                              },
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(),
-                              icon: pesan['isFavourite']
-                                  ? Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                      size: 22,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border_rounded,
-                                      color: Colors.grey[400],
-                                      size: 22,
-                                    )),
-                        )
-                        : Container(),
+            !fromUser
+                ? CircleAvatar(
+                    backgroundColor: Colors.white,
+                    radius: 18,
+                    child: IconButton(
+                        onPressed: () {
+                          print('tekan favorit');
+                          setState(() {
+                            pesan['isFavourite'] =
+                                pesan['isFavourite'] == true ? false : true;
+                            saveArray();
+                          });
+                          print('is favorit? ${pesan['isFavourite']}');
+                        },
+                        padding: EdgeInsets.zero,
+                        constraints: BoxConstraints(),
+                        icon: pesan['isFavourite']
+                            ? Icon(
+                                Icons.favorite,
+                                color: Colors.red,
+                                size: 22,
+                              )
+                            : Icon(
+                                Icons.favorite_border_rounded,
+                                color: Colors.grey[400],
+                                size: 22,
+                              )),
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -2013,13 +2018,19 @@ class ChatPageState extends State<ChatPage> {
           var share = '${e["share"]}';
           var imgUrl = '${e["imgUrl"]}';
           var isFavourite = '${e["isFavourite"]}';
+          var isSelected = '${e['isSelected']}';
           var menu = '${e["menu"]}';
+          var pageNow = '${e["pageNow"]}';
+          var pageMax = '${e["pageMax"]}';
 
           isi = isi +
-              '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu\n';
+              '"$pesan";$fromUser;$time;$share;$imgUrl;$isFavourite;$menu;$isSelected;$pageNow;$pageMax\n';
         }
         print(isi);
-        var toCSV = 'pesan;fromUser;time;share;imgUrl;isFavourite;menu\n' + isi;
+        var toCSV =
+            'pesan;fromUser;time;share;imgUrl;isFavourite;menu;isSelected;pageNow;pageMax\n' +
+                isi;
+        log(toCSV);
         if (await checkStoragePermission()) await createTextFile(toCSV);
       }
       print('DONE export message');
@@ -2133,16 +2144,102 @@ class ChatPageState extends State<ChatPage> {
       final input = File(result.files.single.path!).openRead();
       final isi = await input
           .transform(utf8.decoder)
+          .transform(const LineSplitter())
+          .toList();
+
+      for (var i = 1; i < isi.length; i++) {
+        var row = isi[i].split(';');
+        log(row.length.toString());
+        if (row.length == 10) {
+          var pesan = row[0].replaceAll(RegExp(r'^"|"$', multiLine: true), '');
+          var fromUser = row[1] == 'true';
+          var time = row[2];
+          var share = row[3] == 'true';
+          var imgUrl = row[4];
+          var isFavourite = row[5] == 'true';
+          var menu = parseMenu(row[6], fromUser);
+          var isSelected = row[7] == 'true';
+          var pageNow = int.parse(row[8]);
+          var pageMax = int.parse(row[9]);
+
+          var pesanObj = {
+            'pesan': pesan,
+            'fromUser': fromUser,
+            'share': share,
+            'time': time,
+            'isSelected': isSelected,
+            'isFavourite': isFavourite,
+            'menu': menu,
+            'intent': '',
+            'pageNow': pageNow,
+            'pageMax': pageMax,
+          };
+
+          log(pesanObj.toString());
+
+          setState(() {
+            pesanArray.add(pesanObj);
+          });
+        }
+      }
+
+      saveArray(showLog: false);
+    } else {
+      print('cancel import');
+    }
+  }
+
+  Map<String, dynamic> parseMenu(String menuString, bool fromUser) {
+    var menuValues = menuString.replaceAll(RegExp(r'\{|\}'), '').split(',');
+    if (fromUser == false) {
+      var jmlItem = int.parse(menuValues[0].replaceAll('jmlItem: ', ''));
+
+      var actions = [];
+      for (var i = 1; i < jmlItem + 1; i++) {
+        actions.add({'action': menuValues[i]});
+      }
+
+      var isSpeaking = menuValues[jmlItem + 1] == 'true';
+      var useSpeaker = menuValues[jmlItem + 2] == 'true';
+
+      return {
+        'jmlItem': jmlItem,
+        'actions': actions,
+        'isSpeaking': isSpeaking,
+        'useSpeaker': useSpeaker,
+      };
+    } else {
+      var isSpeaking = menuValues[0];
+      var useSpeaker = menuValues[1];
+
+      return {
+        'isSpeaking': isSpeaking,
+        'useSpeaker': useSpeaker,
+      };
+    }
+  }
+
+  /* Future<void> loadCsvData() async {
+    final directory = await getTemporaryDirectory();
+    directory.delete(recursive: true);
+
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(allowCompression: false);
+
+    if (result != null) {
+      final input = File(result.files.single.path!).openRead();
+      final isi = await input
+          .transform(utf8.decoder)
           .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
           .toList();
       final strIsi = '';
       List objFromCsv = [];
       int index = 0;
-      print(isi);
+      // print(isi);
       for (var e in isi[1]) {
         objFromCsv.add(parseTextToObjects(e.toString()));
+      log(parseTextToObjects(e.toString()).toString());
       }
-
       for (var pesan in objFromCsv[0]) {
         setState(() {
           pesanArray.add(pesan);
@@ -2152,7 +2249,7 @@ class ChatPageState extends State<ChatPage> {
     } else {
       print('cancel import');
     }
-  }
+  } */
 
   // fungsi ubah teks ke obj
   List<Map<String, dynamic>> parseTextToObjects(String text) {
