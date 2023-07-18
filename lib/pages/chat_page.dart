@@ -1258,7 +1258,7 @@ class ChatPageState extends State<ChatPage> {
                     : EdgeInsets.only(bottom: 5, right: 10, left: 10, top: 5),
               ),
             ),
-            CircleAvatar(
+            fromUser ? CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 18,
                           child: IconButton(
@@ -1287,6 +1287,7 @@ class ChatPageState extends State<ChatPage> {
                                       size: 22,
                                     )),
                         )
+                        : Container(),
           ],
         ),
       ),
