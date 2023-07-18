@@ -306,6 +306,27 @@ class ChatPageState extends State<ChatPage> {
             style: TextStyle(color: Colors.white),
           ),
           actions: [
+            selectedItems.length == 0
+                ? IconButton(
+                    onPressed: () {
+                      log('pergi ke note page');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotePage()),
+                      );
+                    },
+                    tooltip: 'Catatan',
+                    icon: Icon(
+                      Icons.note_alt,
+                      color: Colors.white,
+                    ),
+                  )
+                : IconButton(
+                    onPressed: (() {
+                      log('tambah note');
+                    }),
+                    tooltip: 'Tambah ke Catatan',
+                    icon: Icon(Icons.note_add_rounded, color: Colors.white)),
             selectedItems.length != 0
                 ? IconButton(
                     onPressed: () async {
@@ -764,6 +785,7 @@ class ChatPageState extends State<ChatPage> {
                         },
                       );
                     },
+                    tooltip: 'Tambah ke Label',
                     icon: Icon(
                       Icons.new_label_rounded,
                       color: Colors.white,
@@ -775,6 +797,7 @@ class ChatPageState extends State<ChatPage> {
                           MaterialPageRoute(builder: (_) => LabelPage()));
                       log('DONE buka label page');
                     },
+                    tooltip: 'Labels',
                     icon: Icon(
                       Icons.label,
                       color: Colors.white,
@@ -782,6 +805,7 @@ class ChatPageState extends State<ChatPage> {
             selectedItems.length == 0
                 ? PopupMenuButton(
                     color: Colors.white,
+                    tooltip: 'Menu',
                     onSelected: (value) {
                       print('klik di popup menu, pojok kanan atas');
                       _onMenuItemSelected(value as int);
@@ -813,7 +837,9 @@ class ChatPageState extends State<ChatPage> {
                     icon: Icon(
                       Icons.close,
                       color: Colors.white,
-                    )),
+                    ),
+                    tooltip: 'Batal',
+                  ),
           ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: buttonScrollBottom(),
@@ -2141,11 +2167,17 @@ class ChatPageState extends State<ChatPage> {
         await FilePicker.platform.pickFiles(allowCompression: false);
 
     if (result != null) {
+      // membaca isi file csv
       final input = File(result.files.single.path!).openRead();
-      final isi = await input
+      /* final isi = await input
           .transform(utf8.decoder)
           .transform(const LineSplitter())
-          .toList();
+          .toList(); */
+      final a = await input.transform(utf8.decoder).join();
+      final modifiedText = a.replaceAll('\n', '\\n');
+      final lines = LineSplitter().convert(modifiedText);
+      final isi = lines[0].replaceAll(RegExp(r'\\n$', multiLine: true), '').split(RegExp(r'\\n(?=")', multiLine: true));
+      log(isi.toString());
 
       for (var i = 1; i < isi.length; i++) {
         var row = isi[i].split(';');
@@ -2157,13 +2189,14 @@ class ChatPageState extends State<ChatPage> {
           var share = row[3] == 'true';
           var imgUrl = row[4];
           var isFavourite = row[5] == 'true';
+          log('row6: ${row[6]}');
           var menu = parseMenu(row[6], fromUser);
           var isSelected = row[7] == 'true';
           var pageNow = int.parse(row[8]);
           var pageMax = int.parse(row[9]);
 
           var pesanObj = {
-            'pesan': pesan,
+            'pesan': pesan.replaceAll('\\n', '\n'),
             'fromUser': fromUser,
             'share': share,
             'time': time,
@@ -2175,7 +2208,7 @@ class ChatPageState extends State<ChatPage> {
             'pageMax': pageMax,
           };
 
-          log(pesanObj.toString());
+          // log(pesanObj.toString());
 
           setState(() {
             pesanArray.add(pesanObj);
@@ -2192,6 +2225,7 @@ class ChatPageState extends State<ChatPage> {
   Map<String, dynamic> parseMenu(String menuString, bool fromUser) {
     var menuValues = menuString.replaceAll(RegExp(r'\{|\}'), '').split(',');
     if (fromUser == false) {
+      // log(message)
       var jmlItem = int.parse(menuValues[0].replaceAll('jmlItem: ', ''));
 
       var actions = [];
@@ -2218,38 +2252,6 @@ class ChatPageState extends State<ChatPage> {
       };
     }
   }
-
-  /* Future<void> loadCsvData() async {
-    final directory = await getTemporaryDirectory();
-    directory.delete(recursive: true);
-
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(allowCompression: false);
-
-    if (result != null) {
-      final input = File(result.files.single.path!).openRead();
-      final isi = await input
-          .transform(utf8.decoder)
-          .transform(CsvToListConverter(eol: '\n', textDelimiter: '"'))
-          .toList();
-      final strIsi = '';
-      List objFromCsv = [];
-      int index = 0;
-      // print(isi);
-      for (var e in isi[1]) {
-        objFromCsv.add(parseTextToObjects(e.toString()));
-      log(parseTextToObjects(e.toString()).toString());
-      }
-      for (var pesan in objFromCsv[0]) {
-        setState(() {
-          pesanArray.add(pesan);
-        });
-        saveArray(showLog: false);
-      }
-    } else {
-      print('cancel import');
-    }
-  } */
 
   // fungsi ubah teks ke obj
   List<Map<String, dynamic>> parseTextToObjects(String text) {

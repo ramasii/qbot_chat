@@ -6,3 +6,4 @@ export 'settings_page.dart';
 export 'label_page.dart';
 export 'subscription_page.dart';
 export './detail_label_page.dart';
+export './note_page.dart';
