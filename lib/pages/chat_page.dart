@@ -1175,6 +1175,7 @@ class ChatPageState extends State<ChatPage> {
         child: Row(
           mainAxisAlignment:
               fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               foregroundDecoration: BoxDecoration(
@@ -1323,33 +1324,36 @@ class ChatPageState extends State<ChatPage> {
               ),
             ),
             !fromUser
-                ? CircleAvatar(
-                    backgroundColor: Colors.white,
-                    radius: 18,
-                    child: IconButton(
-                        onPressed: () {
-                          print('tekan favorit');
-                          setState(() {
-                            pesan['isFavourite'] =
-                                pesan['isFavourite'] == true ? false : true;
-                            saveArray();
-                          });
-                          print('is favorit? ${pesan['isFavourite']}');
-                        },
-                        padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(),
-                        icon: pesan['isFavourite']
-                            ? Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                                size: 22,
-                              )
-                            : Icon(
-                                Icons.favorite_border_rounded,
-                                color: Colors.grey[400],
-                                size: 22,
-                              )),
-                  )
+                ? Container(
+                  padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 18,
+                      child: IconButton(
+                          onPressed: () {
+                            print('tekan favorit');
+                            setState(() {
+                              pesan['isFavourite'] =
+                                  pesan['isFavourite'] == true ? false : true;
+                              saveArray();
+                            });
+                            print('is favorit? ${pesan['isFavourite']}');
+                          },
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                          icon: pesan['isFavourite']
+                              ? Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 22,
+                                )
+                              : Icon(
+                                  Icons.favorite_border_rounded,
+                                  color: Colors.grey[400],
+                                  size: 22,
+                                )),
+                    ),
+                )
                 : Container(),
           ],
         ),
