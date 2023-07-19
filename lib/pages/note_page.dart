@@ -123,36 +123,37 @@ class _NotePageState extends State<NotePage> {
                                       },
                                       child: Row(
                                         children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              filteredNote[index]['judul'] != ''
-                                                  ? Text(
-                                                      filteredNote[index]
-                                                          ['judul'],
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 20,
-                                                          overflow: TextOverflow
-                                                              .ellipsis),
-                                                    )
-                                                  : Container(),
-                                              filteredNote[index]['konten'] !=
-                                                      ''
-                                                  ? Text(
-                                                      filteredNote[index]
-                                                          ['konten'],
-                                                      maxLines: 4,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          ),
                                           Expanded(
-                                            child: Align(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                filteredNote[index]['judul'] != ''
+                                                    ? Text(
+                                                        filteredNote[index]
+                                                            ['judul'],
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 20,
+                                                            overflow: TextOverflow
+                                                                .ellipsis),
+                                                      )
+                                                    : Container(),
+                                                filteredNote[index]['konten'] !=
+                                                        ''
+                                                    ? Text(
+                                                        filteredNote[index]
+                                                            ['konten'],
+                                                        maxLines: 4,
+                                                        overflow:
+                                                            TextOverflow.ellipsis,
+                                                      )
+                                                    : Container(),
+                                              ],
+                                            ),
+                                          ),
+                                          Align(
                                               alignment: Alignment.centerRight,
                                               child: IconButton(
                                                   tooltip: 'Hapus',
@@ -241,7 +242,6 @@ class _NotePageState extends State<NotePage> {
                                                   },
                                                   icon: Icon(Icons.close)),
                                             ),
-                                          )
                                         ],
                                       ),
                                     ),

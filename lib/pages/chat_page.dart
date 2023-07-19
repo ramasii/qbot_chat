@@ -203,6 +203,7 @@ class ChatPageState extends State<ChatPage> {
   List csvData = [];
   late List selectedItems = [];
   List labeledItems = [];
+  List noteList = [];
   List labelColors = [
     Color.fromARGB(255, 255, 155, 155),
     Color.fromARGB(255, 255, 217, 155),
@@ -322,8 +323,46 @@ class ChatPageState extends State<ChatPage> {
                     ),
                   )
                 : IconButton(
-                    onPressed: (() {
+                    onPressed: (() async {
                       log('tambah note');
+                      log(selectedItems.toString());
+                      for (var element in selectedItems) {
+                        log(element.toString());
+                        // ambil noteList
+                        await getNotesList();
+
+                        // temukan index elemen di pesanArray
+                        var idxFromPesanArr = pesanArray.indexWhere(
+                            (element2) =>
+                                element2['time'] == element['pesanObj']);
+
+                        // dapatkan pesan dari pesanArray[idx]
+                        String konten = pesanArray[idxFromPesanArr]['pesan']
+                            .replaceAll('\*', '');
+
+                        var timeAdd = DateTime.now().toString();
+
+                        var color = noteList.length > 5
+                            ? sisabagi(noteList.length, 5)
+                            : noteList.length;
+
+                        // buat obj note
+                        Map note = {
+                          "judul": konten.split('\n')[0],
+                          "konten": konten,
+                          "timeAdd": DateTime.now().toString(),
+                          "color": color
+                        };
+
+                        // tambahkan note ke noteList
+                        setState(() {
+                          noteList.add(note);
+                        });
+
+                        // simpan
+                        await saveNoteList();
+                      }
+                      await clearSelectedItems();
                     }),
                     tooltip: 'Tambah ke Catatan',
                     icon: Icon(Icons.note_add_rounded, color: Colors.white)),
@@ -2165,7 +2204,9 @@ class ChatPageState extends State<ChatPage> {
       final a = await input.transform(utf8.decoder).join();
       final modifiedText = a.replaceAll('\n', '\\n');
       final lines = LineSplitter().convert(modifiedText);
-      final isi = lines[0].replaceAll(RegExp(r'\\n$', multiLine: true), '').split(RegExp(r'\\n(?=")', multiLine: true));
+      final isi = lines[0]
+          .replaceAll(RegExp(r'\\n$', multiLine: true), '')
+          .split(RegExp(r'\\n(?=")', multiLine: true));
       log(isi.toString());
 
       for (var i = 1; i < isi.length; i++) {
@@ -2269,6 +2310,29 @@ class ChatPageState extends State<ChatPage> {
 
     print('DONE parseTextToObjects');
     return objects;
+  }
+
+  // fungsi save notes
+  saveNoteList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('noteList', jsonEncode(noteList));
+    log('saved noteList');
+  }
+
+  // fungsi ambil notes
+  getNotesList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? a = await prefs.getString('noteList');
+    if (a != null) {
+      setState(() {
+        noteList = jsonDecode(a);
+      });
+      log('noteList ditemukan, length:${noteList.length}', name: 'getNoteList');
+    } else {
+      log('noteList tidak ditemukan', name: 'getNoteList');
+    }
   }
 
   // fungsi buka kamera, ambil gambar dari kamera
