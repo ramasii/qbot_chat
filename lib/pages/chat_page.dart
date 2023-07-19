@@ -384,13 +384,6 @@ class ChatPageState extends State<ChatPage> {
                                             }
                                           }
                                         }
-                                        // log(boolList.toString(),
-                                        //     name: labelName);
-
-                                        // log(checkAllTrue(boolList).toString(),
-                                        //     name: labelName);
-
-                                        // var thisState = null;
 
                                         // jika checkAlltrue == true, maka tambah ke labelIndex
                                         if (checkAllTrue(boolList) == true ||
@@ -2169,10 +2162,6 @@ class ChatPageState extends State<ChatPage> {
     if (result != null) {
       // membaca isi file csv
       final input = File(result.files.single.path!).openRead();
-      /* final isi = await input
-          .transform(utf8.decoder)
-          .transform(const LineSplitter())
-          .toList(); */
       final a = await input.transform(utf8.decoder).join();
       final modifiedText = a.replaceAll('\n', '\\n');
       final lines = LineSplitter().convert(modifiedText);
@@ -2181,7 +2170,6 @@ class ChatPageState extends State<ChatPage> {
 
       for (var i = 1; i < isi.length; i++) {
         var row = isi[i].split(';');
-        log(row.length.toString());
         if (row.length == 10) {
           var pesan = row[0].replaceAll(RegExp(r'^"|"$', multiLine: true), '');
           var fromUser = row[1] == 'true';
@@ -2189,7 +2177,6 @@ class ChatPageState extends State<ChatPage> {
           var share = row[3] == 'true';
           var imgUrl = row[4];
           var isFavourite = row[5] == 'true';
-          log('row6: ${row[6]}');
           var menu = parseMenu(row[6], fromUser);
           var isSelected = row[7] == 'true';
           var pageNow = int.parse(row[8]);
@@ -2207,8 +2194,6 @@ class ChatPageState extends State<ChatPage> {
             'pageNow': pageNow,
             'pageMax': pageMax,
           };
-
-          // log(pesanObj.toString());
 
           setState(() {
             pesanArray.add(pesanObj);
