@@ -17,6 +17,15 @@ class AddNotePage extends StatefulWidget {
 
 class _AddNotePageState extends State<AddNotePage> {
   List noteList = [];
+  List colorList = [
+    Color.fromARGB(255, 255, 155, 155),
+    Color.fromARGB(255, 255, 217, 155),
+    Color.fromARGB(255, 170, 255, 155),
+    Color.fromARGB(255, 121, 255, 253),
+    Color.fromARGB(255, 155, 158, 255),
+    Color.fromARGB(255, 255, 155, 252)
+  ];
+  int colorIndex = 0;
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
   @override
@@ -28,6 +37,7 @@ class _AddNotePageState extends State<AddNotePage> {
       setState(() {
         titleController.text = widget.noteToEdit!['judul'];
         contentController.text = widget.noteToEdit!['konten'];
+        colorIndex = widget.noteToEdit!['color'];
       });
     }
   }
@@ -46,7 +56,7 @@ class _AddNotePageState extends State<AddNotePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Tambah Catatan', style: TextStyle(color: Colors.white)),
+          title: Text('Catatan', style: TextStyle(color: Colors.white)),
           backgroundColor: Color.fromARGB(255, 58, 86, 100),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -62,14 +72,17 @@ class _AddNotePageState extends State<AddNotePage> {
         floatingActionButton: InkWell(
           onTap: () async {
             log('save note');
+            var a = DateTime.now().toString();
             // tambah note baru
-            if ((titleController.text.trim().isNotEmpty || contentController.text.trim().isNotEmpty) &&
+            if ((titleController.text.trim().isNotEmpty ||
+                    contentController.text.trim().isNotEmpty) &&
                 widget.noteToEdit == null) {
               await getNotesList();
               Map note = {
                 "judul": titleController.text.trim(),
                 "konten": contentController.text.trim(),
-                "timeAdd": DateTime.now().toString(),
+                "timeAdd": a,
+                "timeEdited": a,
                 "color": noteList.length > 5
                     ? sisabagi(noteList.length, 5)
                     : noteList.length
@@ -94,14 +107,16 @@ class _AddNotePageState extends State<AddNotePage> {
                   (route) => false);
             }
             // edit note
-            else if ((titleController.text.trim().isNotEmpty || contentController.text.trim().isNotEmpty) &&
+            else if ((titleController.text.trim().isNotEmpty ||
+                    contentController.text.trim().isNotEmpty) &&
                 widget.noteToEdit != null) {
               await getNotesList();
               Map note = {
                 "judul": titleController.text.trim(),
                 "konten": contentController.text.trim(),
+                "timeEdited": DateTime.now().toString(),
                 "timeAdd": widget.noteToEdit!['timeAdd'],
-                "color": widget.noteToEdit!['color'],
+                "color": colorIndex,
               };
               // ambil index catatan yg diedit
               var idxToEdit = noteList.indexWhere((element) =>
@@ -109,7 +124,7 @@ class _AddNotePageState extends State<AddNotePage> {
 
               // replace pada index tsb
               setState(() {
-                noteList.replaceRange(idxToEdit, idxToEdit+1, [note]);
+                noteList.replaceRange(idxToEdit, idxToEdit + 1, [note]);
               });
 
               // simpan
@@ -155,11 +170,48 @@ class _AddNotePageState extends State<AddNotePage> {
           child: Column(
             children: [
               Container(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: List.generate(
+                        colorList.length,
+                        (index) => InkWell(
+                              onTap: () {
+                                setState(() {
+                                  colorIndex = index;
+                                });
+                              },
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.all(10),
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                        color: colorList[index],
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                  ),
+                                  if (index == colorIndex)
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 30,
+                                    )
+                                ],
+                              ),
+                            )),
+                  ),
+                ),
+              ),
+              Container(
                 padding: EdgeInsets.all(20),
                 child: TextField(
                   controller: titleController,
                   cursorColor: Colors.teal,
-                  autofocus: widget.noteToEdit == null, // kalo mau edit/view berarti 'true', kalo nambah berarti 'false'. 
+                  autofocus: widget.noteToEdit ==
+                      null, // kalo mau edit/view berarti 'true', kalo nambah berarti 'false'.
                   decoration: InputDecoration.collapsed(
                     floatingLabelAlignment: FloatingLabelAlignment.start,
                     hintText: "Judul",

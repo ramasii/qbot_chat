@@ -337,41 +337,94 @@ class ChatPageState extends State<ChatPage> {
                     onPressed: (() async {
                       log('tambah note');
                       log(selectedItems.toString());
-                      for (var element in selectedItems) {
-                        log(element.toString());
-                        // ambil noteList
-                        await getNotesList();
 
-                        // temukan index elemen di pesanArray
-                        var idxFromPesanArr = pesanArray.indexWhere(
-                            (element2) =>
-                                element2['time'] == element['pesanObj']);
+                      // Tampilkan PopupMenu
+                      int? selectedOption = await showMenu<int>(
+                        context: context,
+                        position: RelativeRect.fromLTRB(0, 70, 24, 0),
+                        // Tentukan posisi menu relatif terhadap IconButton
+                        items: [
+                          PopupMenuItem(
+                            value: 0,
+                            child: Text('Catatan Baru'),
+                          ),
+                          PopupMenuItem(
+                            value: 1,
+                            child: Text('Catatan yang Sudah Ada'),
+                          ),
+                        ],
+                      );
 
-                        // dapatkan pesan dari pesanArray[idx]
-                        String konten = pesanArray[idxFromPesanArr]['pesan']
-                            .replaceAll('\*', '');
+                      // Tangani pilihan yang dipilih
+                      if (selectedOption != null) {
+                        if (selectedOption == 0) {
+                          // Pilihan "Catatan Baru" dipilih
+                          log('Catatan Baru dipilih');
+                          for (var element in selectedItems) {
+                            log(element.toString());
+                            // ambil noteList
+                            await getNotesList();
 
-                        var timeAdd = DateTime.now().toString();
+                            // temukan index elemen di pesanArray
+                            var idxFromPesanArr = pesanArray.indexWhere(
+                                (element2) =>
+                                    element2['time'] == element['pesanObj']);
 
-                        var color = noteList.length > 5
-                            ? sisabagi(noteList.length, 5)
-                            : noteList.length;
+                            // dapatkan pesan dari pesanArray[idx]
+                            String konten = pesanArray[idxFromPesanArr]['pesan']
+                                .replaceAll('\*', '');
 
-                        // buat obj note
-                        Map note = {
-                          "judul": konten.split('\n')[0],
-                          "konten": konten,
-                          "timeAdd": DateTime.now().toString(),
-                          "color": color
-                        };
+                            var timeAdd = DateTime.now().toString();
 
-                        // tambahkan note ke noteList
-                        setState(() {
-                          noteList.add(note);
-                        });
+                            var color = noteList.length > 5
+                                ? sisabagi(noteList.length, 5)
+                                : noteList.length;
 
-                        // simpan
-                        await saveNoteList();
+                            var a = DateTime.now().toString();
+                            // buat obj note
+                            Map note = {
+                              "judul": konten.split('\n')[0],
+                              "konten": konten,
+                              "timeAdd": a,
+                              "timeEdited": a,
+                              "color": color
+                            };
+
+                            // tambahkan note ke noteList
+                            setState(() {
+                              noteList.add(note);
+                            });
+
+                            // simpan
+                            await saveNoteList();
+
+                            Fluttertoast.showToast(
+                                                            msg:
+                                                                'Catatan baru ditambahkan',
+                                                            backgroundColor:
+                                                                Colors.green,
+                                                            textColor:
+                                                                Colors.white);
+                          }
+                        } else if (selectedOption == 1) {
+                          // Pilihan "Catatan yang Sudah Ada" dipilih
+                          log('Catatan yang Sudah Ada dipilih');
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Tambahkan Catatan'),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: List.generate(
+                                          5,
+                                          (index) => Container(
+                                                child: Text(index.toString()),
+                                              ))),
+                                );
+                              });
+                        }
                       }
                       await clearSelectedItems();
                     }),

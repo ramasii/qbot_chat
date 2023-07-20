@@ -58,34 +58,41 @@ class _NotePageState extends State<NotePage> {
                   color: Color.fromARGB(255, 58, 86, 100),
                   padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
                   child: Container(
-                      padding: EdgeInsets.fromLTRB(15, 12, 15, 10),
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 83, 123, 141),
-                          borderRadius: BorderRadiusDirectional.circular(60)),
-                      child: Align(
-                        child: TextField(
-                          controller: searchController,
-                          onChanged: (value) {
-                            onSearchTextChanged(value);
-                          },
-                          cursorColor: Colors.teal,
-                          maxLines: 3,
-                          autofocus:
-                              false, // supaya keyboard tidak muncul otomatis
-                          decoration: InputDecoration.collapsed(
-                            floatingLabelAlignment:
-                                FloatingLabelAlignment.start,
-                            hintText: "Cari catatan...",
-                            hintStyle: TextStyle(
-                                color: Color.fromARGB(
-                                    255, 186, 186, 186)), // Warna teks hint
-                          ),
-                          style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              fontSize: 18), // Warna teks yang diketik
+                    padding: EdgeInsets.fromLTRB(5, 0, 15, 0),
+                    height: 50,
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 83, 123, 141),
+                        borderRadius: BorderRadiusDirectional.circular(60)),
+                    child: TextField(
+                      controller: searchController,
+                      onChanged: (value) {
+                        onSearchTextChanged(value);
+                      },
+                      cursorColor: Colors.teal,
+                      maxLines: 1,
+                      autofocus: false, // supaya keyboard tidak muncul otomatis
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.search,
+                          size: 30,
                         ),
-                      )),
+                        prefixIconColor: Color.fromARGB(255, 186, 186, 186),
+
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+
+                        floatingLabelAlignment: FloatingLabelAlignment.start,
+                        hintText: "Cari catatan...",
+
+                        hintStyle: TextStyle(
+                            color: Color.fromARGB(255, 186, 186, 186),
+                            fontSize: 18), // Warna teks hint
+                      ),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 255, 255, 255),
+                          fontSize: 18), // Warna teks yang diketik
+                    ),
+                  ),
                 ),
                 StatefulBuilder(
                     builder: (BuildContext context, StateSetter setState) {
@@ -106,8 +113,9 @@ class _NotePageState extends State<NotePage> {
                                   ),
                                   margin: EdgeInsets.fromLTRB(15, 5, 15, 5),
                                   child: Container(
-                                    padding: EdgeInsets.all(15),
+                                    // padding: EdgeInsets.all(15),
                                     child: InkWell(
+                                      borderRadius: BorderRadius.circular(10),
                                       onTap: () {
                                         log('view note idx $index');
 
@@ -122,126 +130,142 @@ class _NotePageState extends State<NotePage> {
                                         );
                                       },
                                       child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                filteredNote[index]['judul'] != ''
-                                                    ? Text(
-                                                        filteredNote[index]
-                                                            ['judul'],
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 20,
-                                                            overflow: TextOverflow
-                                                                .ellipsis),
-                                                      )
-                                                    : Container(),
-                                                filteredNote[index]['konten'] !=
-                                                        ''
-                                                    ? Text(
-                                                        filteredNote[index]
-                                                            ['konten'],
-                                                        maxLines: 4,
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
-                                                      )
-                                                    : Container(),
-                                              ],
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  15, 10, 15, 10),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  filteredNote[index]
+                                                              ['judul'] !=
+                                                          ''
+                                                      ? Text(
+                                                          filteredNote[index]
+                                                              ['judul'],
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 20,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis),
+                                                        )
+                                                      : Container(),
+                                                  filteredNote[index]
+                                                              ['konten'] !=
+                                                          ''
+                                                      ? Text(
+                                                          filteredNote[index]
+                                                              ['konten'],
+                                                          maxLines: 4,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        )
+                                                      : Container(),
+                                                      Divider(color: Color.fromARGB(0, 0, 0, 0),),
+                                                  Text(filteredNote[index]
+                                                              ['timeAdd'] ==
+                                                          filteredNote[index]
+                                                              ['timeEdited']
+                                                      ? 'Ditambahkan ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}'
+                                                      : 'Diedit ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}',
+                                                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Color.fromARGB(255, 138, 138, 138)),)
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          Align(
-                                              alignment: Alignment.centerRight,
-                                              child: IconButton(
-                                                  tooltip: 'Hapus',
-                                                  splashRadius: 25,
-                                                  onPressed: () async {
-                                                    // temukan indexnya
-                                                    var indexToDelete = filteredNote
-                                                        .indexWhere((element) =>
-                                                            element[
-                                                                'timeAdd'] ==
-                                                            filteredNote[index]
-                                                                ['timeAdd']);
+                                          IconButton(
+                                              tooltip: 'Hapus',
+                                              splashRadius: 25,
+                                              onPressed: () async {
+                                                // temukan indexnya
+                                                var indexToDelete = filteredNote
+                                                    .indexWhere((element) =>
+                                                        element['timeAdd'] ==
+                                                        filteredNote[index]
+                                                            ['timeAdd']);
 
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return AlertDialog(
-                                                          title: Text(
-                                                              'Hapus Catatan ini?'),
-                                                          content: Text(
-                                                              'Catatan yang dihapus tidak bisa dikembalikan.'),
-                                                          actions: [
-                                                            TextButton(
-                                                              child: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            10),
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(
+                                                          'Hapus Catatan ini?'),
+                                                      content: Text(
+                                                          'Catatan yang dihapus tidak bisa dikembalikan.'),
+                                                      actions: [
+                                                        TextButton(
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.grey,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
                                                                             5)),
-                                                                child: Text(
-                                                                  'Batal',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
+                                                            child: Text(
+                                                              'Batal',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
                                                             ),
-                                                            TextButton(
-                                                              child: Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            10),
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                        .red,
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
+                                                          ),
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                        TextButton(
+                                                          child: Container(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10),
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.red,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
                                                                             5)),
-                                                                child: Text(
-                                                                  'Hapus',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                log('delete index: $indexToDelete');
+                                                            child: Text(
+                                                              'Hapus',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                          onPressed: () async {
+                                                            log('delete index: $indexToDelete');
 
-                                                                setState(() {
-                                                                  noteList.removeAt(
-                                                                      indexToDelete);
-                                                                });
-                                                                await saveNoteList();
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
+                                                            setState(() {
+                                                              noteList.removeAt(
+                                                                  indexToDelete);
+                                                            });
+                                                            await saveNoteList();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          },
+                                                        ),
+                                                      ],
                                                     );
                                                   },
-                                                  icon: Icon(Icons.close)),
-                                            ),
+                                                );
+                                              },
+                                              icon: Icon(
+                                                Icons.close,
+                                              )),
                                         ],
                                       ),
                                     ),
@@ -252,13 +276,12 @@ class _NotePageState extends State<NotePage> {
                           }),
                         )
                       : Center(
-                        heightFactor: 10,
+                          heightFactor: 10,
                           child: Padding(
                             padding: EdgeInsets.all(15),
                             child: Text(
                               'Anda belum menambahkan catatan',
-                              style: TextStyle(
-                                  color: Colors.grey),
+                              style: TextStyle(color: Colors.grey),
                             ),
                           ),
                         );
@@ -306,8 +329,8 @@ class _NotePageState extends State<NotePage> {
       setState(() {
         noteList = jsonDecode(a);
         noteList.sort((a, b) {
-          DateTime timeA = DateTime.parse(a['timeAdd']);
-          DateTime timeB = DateTime.parse(b['timeAdd']);
+          DateTime timeA = DateTime.parse(a['timeEdited'] ?? '0');
+          DateTime timeB = DateTime.parse(b['timeEdited'] ?? '0');
           return timeB.compareTo(timeA); // Mengurutkan dari terbaru ke terlama
         });
       });
