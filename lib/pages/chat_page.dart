@@ -12,7 +12,17 @@ import '../utils/allpackages.dart';
 import 'pages.dart';
 import '../qbotterminal.dart';
 
-enum Options { clear, exit, export, about, settings, import, labels }
+enum Options {
+  clear,
+  exit,
+  export,
+  about,
+  settings,
+  import,
+  labels,
+  note,
+  subscription
+}
 
 class ChatPage extends StatefulWidget {
   ChatPage({Key? key, required this.arguments, this.messageStamp = ''})
@@ -42,6 +52,7 @@ class ChatPageState extends State<ChatPage> {
   bool loadingOcr = false;
   bool selectItem = false;
   bool speaking = false;
+  bool isPremium = false;
   var _popupMenuItemIndex = 0;
 
   final TextEditingController textEditingController = TextEditingController();
@@ -235,7 +246,7 @@ class ChatPageState extends State<ChatPage> {
       });
 
     getArray('pesanArray', objKey: widget.messageStamp);
-
+    checkPremium();
     AppSettings.loadSettings();
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
@@ -842,26 +853,31 @@ class ChatPageState extends State<ChatPage> {
                       print('klik di popup menu, pojok kanan atas');
                       _onMenuItemSelected(value as int);
                     },
-                    itemBuilder: (ctx) => [
-                          _buildPopupMenuItem('Expor Pesan',
-                              Icons.upload_file_rounded, Options.export.index),
-                          _buildPopupMenuItem(
-                              'Impor Pesan',
-                              Icons.file_download_rounded,
-                              Options.import.index),
-                          _buildPopupMenuItem(
-                              'Bersihkan Pesan',
-                              Icons.cleaning_services_rounded,
-                              Options.clear.index),
-                          _buildPopupMenuItem(
-                              'Labels', Icons.label, Options.labels.index),
-                          _buildPopupMenuItem('Pengaturan', Icons.settings,
-                              Options.settings.index),
-                          _buildPopupMenuItem('Tentang IslamBot',
-                              Icons.info_outline_rounded, Options.about.index),
-                          _buildPopupMenuItem('Keluar Aplikasi',
-                              Icons.exit_to_app_rounded, Options.exit.index),
-                        ])
+                    itemBuilder: (ctx) {
+                      return [
+                        if (isPremium)
+                          ..._buildPopupMenuItem('Membership',
+                              FontAwesome5.crown, Options.subscription.index),
+                        ..._buildPopupMenuItem(
+                            'Catatan', Icons.note_alt, Options.note.index),
+                        ..._buildPopupMenuItem(
+                            'Labels', Icons.label, Options.labels.index),
+                        ..._buildPopupMenuItem('Pengaturan', Icons.settings,
+                            Options.settings.index),
+                        ..._buildPopupMenuItem('Expor Pesan',
+                            Icons.upload_file_rounded, Options.export.index),
+                        ..._buildPopupMenuItem('Impor Pesan',
+                            Icons.file_download_rounded, Options.import.index),
+                        ..._buildPopupMenuItem(
+                            'Bersihkan Pesan',
+                            Icons.cleaning_services_rounded,
+                            Options.clear.index),
+                        ..._buildPopupMenuItem('Tentang IslamBot',
+                            Icons.info_outline_rounded, Options.about.index),
+                        ..._buildPopupMenuItem('Keluar Aplikasi',
+                            Icons.exit_to_app_rounded, Options.exit.index),
+                      ];
+                    })
                 : IconButton(
                     onPressed: () {
                       clearSelectedItems();
@@ -1172,7 +1188,7 @@ class ChatPageState extends State<ChatPage> {
         child: Row(
           mainAxisAlignment:
               fromUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               foregroundDecoration: BoxDecoration(
@@ -1322,8 +1338,8 @@ class ChatPageState extends State<ChatPage> {
             ),
             !fromUser
                 ? Container(
-                  padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  child: CircleAvatar(
+                    padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                    child: CircleAvatar(
                       backgroundColor: Colors.white,
                       radius: 18,
                       child: IconButton(
@@ -1350,7 +1366,7 @@ class ChatPageState extends State<ChatPage> {
                                   size: 22,
                                 )),
                     ),
-                )
+                  )
                 : Container(),
           ],
         ),
@@ -1963,24 +1979,53 @@ class ChatPageState extends State<ChatPage> {
   }
 
   //widget popup menu button
-  PopupMenuItem _buildPopupMenuItem(
+  List<PopupMenuEntry> _buildPopupMenuItem(
+    String title,
+    IconData iconData,
+    int position,
+  ) {
+    return [
+      PopupMenuItem(
+        value: position,
+        child: Row(
+          children: [
+            Icon(
+              iconData,
+              color: Colors.teal,
+            ),
+            SizedBox(width: 10),
+            Text(title),
+          ],
+        ),
+      ),
+      if (position == 0 ||
+          position == 4) // Tidak tambahkan Divider untuk item terakhir
+        PopupMenuDivider(height: 2),
+    ];
+  }
+  /* PopupMenuItem _buildPopupMenuItem(
       String title, IconData iconData, int position) {
     return PopupMenuItem(
       value: position,
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Icon(
-            iconData,
-            color: Colors.teal,
+          Row(
+            children: [
+              Icon(
+                iconData,
+                color: Colors.teal,
+              ),
+              Container(
+                width: 10,
+              ),
+              Text(position.toString()),
+            ],
           ),
-          Container(
-            width: 10,
-          ),
-          Text(title),
         ],
       ),
     );
-  }
+  } */
 
   // fungsi jika select di popup menu
   _onMenuItemSelected(int value) async {
@@ -2043,6 +2088,25 @@ class ChatPageState extends State<ChatPage> {
       );
     }
 
+    // go to membership
+    else if (value == Options.note.index) {
+      log('pergi ke membership');
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SubscriptionScreen(
+                  checkSubs: true,
+                )),
+      );
+    }
+    // go to note
+    else if (value == Options.note.index) {
+      log('pergi ke note page');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NotePage()),
+      );
+    }
     // exit app
     else if (value == Options.exit.index) {
       print('START exit app');
@@ -2311,6 +2375,36 @@ class ChatPageState extends State<ChatPage> {
 
     print('DONE parseTextToObjects');
     return objects;
+  }
+
+  void checkPremium() async {
+    log('check premium');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var isPremium = prefs.getBool('isPremium') ?? false;
+    var premiumEnd = prefs.getString('PremiumEnd');
+
+    if (isPremium && premiumEnd != null) {
+      // Konversi milisekon UNIX timestamp menjadi DateTime
+      DateTime endDateTime =
+          DateTime.fromMillisecondsSinceEpoch(int.parse(premiumEnd));
+      DateTime now = DateTime.now();
+      if (endDateTime.isAfter(now)) {
+        setState(() {
+          // Jika isPremium true dan premiumEnd lebih besar daripada tanggal sekarang
+          // maka atur isPremium menjadi true
+          isPremium = true;
+        });
+      } else {
+        // Jika premium sudah berakhir, set isPremium menjadi false
+        isPremium = false;
+      }
+    } else {
+      // Jika isPremium adalah null atau false, set isPremium menjadi false
+      isPremium = false;
+    }
+
+    // Simpan kembali status isPremium setelah diperbarui (optional, tergantung kebutuhan)
+    prefs.setBool('isPremium', isPremium);
   }
 
   // fungsi save notes

@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'pages.dart';
 
 class SubscriptionScreen extends StatefulWidget {
+  bool checkSubs;
+
+  SubscriptionScreen({this.checkSubs = false});
+
   @override
   _SubscriptionScreenState createState() => _SubscriptionScreenState();
 }
@@ -15,7 +19,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
-    isMembership();
+    if (!widget.checkSubs) isMembership();
   }
 
   @override
@@ -74,18 +78,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                   child: InkWell(
                       onTap: () {
                         Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChatPage(
-                              arguments: ChatPageArguments(
-                                peerId: '111',
-                                peerAvatar: 'images/app_icon.png',
-                                peerNickname: 'IslamBot',
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                arguments: ChatPageArguments(
+                                  peerId: '111',
+                                  peerAvatar: 'images/app_icon.png',
+                                  peerNickname: 'IslamBot',
+                                ),
                               ),
                             ),
-                          ),
-                          (route)=>false
-                        );
+                            (route) => false);
                       },
                       child: ProductCard(
                           Color.fromARGB(255, 209, 209, 209),
@@ -217,10 +220,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference usersCollection = firestore.collection('users');
     var a = await getAllValuesFromUserDocument();
+    await prefs.setBool('isPremium', a["isPremium"]);
+    await prefs.setBool('isTrial', a["isTrial"]);
 
     if (a["isPremium"] || a["isTrial"]) {
       int p = a["PremiumEnd"] == null ? 0 : int.parse(a["PremiumEnd"]);
       int t = a["TrialEnd"] == null ? 0 : int.parse(a["TrialEnd"]);
+
+      await prefs.setString(
+          'PremiumEnd', a["PremiumEnd"] == null ? '0' : a["PremiumEnd"]);
+      await prefs.setString(
+          'TrialEnd', a["TrialEnd"] == null ? '0' : a["TrialEnd"]);
 
       if (p > DateTime.now().millisecondsSinceEpoch ||
           t > DateTime.now().millisecondsSinceEpoch) {
@@ -282,18 +292,17 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         print('Member sudah Premium / Trial');
       }
       Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChatPage(
-            arguments: ChatPageArguments(
-              peerId: '111',
-              peerAvatar: 'images/app_icon.png',
-              peerNickname: 'IslamBot',
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              arguments: ChatPageArguments(
+                peerId: '111',
+                peerAvatar: 'images/app_icon.png',
+                peerNickname: 'IslamBot',
+              ),
             ),
           ),
-        ),
-        (route)=>false
-      );
+          (route) => false);
     } catch (e) {
       print('Error updating Member status: $e');
     }
