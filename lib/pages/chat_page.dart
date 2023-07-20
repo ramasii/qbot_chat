@@ -1136,9 +1136,6 @@ class ChatPageState extends State<ChatPage> {
 
   // buat block pesan
   Widget buatItem(Map pesan, int index, {bool fromUser = true}) {
-    // log('index: $index - ${_itemKeys[pesanArray[index]["time"]]}');
-    /* final kunciGlobal = ValueKey<String>('${pesanArray[index]["time"]}');
-    log('$kunciGlobal'); */
     return InkWell(
       // key: kunciGlobal,
       onLongPress: () async {

@@ -228,7 +228,7 @@ class _DetailLabelState extends State<DetailLabel> {
                             return Column(
                               children: [
                                 Container(
-                                  margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
+                                  // margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
                                   decoration: BoxDecoration(
                                       color: Color.fromARGB(
                                           selectedMsg.contains(msgTime)
@@ -289,122 +289,131 @@ class _DetailLabelState extends State<DetailLabel> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      5, 5, 5, 5),
-                                                  child: pesanInLabel(
-                                                      pesanObj: pesanObj),
-                                                ),
-                                              ],
+                                            child: Container(
+                                              // margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
+                                              padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    padding: EdgeInsets.fromLTRB(
+                                                        5, 5, 5, 5),
+                                                    child: pesanInLabel(
+                                                        pesanObj: pesanObj),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                           if (selectedMsg.isEmpty)
-                                            IconButton(
-                                                onPressed: () async {
-                                                  log('delete this: {$msgTime}');
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                            'Hapus pesan ini?'),
-                                                        content: Text(
-                                                            'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
-                                                        actions: [
-                                                          TextButton(
-                                                            child: Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(10),
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              child: Text(
-                                                                'Batal',
-                                                                style: TextStyle(
+                                            Container(
+                                              // color: Colors.blue,
+                                              child: IconButton(
+                                                splashRadius: 20,
+                                                // alignment: Alignment.topCenter,
+                                                  onPressed: () async {
+                                                    log('delete this: {$msgTime}');
+                                                    showDialog(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext context) {
+                                                        return AlertDialog(
+                                                          title: Text(
+                                                              'Hapus pesan ini?'),
+                                                          content: Text(
+                                                              'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
+                                                          actions: [
+                                                            TextButton(
+                                                              child: Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(10),
+                                                                decoration: BoxDecoration(
                                                                     color: Colors
-                                                                        .white),
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                          TextButton(
-                                                            child: Container(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(10),
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                      .red,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5)),
-                                                              child: Text(
-                                                                'Hapus',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                            ),
-                                                            onPressed:
-                                                                () async {
-                                                              await getLabeledItems();
-                                                              setState(() {
-                                                                List listPesan =
-                                                                    labeledItems[
-                                                                            widget.indexLabel]
-                                                                        [
-                                                                        'listPesan'];
-                                                                listPesan.removeWhere(
-                                                                    (element) =>
-                                                                        element[
-                                                                            'pesanObj'] ==
-                                                                        msgTime);
-                                                              });
-                                                              await saveLabeledItems();
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          DetailLabel(
-                                                                    labelData:
-                                                                        labeledItems[
-                                                                            widget.indexLabel],
-                                                                    indexLabel:
-                                                                        widget
-                                                                            .indexLabel,
-                                                                  ),
+                                                                        .grey,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                5)),
+                                                                child: Text(
+                                                                  'Batal',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white),
                                                                 ),
-                                                              );
-                                                            },
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                icon: Icon(
-                                                  Icons.clear_rounded,
-                                                  color: Colors.red,
-                                                ))
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                            TextButton(
+                                                              child: Container(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .all(10),
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                5)),
+                                                                child: Text(
+                                                                  'Hapus',
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white),
+                                                                ),
+                                                              ),
+                                                              onPressed:
+                                                                  () async {
+                                                                await getLabeledItems();
+                                                                setState(() {
+                                                                  List listPesan =
+                                                                      labeledItems[
+                                                                              widget.indexLabel]
+                                                                          [
+                                                                          'listPesan'];
+                                                                  listPesan.removeWhere(
+                                                                      (element) =>
+                                                                          element[
+                                                                              'pesanObj'] ==
+                                                                          msgTime);
+                                                                });
+                                                                await saveLabeledItems();
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DetailLabel(
+                                                                      labelData:
+                                                                          labeledItems[
+                                                                              widget.indexLabel],
+                                                                      indexLabel:
+                                                                          widget
+                                                                              .indexLabel,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.clear_rounded,
+                                                    color: Colors.red,
+                                                  )),
+                                            )
                                         ],
                                       ),
                                     ),
