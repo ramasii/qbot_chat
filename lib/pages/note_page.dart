@@ -15,12 +15,15 @@ class _NotePageState extends State<NotePage> {
       []; // {"judul":"String", "konten":"String Multiline\n1\n2\n3 last", "timeAdd":"DateTime().now().toString", "color":0}
   List filteredNote = [];
   List colorList = [
-    Color.fromARGB(255, 255, 155, 155),
-    Color.fromARGB(255, 255, 217, 155),
-    Color.fromARGB(255, 170, 255, 155),
-    Color.fromARGB(255, 121, 255, 253),
-    Color.fromARGB(255, 155, 158, 255),
-    Color.fromARGB(255, 255, 155, 252)
+    Color.fromARGB(255, 244,237,178),
+    Color.fromARGB(255, 241,241,241),
+    Color.fromARGB(255, 223,243,179),
+    Color.fromARGB(255, 192,242,177),
+    Color.fromARGB(255, 238,195,236),
+    Color.fromARGB(255, 183,228,244),
+    Color.fromARGB(255, 196,208,242),
+    Color.fromARGB(255, 186,243,220),
+    Color.fromARGB(255, 238,170,190),
   ];
 
   @override

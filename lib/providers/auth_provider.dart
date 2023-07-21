@@ -77,10 +77,10 @@ class AuthProvider extends ChangeNotifier {
             FirestoreConstants.photoUrl: firebaseUser.photoURL,
             FirestoreConstants.id: firebaseUser.uid,
             'createdAt': DateTime.now().millisecondsSinceEpoch.toString(),
-            FirestoreConstants.isPremium: false,
+            'isPremium': false,
             'PremiumStart': null,
             'PremiumEnd': null,
-            FirestoreConstants.isTrial: false,
+            'isTrial': false,
             'TrialStart':null,
             'TrialEnd':null,
             FirestoreConstants.chattingWith: null

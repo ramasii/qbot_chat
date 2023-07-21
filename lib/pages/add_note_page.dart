@@ -18,12 +18,15 @@ class AddNotePage extends StatefulWidget {
 class _AddNotePageState extends State<AddNotePage> {
   List noteList = [];
   List colorList = [
-    Color.fromARGB(255, 255, 155, 155),
-    Color.fromARGB(255, 255, 217, 155),
-    Color.fromARGB(255, 170, 255, 155),
-    Color.fromARGB(255, 121, 255, 253),
-    Color.fromARGB(255, 155, 158, 255),
-    Color.fromARGB(255, 255, 155, 252)
+    Color.fromARGB(255, 244,237,178),
+    Color.fromARGB(255, 241,241,241),
+    Color.fromARGB(255, 223,243,179),
+    Color.fromARGB(255, 192,242,177),
+    Color.fromARGB(255, 238,195,236),
+    Color.fromARGB(255, 183,228,244),
+    Color.fromARGB(255, 196,208,242),
+    Color.fromARGB(255, 186,243,220),
+    Color.fromARGB(255, 238,170,190),
   ];
   int colorIndex = 0;
   TextEditingController titleController = TextEditingController();
@@ -170,36 +173,39 @@ class _AddNotePageState extends State<AddNotePage> {
               Container(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: List.generate(
-                        colorList.length,
-                        (index) => InkWell(
-                              onTap: () {
-                                setState(() {
-                                  colorIndex = index;
-                                });
-                              },
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.all(10),
-                                    height: 60,
-                                    width: 60,
-                                    decoration: BoxDecoration(
-                                        color: colorList[index],
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                  ),
-                                  if (index == colorIndex)
-                                    Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                      size: 30,
-                                    )
-                                ],
-                              ),
-                            )),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                    child: Row(
+                      children: List.generate(
+                          colorList.length,
+                          (index) => InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    colorIndex = index;
+                                  });
+                                },
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                      height: 60,
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                          color: colorList[index],
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                    ),
+                                    if (index == colorIndex)
+                                      Icon(
+                                        Icons.check,
+                                        color: Colors.white,
+                                        size: 30,
+                                      )
+                                  ],
+                                ),
+                              )),
+                    ),
                   ),
                 ),
               ),

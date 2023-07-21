@@ -286,19 +286,22 @@ class _DetailLabelState extends State<DetailLabel> {
                                     },
                                     child: Container(
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Expanded(
                                             child: Container(
                                               // margin: EdgeInsets.fromLTRB(0, 3, 0, 3),
-                                              padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 8, 0, 8),
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
-                                                    padding: EdgeInsets.fromLTRB(
-                                                        5, 5, 5, 5),
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            5, 5, 5, 5),
                                                     child: pesanInLabel(
                                                         pesanObj: pesanObj),
                                                   ),
@@ -310,14 +313,14 @@ class _DetailLabelState extends State<DetailLabel> {
                                             Container(
                                               // color: Colors.blue,
                                               child: IconButton(
-                                                splashRadius: 20,
-                                                // alignment: Alignment.topCenter,
+                                                  splashRadius: 20,
+                                                  // alignment: Alignment.topCenter,
                                                   onPressed: () async {
                                                     log('delete this: {$msgTime}');
                                                     showDialog(
                                                       context: context,
-                                                      builder:
-                                                          (BuildContext context) {
+                                                      builder: (BuildContext
+                                                          context) {
                                                         return AlertDialog(
                                                           title: Text(
                                                               'Hapus pesan ini?'),
@@ -328,14 +331,14 @@ class _DetailLabelState extends State<DetailLabel> {
                                                               child: Container(
                                                                 padding:
                                                                     EdgeInsets
-                                                                        .all(10),
+                                                                        .all(
+                                                                            10),
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
                                                                         .grey,
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5)),
+                                                                        BorderRadius.circular(
+                                                                            5)),
                                                                 child: Text(
                                                                   'Batal',
                                                                   style: TextStyle(
@@ -353,14 +356,14 @@ class _DetailLabelState extends State<DetailLabel> {
                                                               child: Container(
                                                                 padding:
                                                                     EdgeInsets
-                                                                        .all(10),
+                                                                        .all(
+                                                                            10),
                                                                 decoration: BoxDecoration(
                                                                     color: Colors
                                                                         .red,
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                5)),
+                                                                        BorderRadius.circular(
+                                                                            5)),
                                                                 child: Text(
                                                                   'Hapus',
                                                                   style: TextStyle(
@@ -372,7 +375,8 @@ class _DetailLabelState extends State<DetailLabel> {
                                                                   () async {
                                                                 await getLabeledItems();
                                                                 setState(() {
-                                                                  List listPesan =
+                                                                  List
+                                                                      listPesan =
                                                                       labeledItems[
                                                                               widget.indexLabel]
                                                                           [
@@ -526,43 +530,48 @@ class _DetailLabelState extends State<DetailLabel> {
       log('copy pesan');
       List listMsgToCopy = [];
       List listPesan = widget.labelData['listPesan'];
+      if (listPesan.isNotEmpty) {
+        // Mengurutkan listPesan berdasarkan waktu pesan
+        listPesan.sort((a, b) => DateTime.parse(a['pesanObj'])
+            .compareTo(DateTime.parse(b['pesanObj'])));
 
-      // Mengurutkan listPesan berdasarkan waktu pesan
-      listPesan.sort((a, b) => DateTime.parse(a['pesanObj'])
-          .compareTo(DateTime.parse(b['pesanObj'])));
+        listPesan.forEach((element) {
+          // Menemukan index objek pesan yang waktu pesannya sama
+          int indexPesan = pesanArray.indexWhere(
+            (element2) => element2['time'] == element['pesanObj'],
+          );
+          listMsgToCopy.add(
+              pesanArray[indexPesan]['pesan'].replaceAll(RegExp(r'\*\*'), '*'));
+        });
 
-      listPesan.forEach((element) {
-        // Menemukan index objek pesan yang waktu pesannya sama
-        int indexPesan = pesanArray.indexWhere(
-          (element2) => element2['time'] == element['pesanObj'],
-        );
-        listMsgToCopy.add(
-            pesanArray[indexPesan]['pesan'].replaceAll(RegExp(r'\*\*'), '*'));
-      });
-
-      await copyMsg(listMsgToCopy, '\n-----------------\n');
+        await copyMsg(listMsgToCopy, '\n-----------------\n');
+      } else {
+        Fluttertoast.showToast(
+            msg: 'Label ini tidak memiliki pesan',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
+      }
     }
 
     // export
     else if (value == LabeledOptions.export.index) {
       log('export pesan');
-        List listMsgForExcel = [];
-        List listPesan = widget.labelData['listPesan'];
+      List listMsgForExcel = [];
+      List listPesan = widget.labelData['listPesan'];
 
-        listPesan.forEach((element) {
-          // menemukan index objek pesan yang time nya sama
-          int indexPesan = pesanArray.indexWhere(
-            (element2) => element2['time'] == element['pesanObj'],
-          );
-          listMsgForExcel.add(pesanArray[indexPesan]);
-        });
+      listPesan.forEach((element) {
+        // menemukan index objek pesan yang time nya sama
+        int indexPesan = pesanArray.indexWhere(
+          (element2) => element2['time'] == element['pesanObj'],
+        );
+        listMsgForExcel.add(pesanArray[indexPesan]);
+      });
       if (widget.labelData.isEmpty || listMsgForExcel.isEmpty) {
         Fluttertoast.showToast(
             msg: 'Label ini tidak memilik pesan',
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       } else {
-
         // expor to excel new
         await exportExcelNew(listMsgForExcel);
       }
@@ -583,6 +592,10 @@ class _DetailLabelState extends State<DetailLabel> {
             title: Text('Edit Nama Label'),
             content: TextFormField(
               initialValue: widget.labelData['labelName'],
+              cursorColor: Colors.teal,
+              decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.teal))
+              ),
               autofocus: true,
               onChanged: (value) {
                 newLabelName = value.trim();

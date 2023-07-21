@@ -216,12 +216,15 @@ class ChatPageState extends State<ChatPage> {
   List labeledItems = [];
   List noteList = [];
   List labelColors = [
-    Color.fromARGB(255, 255, 155, 155),
-    Color.fromARGB(255, 255, 217, 155),
-    Color.fromARGB(255, 170, 255, 155),
-    Color.fromARGB(255, 121, 255, 253),
-    Color.fromARGB(255, 155, 158, 255),
-    Color.fromARGB(255, 255, 155, 252)
+    Color.fromARGB(255, 244,237,178),
+    Color.fromARGB(255, 241,241,241),
+    Color.fromARGB(255, 223,243,179),
+    Color.fromARGB(255, 192,242,177),
+    Color.fromARGB(255, 238,195,236),
+    Color.fromARGB(255, 183,228,244),
+    Color.fromARGB(255, 196,208,242),
+    Color.fromARGB(255, 186,243,220),
+    Color.fromARGB(255, 238,170,190),
   ];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
@@ -376,8 +379,8 @@ class ChatPageState extends State<ChatPage> {
 
                             var timeAdd = DateTime.now().toString();
 
-                            var color = noteList.length > 5
-                                ? sisabagi(noteList.length, 5)
+                            var color = noteList.length > 8
+                                ? sisabagi(noteList.length, 8)
                                 : noteList.length;
 
                             var a = DateTime.now().toString();
@@ -419,7 +422,7 @@ class ChatPageState extends State<ChatPage> {
                                 .compareTo(b['judul'].toLowerCase()));
                             List<String> ex1 = [];
                             SelectDialog.showModal<String>(context,
-                                label: "Tambahkan ke Catatan",
+                                label: "Tambah ke Catatan",
                                 searchBoxDecoration: InputDecoration(
                                   hintText: 'Cari catatan...',
                                   focusedBorder: UnderlineInputBorder(
@@ -705,11 +708,11 @@ class ChatPageState extends State<ChatPage> {
                                                                 labelName,
                                                             "labelColor": labeledItems
                                                                         .length >
-                                                                    5
+                                                                    8
                                                                 ? sisabagi(
                                                                     labeledItems
                                                                         .length,
-                                                                    5)
+                                                                    8)
                                                                 : labeledItems
                                                                     .length,
                                                             "listPesan": [],
@@ -801,9 +804,9 @@ class ChatPageState extends State<ChatPage> {
                                       setState(() {
                                         labeledItems.add({
                                           "labelName": labelName,
-                                          "labelColor": labeledItems.length > 5
+                                          "labelColor": labeledItems.length > 8
                                               ? labelColors[sisabagi(
-                                                  labeledItems.length, 5)]
+                                                  labeledItems.length, 8)]
                                               : labeledItems.length,
                                           "listPesan": selectedItems,
                                           "time": DateTime.now().toString()
@@ -993,7 +996,7 @@ class ChatPageState extends State<ChatPage> {
                     },
                     itemBuilder: (ctx) {
                       return [
-                        if (isPremium)
+                        if (!isPremium)
                           ..._buildPopupMenuItem('Membership',
                               FontAwesome5.crown, Options.subscription.index),
                         ..._buildPopupMenuItem(
@@ -2227,7 +2230,7 @@ class ChatPageState extends State<ChatPage> {
     }
 
     // go to membership
-    else if (value == Options.note.index) {
+    else if (value == Options.subscription.index) {
       log('pergi ke membership');
       Navigator.push(
         context,
@@ -2530,15 +2533,21 @@ class ChatPageState extends State<ChatPage> {
         setState(() {
           // Jika isPremium true dan premiumEnd lebih besar daripada tanggal sekarang
           // maka atur isPremium menjadi true
-          isPremium = true;
+          setState(() {
+            isPremium = true;
+          });
         });
       } else {
         // Jika premium sudah berakhir, set isPremium menjadi false
-        isPremium = false;
+        setState(() {
+          isPremium = false;
+        });
       }
     } else {
       // Jika isPremium adalah null atau false, set isPremium menjadi false
-      isPremium = false;
+      setState(() {
+        isPremium = false;
+      });
     }
 
     // Simpan kembali status isPremium setelah diperbarui (optional, tergantung kebutuhan)
