@@ -343,21 +343,30 @@ class ChatPageState extends State<ChatPage> {
                       log('tambah note');
                       log(selectedItems.toString());
 
-                      // Tampilkan PopupMenu
-                      int? selectedOption = await showMenu<int>(
+                      // Tampilkan Dialog
+                      int? selectedOption = await showDialog<int>(
                         context: context,
-                        position: RelativeRect.fromLTRB(0, 70, 24, 0),
-                        // Tentukan posisi menu relatif terhadap IconButton
-                        items: [
-                          PopupMenuItem(
-                            value: 0,
-                            child: Text('Catatan Baru'),
-                          ),
-                          PopupMenuItem(
-                            value: 1,
-                            child: Text('Catatan yang Sudah Ada'),
-                          ),
-                        ],
+                        builder: (BuildContext context) {
+                          return SimpleDialog(
+                            title: Text('Tambah ke Catatan'),
+                            children: [
+                              SimpleDialogOption(
+                                onPressed: () {
+                                  Navigator.pop(context,
+                                      0); // Nilai yang dikembalikan saat opsi dipilih
+                                },
+                                child: Text('• Catatan Baru'),
+                              ),
+                              SimpleDialogOption(
+                                onPressed: () {
+                                  Navigator.pop(context,
+                                      1); // Nilai yang dikembalikan saat opsi dipilih
+                                },
+                                child: Text('• Catatan yang Sudah Ada'),
+                              ),
+                            ],
+                          );
+                        },
                       );
 
                       // Tangani pilihan yang dipilih
@@ -437,7 +446,21 @@ class ChatPageState extends State<ChatPage> {
                                 multipleSelectedValues: ex1,
                                 items: List.generate(noteList.length, (index) {
                                   return "${noteList[index]['judul']}";
-                                }), onMultipleItemsChange:
+                                }), itemBuilder: (context, item, isSelected) {
+                              return Container(
+                                color: Color.fromARGB(isSelected ? 150 :0, 150, 222, 255),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Text(item),
+                                    ),
+                                    Divider(height: 0,)
+                                  ],
+                                ),
+                              );
+                            }, onMultipleItemsChange:
                                     (List<String> selected) async {
                               setState(() {
                                 ex1 = selected;
