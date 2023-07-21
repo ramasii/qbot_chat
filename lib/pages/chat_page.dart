@@ -399,34 +399,119 @@ class ChatPageState extends State<ChatPage> {
                             await saveNoteList();
 
                             Fluttertoast.showToast(
-                                                            msg:
-                                                                'Catatan baru ditambahkan',
-                                                            backgroundColor:
-                                                                Colors.green,
-                                                            textColor:
-                                                                Colors.white);
+                                msg: 'Catatan baru ditambahkan',
+                                backgroundColor: Colors.green,
+                                textColor: Colors.white);
+
+                            // bersihkan noteList
+                            setState(() {
+                              noteList.clear();
+                            });
                           }
+                          await clearSelectedItems();
                         } else if (selectedOption == 1) {
                           // Pilihan "Catatan yang Sudah Ada" dipilih
                           log('Catatan yang Sudah Ada dipilih');
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('Tambahkan Catatan'),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: List.generate(
-                                          5,
-                                          (index) => Container(
-                                                child: Text(index.toString()),
-                                              ))),
-                                );
+                          await getNotesList();
+                          if (noteList.isNotEmpty) {
+                            noteList.sort((a, b) => a['judul']
+                                .toLowerCase()
+                                .compareTo(b['judul'].toLowerCase()));
+                            List<String> ex1 = [];
+                            SelectDialog.showModal<String>(context,
+                                label: "Tambahkan ke Catatan",
+                                searchBoxDecoration: InputDecoration(
+                                  hintText: 'Cari catatan...',
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.teal,
+                                        width:
+                                            2.0), // Atur warna dan ketebalan garis
+                                  ),
+                                ),
+                                multipleSelectedValues: ex1,
+                                items: List.generate(noteList.length, (index) {
+                                  return "${noteList[index]['judul']}";
+                                }), onMultipleItemsChange:
+                                    (List<String> selected) async {
+                              setState(() {
+                                ex1 = selected;
                               });
+                              log(ex1.toString());
+                            }, okButtonBuilder: (context, onPressed) {
+                              return TextButton(
+                                onPressed: () async {
+                                  onPressed(); // ini di atas, menandakan awal dari fungsi
+                                  await getNotesList();
+                                  setState(() {
+                                    selectedItems.sort((a, b) {
+                                      DateTime timeA =
+                                          DateTime.parse(a['pesanObj'] ?? '0');
+                                      DateTime timeB =
+                                          DateTime.parse(b['pesanObj'] ?? '0');
+                                      return timeA.compareTo(timeB);
+                                    });
+                                  });
+                                  if (ex1.isNotEmpty) {
+                                    for (var element in ex1) {
+                                      int idx = noteList.indexWhere(
+                                          (element2) =>
+                                              element2['judul'] == element);
+                                      String konten = noteList[idx]['konten'];
+
+                                      List listMsg = [];
+                                      log(selectedItems.toString());
+
+                                      for (var element3 in selectedItems) {
+                                        String pesan = pesanArray[
+                                            pesanArray.indexWhere((element4) =>
+                                                element4['time'] ==
+                                                element3['pesanObj'])]['pesan'];
+                                        listMsg.add(pesan.replaceAll('*', ''));
+                                      }
+                                      String selectedMsg =
+                                          listMsg.join('\n-----------------\n');
+
+                                      String toAdd = konten != ''
+                                          ? [konten, selectedMsg]
+                                              .join('\n-----------------\n')
+                                          : selectedMsg;
+                                      setState(() {
+                                        noteList[idx]['konten'] = toAdd;
+                                      });
+                                    }
+                                  }
+                                  await saveNoteList();
+                                  await clearSelectedItems();
+                                  setState(() {
+                                    noteList.clear();
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Text(
+                                    'Simpan',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              );
+                            });
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (ctx) {
+                                  return AlertDialog(
+                                    title: Text('Anda belum memiliki catatan'),
+                                    content: Text(
+                                        'Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.'),
+                                  );
+                                });
+                          }
                         }
                       }
-                      await clearSelectedItems();
                     }),
                     tooltip: 'Tambah ke Catatan',
                     icon: Icon(Icons.note_add_rounded, color: Colors.white)),

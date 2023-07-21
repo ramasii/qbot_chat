@@ -32,6 +32,7 @@ dependencies:
   package_info: ^2.0.2
   fluttericon: ^2.0.0
   url_launcher: ^6.1.11
+  select_dialog: any
 
 
 dev_dependencies:

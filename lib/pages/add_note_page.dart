@@ -83,9 +83,7 @@ class _AddNotePageState extends State<AddNotePage> {
                 "konten": contentController.text.trim(),
                 "timeAdd": a,
                 "timeEdited": a,
-                "color": noteList.length > 5
-                    ? sisabagi(noteList.length, 5)
-                    : noteList.length
+                "color": colorIndex
               };
               setState(() {
                 noteList.add(note);

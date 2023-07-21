@@ -23,3 +23,4 @@ export 'package:file_picker/file_picker.dart';
 export 'package:flutter_tesseract_ocr/flutter_tesseract_ocr.dart';
 export 'package:scroll_to_index/scroll_to_index.dart';
 export 'package:fluttericon/font_awesome5_icons.dart';
+export 'package:select_dialog/select_dialog.dart';
