@@ -6,7 +6,7 @@ import 'package:IslamBot/utils/allpackages.dart';
 import 'pages.dart';
 import 'package:flutter_excel/excel.dart';
 
-enum LabeledOptions { copy, export, edit, delete }
+enum LabeledOptions { copy, export, edit, delete, share }
 
 class DetailLabel extends StatefulWidget {
   Map labelData;
@@ -138,6 +138,7 @@ class _DetailLabelState extends State<DetailLabel> {
                         },
                       );
                     },
+                    tooltip: "Hapus",
                     icon: Icon(
                       Icons.delete,
                       color: Colors.white,
@@ -160,8 +161,33 @@ class _DetailLabelState extends State<DetailLabel> {
 
                       await copyMsg(listMsgToCopy, '\n-----------------\n');
                     },
+                    tooltip: "Salin pesan",
                     icon: Icon(
                       Icons.copy_rounded,
+                      color: Colors.white,
+                    )),
+              if (selectedMsg.isNotEmpty)
+                IconButton(
+                    onPressed: () async {
+                      log('bagikan pesan');
+                      List listMsgToShare = [];
+                      String joinedListMsgToShare = '';
+                      selectedMsg.forEach((msgTime) {
+                        // menemukan index objek pesan yang time nya sama
+                        int indexPesan = pesanArray.indexWhere(
+                          (element) => element['time'] == msgTime,
+                        );
+                        listMsgToShare.add(pesanArray[indexPesan]['pesan']
+                            .replaceAll(RegExp(r'\*\*'), '*'));
+                      });
+                      joinedListMsgToShare =
+                          listMsgToShare.join('\n-----------------\n');
+                      await Share.share(joinedListMsgToShare,
+                          subject: widget.labelData['labelName']);
+                    },
+                    tooltip: 'Bagikan',
+                    icon: Icon(
+                      Icons.share_rounded,
                       color: Colors.white,
                     )),
               if (selectedMsg.isNotEmpty) ExportToExcel(context),
@@ -173,6 +199,8 @@ class _DetailLabelState extends State<DetailLabel> {
                       _onMenuItemSelected(value as int);
                     },
                     itemBuilder: (ctx) => [
+                          _buildPopupMenuItem('Bagikan', Icons.share_rounded,
+                              LabeledOptions.share.index),
                           _buildPopupMenuItem('Salin Pesan', Icons.copy_rounded,
                               LabeledOptions.copy.index),
                           _buildPopupMenuItem(
@@ -454,6 +482,7 @@ class _DetailLabelState extends State<DetailLabel> {
 
           await exportExcelNew(listMsgForExcel);
         },
+        tooltip: 'Simpan sebagai Excel',
         icon: Icon(
           Icons.file_download_rounded,
           color: Colors.white,
@@ -553,6 +582,37 @@ class _DetailLabelState extends State<DetailLabel> {
       }
     }
 
+    // bagikan
+    else if (value == LabeledOptions.share.index) {
+      log('popupmenu: bagikan');
+      List listMsgForShare = [];
+      List listPesan = widget.labelData['listPesan'];
+
+      if (listPesan.isEmpty) {
+        Fluttertoast.showToast(
+            msg: 'Label ini tidak memilik pesan',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
+      } else {
+        // Mengurutkan listPesan berdasarkan waktu pesan
+        listPesan.sort((a, b) => DateTime.parse(a['pesanObj'])
+            .compareTo(DateTime.parse(b['pesanObj'])));
+
+        listPesan.forEach((element) {
+          // Menemukan index objek pesan yang waktu pesannya sama
+          int indexPesan = pesanArray.indexWhere(
+            (element2) => element2['time'] == element['pesanObj'],
+          );
+          listMsgForShare.add(
+              pesanArray[indexPesan]['pesan'].replaceAll(RegExp(r'\*\*'), '*'));
+        });
+
+        // bagikan
+        await Share.share(listMsgForShare.join('\n-----------------\n'),
+            subject: widget.labelData['labelName']);
+      }
+    }
+
     // export
     else if (value == LabeledOptions.export.index) {
       log('export pesan');
@@ -594,8 +654,8 @@ class _DetailLabelState extends State<DetailLabel> {
               initialValue: widget.labelData['labelName'],
               cursorColor: Colors.teal,
               decoration: InputDecoration(
-                focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.teal))
-              ),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.teal))),
               autofocus: true,
               onChanged: (value) {
                 newLabelName = value.trim();
