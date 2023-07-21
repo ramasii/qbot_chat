@@ -21,7 +21,8 @@ enum Options {
   import,
   labels,
   note,
-  subscription
+  subscription,
+  shareMsg
 }
 
 class ChatPage extends StatefulWidget {
@@ -216,15 +217,15 @@ class ChatPageState extends State<ChatPage> {
   List labeledItems = [];
   List noteList = [];
   List labelColors = [
-    Color.fromARGB(255, 244,237,178),
-    Color.fromARGB(255, 241,241,241),
-    Color.fromARGB(255, 223,243,179),
-    Color.fromARGB(255, 192,242,177),
-    Color.fromARGB(255, 238,195,236),
-    Color.fromARGB(255, 183,228,244),
-    Color.fromARGB(255, 196,208,242),
-    Color.fromARGB(255, 186,243,220),
-    Color.fromARGB(255, 238,170,190),
+    Color.fromARGB(255, 244, 237, 178),
+    Color.fromARGB(255, 241, 241, 241),
+    Color.fromARGB(255, 223, 243, 179),
+    Color.fromARGB(255, 192, 242, 177),
+    Color.fromARGB(255, 238, 195, 236),
+    Color.fromARGB(255, 183, 228, 244),
+    Color.fromARGB(255, 196, 208, 242),
+    Color.fromARGB(255, 186, 243, 220),
+    Color.fromARGB(255, 238, 170, 190),
   ];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
@@ -249,6 +250,7 @@ class ChatPageState extends State<ChatPage> {
       });
 
     getArray('pesanArray', objKey: widget.messageStamp);
+    saveArray();
     checkPremium();
     AppSettings.loadSettings();
     checkFirstRun();
@@ -1005,6 +1007,8 @@ class ChatPageState extends State<ChatPage> {
                             'Labels', Icons.label, Options.labels.index),
                         ..._buildPopupMenuItem('Pengaturan', Icons.settings,
                             Options.settings.index),
+                        ..._buildPopupMenuItem('Bagikan Semua Pesan',
+                            Icons.share_rounded, Options.shareMsg.index),
                         ..._buildPopupMenuItem('Expor Pesan',
                             Icons.upload_file_rounded, Options.export.index),
                         ..._buildPopupMenuItem('Impor Pesan',
@@ -2259,6 +2263,23 @@ class ChatPageState extends State<ChatPage> {
     else if (value == Options.import.index) {
       print('START import message');
       await loadCsvData();
+    }
+
+    // bagikan semua pesan
+    else if (value == Options.shareMsg.index) {
+      print('START Share message');
+      if (pesanArray.isNotEmpty) {
+        List<String> listMsg = [];
+        for (var element in pesanArray) {
+          listMsg.add(element['pesan']);
+        }
+        await Share.share(listMsg.join('\n-----------------\n'));
+      } else {
+        Fluttertoast.showToast(
+            msg: 'Anda belum memiliki pesan',
+            textColor: Colors.black,
+            backgroundColor: Colors.yellow);
+      }
     }
 
     // export chat
