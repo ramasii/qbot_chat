@@ -99,7 +99,8 @@ class _AddNotePageState extends State<AddNotePage> {
                         isEditMode ? Icons.close : Icons.edit,
                         color: Colors.white,
                       )),
-                  IconButton(
+                  if(isEditMode == false)IconButton(
+                    tooltip: 'Salin Catatan',
                       onPressed: () async {
                         log('copy note');
                         await Clipboard.setData(
@@ -109,7 +110,8 @@ class _AddNotePageState extends State<AddNotePage> {
                         Icons.copy,
                         color: Colors.white,
                       )),
-                  IconButton(
+                  if(isEditMode == false)IconButton(
+                    tooltip: 'Bagikan',
                       onPressed: () async {
                         log('share note');
                         await Share.share('${widget.noteToEdit!['judul']}\n-----------------\n${widget.noteToEdit!['konten']}', subject: '${widget.noteToEdit!['judul']}');
