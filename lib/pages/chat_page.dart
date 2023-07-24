@@ -1237,24 +1237,24 @@ class ChatPageState extends State<ChatPage> {
                       itemBuilder: (ctx) {
                         return [
                           if (!isPremium)
-                            ..._buildPopupMenuItem('Membership',
+                            ..._buildPopupMenuItem('Upgrade ke Premium',
                                 FontAwesome5.crown, Options.subscription.index),
                           ..._buildPopupMenuItem(
                               'Catatan', Icons.note_alt, Options.note.index),
                           ..._buildPopupMenuItem(
-                              'Labels', Icons.label, Options.labels.index),
+                              'Label', Icons.label, Options.labels.index),
                           ..._buildPopupMenuItem('Pengaturan', Icons.settings,
                               Options.settings.index),
                           ..._buildPopupMenuItem('Bagikan Semua Pesan',
                               Icons.share_rounded, Options.shareMsg.index),
-                          ..._buildPopupMenuItem('Expor Pesan',
+                          ..._buildPopupMenuItem('Ekspor Semua Pesan',
                               Icons.upload_file_rounded, Options.export.index),
                           ..._buildPopupMenuItem(
-                              'Impor Pesan',
+                              'Import Pesan',
                               Icons.file_download_rounded,
                               Options.import.index),
                           ..._buildPopupMenuItem(
-                              'Bersihkan Pesan',
+                              'Hapus Semua Pesan',
                               Icons.cleaning_services_rounded,
                               Options.clear.index),
                           ..._buildPopupMenuItem('Tentang IslamBot',
