@@ -16,7 +16,6 @@ class _NotePageState extends State<NotePage> {
   List filteredNote = [];
   List colorList = [
     Color.fromARGB(255, 244,237,178),
-    Color.fromARGB(255, 241,241,241),
     Color.fromARGB(255, 223,243,179),
     Color.fromARGB(255, 192,242,177),
     Color.fromARGB(255, 238,195,236),
@@ -24,6 +23,7 @@ class _NotePageState extends State<NotePage> {
     Color.fromARGB(255, 196,208,242),
     Color.fromARGB(255, 186,243,220),
     Color.fromARGB(255, 238,170,190),
+    Color.fromARGB(255, 241,241,241),
   ];
 
   @override
