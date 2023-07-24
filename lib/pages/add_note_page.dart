@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:IslamBot/pages/note_page.dart';
+import 'package:IslamBot/qbotterminal.dart';
 import 'package:flutter/material.dart';
 import '../utils/allpackages.dart';
 
@@ -37,6 +38,7 @@ class _AddNotePageState extends State<AddNotePage> {
     // TODO: implement initState
     super.initState();
     log('in add note');
+    AppSettings.loadSettings();
     if (widget.noteToEdit != null) {
       // noteToEdit ada isinya
       setState(() {
@@ -90,6 +92,10 @@ class _AddNotePageState extends State<AddNotePage> {
                         setState(() {
                           if (isEditMode) {
                             isEditMode = false;
+                            titleController.text = widget.noteToEdit!['judul'];
+                            contentController.text =
+                                widget.noteToEdit!['konten'];
+                            colorIndex = widget.noteToEdit!['color'];
                           } else {
                             isEditMode = true;
                           }
@@ -212,27 +218,32 @@ class _AddNotePageState extends State<AddNotePage> {
               Divider(
                 height: 40,
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
-                child: TextField(
-                  enabled: isEditMode,
-                  controller: contentController,
-                  cursorColor: Colors.teal,
-                  maxLines: null, // baris tak terbatas
-                  textInputAction: TextInputAction.newline,
-                  autofocus: false, // supaya keyboard tidak muncul otomatis
-                  decoration: InputDecoration.collapsed(
-                    floatingLabelAlignment: FloatingLabelAlignment.start,
-                    hintText: "Masukkan catatan...",
-                    hintStyle: TextStyle(
-                        color: Color.fromARGB(
-                            255, 143, 143, 143)), // Warna teks hint
+              if (isEditMode)
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: TextField(
+                    enabled: isEditMode,
+                    controller: contentController,
+                    cursorColor: Colors.teal,
+                    maxLines: null, // baris tak terbatas
+                    textInputAction: TextInputAction.newline,
+                    autofocus: false, // supaya keyboard tidak muncul otomatis
+                    decoration: InputDecoration.collapsed(
+                      floatingLabelAlignment: FloatingLabelAlignment.start,
+                      hintText: "Masukkan catatan...",
+                      hintStyle: TextStyle(
+                          color: Color.fromARGB(
+                              255, 143, 143, 143)), // Warna teks hint
+                    ),
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: AppSettings.regularTextSize), // Warna teks yang diketik
                   ),
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontSize: 18), // Warna teks yang diketik
-                ),
-              ),
+                )
+              else
+                Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: BoldAsteris(text: contentController.text)),
             ],
           ),
         ),
