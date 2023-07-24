@@ -230,6 +230,7 @@ class ChatPageState extends State<ChatPage> {
   bool qbotSpeaking = false;
   bool isFirstRun = true;
   late Map<String, GlobalKey> _itemKeys = {};
+  DateTime? currentBackPressTime;
 
   late ChatProvider chatProvider;
   late AuthProvider authProvider;
@@ -315,667 +316,220 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 58, 86, 100),
-          title: Text(
-            this.widget.arguments.peerNickname,
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [
-            selectedItems.length == 0
-                ? IconButton(
-                    onPressed: () {
-                      log('pergi ke note page');
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => NotePage()),
-                      );
-                    },
-                    tooltip: 'Catatan',
-                    icon: Icon(
-                      Icons.note_alt,
-                      color: Colors.white,
-                    ),
-                  )
-                : IconButton(
-                    onPressed: (() async {
-                      log('tambah note');
-                      log(selectedItems.toString());
-
-                      // Tampilkan Dialog
-                      int? selectedOption = await showDialog<int>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return SimpleDialog(
-                            title: Text('Tambah ke Catatan'),
-                            children: [
-                              SimpleDialogOption(
-                                onPressed: () {
-                                  Navigator.pop(context,
-                                      0); // Nilai yang dikembalikan saat opsi dipilih
-                                },
-                                child: Text('• Catatan Baru'),
-                              ),
-                              SimpleDialogOption(
-                                onPressed: () {
-                                  Navigator.pop(context,
-                                      1); // Nilai yang dikembalikan saat opsi dipilih
-                                },
-                                child: Text('• Catatan yang Sudah Ada'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-
-                      // Tangani pilihan yang dipilih
-                      if (selectedOption != null) {
-                        if (selectedOption == 0) {
-                          // Pilihan "Catatan Baru" dipilih
-                          log('Catatan Baru dipilih');
-                          for (var element in selectedItems) {
-                            log(element.toString());
-                            // ambil noteList
-                            await getNotesList();
-
-                            // temukan index elemen di pesanArray
-                            var idxFromPesanArr = pesanArray.indexWhere(
-                                (element2) =>
-                                    element2['time'] == element['pesanObj']);
-
-                            // dapatkan pesan dari pesanArray[idx]
-                            String konten = pesanArray[idxFromPesanArr]['pesan']
-                                .replaceAll('\*', '');
-
-                            var timeAdd = DateTime.now().toString();
-
-                            var color = noteList.length > 8
-                                ? sisabagi(noteList.length, 8)
-                                : noteList.length;
-
-                            var a = DateTime.now().toString();
-                            // buat obj note
-                            Map note = {
-                              "judul": konten.split('\n')[0],
-                              "konten": konten,
-                              "timeAdd": a,
-                              "timeEdited": a,
-                              "color": color
-                            };
-
-                            // tambahkan note ke noteList
-                            setState(() {
-                              noteList.add(note);
-                            });
-
-                            // simpan
-                            await saveNoteList();
-
-                            Fluttertoast.showToast(
-                                msg: 'Catatan baru ditambahkan',
-                                backgroundColor: Colors.green,
-                                textColor: Colors.white);
-
-                            // bersihkan noteList
-                            setState(() {
-                              noteList.clear();
-                            });
-                          }
-                          await clearSelectedItems();
-                        } else if (selectedOption == 1) {
-                          // Pilihan "Catatan yang Sudah Ada" dipilih
-                          log('Catatan yang Sudah Ada dipilih');
-                          await getNotesList();
-                          if (noteList.isNotEmpty) {
-                            noteList.sort((a, b) => a['judul']
-                                .toLowerCase()
-                                .compareTo(b['judul'].toLowerCase()));
-                            List<String> ex1 = [];
-                            SelectDialog.showModal<String>(context,
-                                label: "Tambah ke Catatan",
-                                searchBoxDecoration: InputDecoration(
-                                  hintText: 'Cari catatan...',
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.teal,
-                                        width:
-                                            2.0), // Atur warna dan ketebalan garis
-                                  ),
-                                ),
-                                multipleSelectedValues: ex1,
-                                items: List.generate(noteList.length, (index) {
-                                  return "${noteList[index]['judul']}";
-                                }), itemBuilder: (context, item, isSelected) {
-                              return Container(
-                                color: Color.fromARGB(isSelected ? 150 :0, 150, 222, 255),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Text(item),
-                                    ),
-                                    Divider(height: 0,)
-                                  ],
-                                ),
-                              );
-                            }, onMultipleItemsChange:
-                                    (List<String> selected) async {
-                              setState(() {
-                                ex1 = selected;
-                              });
-                              log(ex1.toString());
-                            }, okButtonBuilder: (context, onPressed) {
-                              return TextButton(
-                                onPressed: () async {
-                                  onPressed(); // ini di atas, menandakan awal dari fungsi
-                                  await getNotesList();
-                                  setState(() {
-                                    selectedItems.sort((a, b) {
-                                      DateTime timeA =
-                                          DateTime.parse(a['pesanObj'] ?? '0');
-                                      DateTime timeB =
-                                          DateTime.parse(b['pesanObj'] ?? '0');
-                                      return timeA.compareTo(timeB);
-                                    });
-                                  });
-                                  if (ex1.isNotEmpty) {
-                                    for (var element in ex1) {
-                                      int idx = noteList.indexWhere(
-                                          (element2) =>
-                                              element2['judul'] == element);
-                                      String konten = noteList[idx]['konten'];
-
-                                      List listMsg = [];
-                                      log(selectedItems.toString());
-
-                                      for (var element3 in selectedItems) {
-                                        String pesan = pesanArray[
-                                            pesanArray.indexWhere((element4) =>
-                                                element4['time'] ==
-                                                element3['pesanObj'])]['pesan'];
-                                        listMsg.add(pesan.replaceAll('*', ''));
-                                      }
-                                      String selectedMsg =
-                                          listMsg.join('\n-----------------\n');
-
-                                      String toAdd = konten != ''
-                                          ? [konten, selectedMsg]
-                                              .join('\n-----------------\n')
-                                          : selectedMsg;
-                                      setState(() {
-                                        noteList[idx]['konten'] = toAdd;
-                                      });
-                                    }
-                                  }
-                                  await saveNoteList();
-                                  await clearSelectedItems();
-                                  setState(() {
-                                    noteList.clear();
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      color: Colors.green,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: Text(
-                                    'Simpan',
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              );
-                            });
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (ctx) {
-                                  return AlertDialog(
-                                    title: Text('Anda belum memiliki catatan'),
-                                    content: Text(
-                                        'Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.'),
-                                  );
-                                });
-                          }
-                        }
-                      }
-                    }),
-                    tooltip: 'Tambah ke Catatan',
-                    icon: Icon(Icons.note_add_rounded, color: Colors.white)),
-            selectedItems.length != 0
-                ? IconButton(
-                    onPressed: () async {
-                      String labelName = '';
-
-                      await getLabeledItems();
-
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          List<int> labelIndex =
-                              []; // label yang dipilih nanti indexnya dimasukkan ke sini
-                          bool disturbedCheck = false;
-
-                          return StatefulBuilder(builder:
-                              (BuildContext context, StateSetter setState) {
-                            return AlertDialog(
-                              title: Text(
-                                'Label Pesan',
-                              ),
-                              contentPadding: EdgeInsets.all(0),
-                              content: SingleChildScrollView(
-                                physics: ClampingScrollPhysics(),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: List.generate(
-                                          labeledItems.length, (index) {
-                                        String labelName =
-                                            labeledItems[index]['labelName'];
-                                        List listPesan =
-                                            labeledItems[index]['listPesan'];
-                                        // log(listPesan.toString(),
-                                        // name: labelName);
-                                        // log(selectedItems.toString()); // [{inx: 3, pesanObj: 2023-07-12 15:49:22.032284}, {inx: 2, pesanObj: 2023-07-12 15:49:21.548758}]
-
-                                        List<bool> boolList = [];
-
-                                        for (var pesan1 in listPesan) {
-                                          var pesanTime = pesan1['pesanObj'];
-                                          for (var item1 in selectedItems) {
-                                            var itemTime = item1['pesanObj'];
-                                            if (pesanTime == itemTime) {
-                                              // log('sudah ada, $itemTime',
-                                              //     name: labelName);
-                                              boolList.add(true);
-                                            } else {
-                                              // log('gaada, $itemTime',
-                                              //     name: labelName);
-                                              boolList.add(false);
-                                            }
-                                          }
-                                        }
-
-                                        // jika checkAlltrue == true, maka tambah ke labelIndex
-                                        if (checkAllTrue(boolList) == true ||
-                                            checkAllTrue(boolList) == null &&
-                                                disturbedCheck == false &&
-                                                selectedItems.length <= 1) {
-                                          labelIndex.add(index);
-                                        }
-
-                                        return ListTile(
-                                          leading: SizedBox(
-                                            width:
-                                                20, // Atur lebar leading widget sesuai kebutuhan
-                                            child: Container(
-                                              alignment: Alignment.centerLeft,
-                                              child: Icon(
-                                                Icons.label,
-                                                color: labelColors[
-                                                    labeledItems[index]
-                                                        ['labelColor']],
-                                              ),
-                                            ),
-                                          ),
-                                          minLeadingWidth: 5,
-                                          title: Text(
-                                            labelName,
-                                            maxLines: 2,
-                                            softWrap: true,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          trailing: SizedBox(
-                                            width:
-                                                20, // Lebar yang sesuai dengan kebutuhanmu
-                                            child: Checkbox(
-                                              tristate: true,
-                                              value: labelIndex.contains(index),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  // log('$labeledItems');
-                                                  // log('$selectedItems');
-                                                  setState(() {
-                                                    disturbedCheck = true;
-                                                  });
-                                                  if (!labelIndex
-                                                      .contains(index)) {
-                                                    // log('add labelindex true');
-                                                    labelIndex.add(
-                                                        index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
-                                                  } else {
-                                                    // log('add labelindex false');
-                                                    labelIndex.remove(
-                                                        index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
-                                                  }
-                                                  // log('labelindex $labelIndex');
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          log('new label');
-                                          String labelName = '';
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text('Buat Label Baru'),
-                                                content: TextField(
-                                                  onChanged: (value) {
-                                                    labelName = value;
-                                                  },
-                                                  decoration: InputDecoration(
-                                                      hintText:
-                                                          'Masukkan nama label',
-                                                      border: UnderlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                              color: Color
-                                                                  .fromARGB(
-                                                                      255,
-                                                                      58,
-                                                                      86,
-                                                                      100))),
-                                                      focusedBorder:
-                                                          UnderlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Color
-                                                                      .fromARGB(
-                                                                          255,
-                                                                          58,
-                                                                          86,
-                                                                          100)))),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                      setState(() {
-                                                        textLabelNameController
-                                                            .clear();
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.grey,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5)),
-                                                      child: Text(
-                                                        'Batal',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      if (labelName
-                                                          .isNotEmpty) {
-                                                        await getLabeledItems();
-                                                        setState(() {
-                                                          labeledItems.add({
-                                                            "labelName":
-                                                                labelName,
-                                                            "labelColor": labeledItems
-                                                                        .length >
-                                                                    8
-                                                                ? sisabagi(
-                                                                    labeledItems
-                                                                        .length,
-                                                                    8)
-                                                                : labeledItems
-                                                                    .length,
-                                                            "listPesan": [],
-                                                            "time":
-                                                                DateTime.now()
-                                                                    .toString()
-                                                          });
-                                                        });
-                                                        await saveLabeledItems();
-                                                        await getLabeledItems();
-
-                                                        log('sukses melabel pesan: ${labeledItems.last}');
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                'Disimpan dengan label "$labelName"',
-                                                            backgroundColor:
-                                                                Colors.green,
-                                                            textColor:
-                                                                Colors.white);
-                                                        Navigator.pop(context);
-                                                        setState(() {
-                                                          textLabelNameController
-                                                              .clear();
-                                                        });
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                'Nama label tidak boleh kosong',
-                                                            textColor:
-                                                                Colors.black,
-                                                            backgroundColor:
-                                                                Colors.yellow);
-                                                      }
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          EdgeInsets.all(10),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.green,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5)),
-                                                      child: Text(
-                                                        'Simpan',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Container(
-                                            child: Text('+ Label Baru',
-                                                style: TextStyle(
-                                                    color: Colors.teal,
-                                                    fontWeight:
-                                                        FontWeight.bold))),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
+    return WillPopScope(
+      onWillPop: () async {
+        if (currentBackPressTime == null ||
+              DateTime.now().difference(currentBackPressTime!) > Duration(seconds: 2)) {
+            // Menampilkan Toast "Tekan sekali lagi untuk keluar aplikasi."
+            Fluttertoast.showToast(
+              msg: "Tekan sekali lagi untuk keluar aplikasi.",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+            );
+            currentBackPressTime = DateTime.now();
+            return false; // Tidak menutup aplikasi
+          }
+          return true; // Menutup aplikasi
+      },
+      child: Scaffold(
+        appBar: AppBar(
+            backgroundColor: Color.fromARGB(255, 58, 86, 100),
+            title: Text(
+              this.widget.arguments.peerNickname,
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              selectedItems.length == 0
+                  ? IconButton(
+                      onPressed: () {
+                        log('pergi ke note page');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => NotePage()),
+                        );
+                      },
+                      tooltip: 'Catatan',
+                      icon: Icon(
+                        Icons.note_alt,
+                        color: Colors.white,
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: (() async {
+                        log('tambah note');
+                        log(selectedItems.toString());
+    
+                        // Tampilkan Dialog
+                        int? selectedOption = await showDialog<int>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SimpleDialog(
+                              title: Text('Tambah ke Catatan'),
+                              children: [
+                                SimpleDialogOption(
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,
+                                        0); // Nilai yang dikembalikan saat opsi dipilih
                                   },
-                                  child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Text(
-                                      'Batal',
-                                      style: TextStyle(color: Colors.white),
+                                  child: Text('• Catatan Baru'),
+                                ),
+                                SimpleDialogOption(
+                                  onPressed: () {
+                                    Navigator.pop(context,
+                                        1); // Nilai yang dikembalikan saat opsi dipilih
+                                  },
+                                  child: Text('• Catatan yang Sudah Ada'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+    
+                        // Tangani pilihan yang dipilih
+                        if (selectedOption != null) {
+                          if (selectedOption == 0) {
+                            // Pilihan "Catatan Baru" dipilih
+                            log('Catatan Baru dipilih');
+                            for (var element in selectedItems) {
+                              log(element.toString());
+                              // ambil noteList
+                              await getNotesList();
+    
+                              // temukan index elemen di pesanArray
+                              var idxFromPesanArr = pesanArray.indexWhere(
+                                  (element2) =>
+                                      element2['time'] == element['pesanObj']);
+    
+                              // dapatkan pesan dari pesanArray[idx]
+                              String konten = pesanArray[idxFromPesanArr]['pesan']
+                                  .replaceAll('\*', '');
+    
+                              var timeAdd = DateTime.now().toString();
+    
+                              var color = noteList.length > 8
+                                  ? sisabagi(noteList.length, 8)
+                                  : noteList.length;
+    
+                              var a = DateTime.now().toString();
+                              // buat obj note
+                              Map note = {
+                                "judul": konten.split('\n')[0],
+                                "konten": konten,
+                                "timeAdd": a,
+                                "timeEdited": a,
+                                "color": color
+                              };
+    
+                              // tambahkan note ke noteList
+                              setState(() {
+                                noteList.add(note);
+                              });
+    
+                              // simpan
+                              await saveNoteList();
+    
+                              Fluttertoast.showToast(
+                                  msg: 'Catatan baru ditambahkan',
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white);
+    
+                              // bersihkan noteList
+                              setState(() {
+                                noteList.clear();
+                              });
+                            }
+                            await clearSelectedItems();
+                          } else if (selectedOption == 1) {
+                            // Pilihan "Catatan yang Sudah Ada" dipilih
+                            log('Catatan yang Sudah Ada dipilih');
+                            await getNotesList();
+                            if (noteList.isNotEmpty) {
+                              noteList.sort((a, b) => a['judul']
+                                  .toLowerCase()
+                                  .compareTo(b['judul'].toLowerCase()));
+                              List<String> ex1 = [];
+                              SelectDialog.showModal<String>(context,
+                                  label: "Tambah ke Catatan",
+                                  searchBoxDecoration: InputDecoration(
+                                    hintText: 'Cari catatan...',
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.teal,
+                                          width:
+                                              2.0), // Atur warna dan ketebalan garis
                                     ),
                                   ),
-                                ),
-                                TextButton(
+                                  multipleSelectedValues: ex1,
+                                  items: List.generate(noteList.length, (index) {
+                                    return "${noteList[index]['judul']}";
+                                  }), itemBuilder: (context, item, isSelected) {
+                                return Container(
+                                  color: Color.fromARGB(isSelected ? 150 :0, 150, 222, 255),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Text(item),
+                                      ),
+                                      Divider(height: 0,)
+                                    ],
+                                  ),
+                                );
+                              }, onMultipleItemsChange:
+                                      (List<String> selected) async {
+                                setState(() {
+                                  ex1 = selected;
+                                });
+                                log(ex1.toString());
+                              }, okButtonBuilder: (context, onPressed) {
+                                return TextButton(
                                   onPressed: () async {
-                                    // menambahkan label dengan label baru
-                                    if (labelName.trim().isNotEmpty) {
-                                      log('klik new label, pesan dipilih: ${selectedItems.length}');
-                                      await getLabeledItems();
-                                      setState(() {
-                                        labeledItems.add({
-                                          "labelName": labelName,
-                                          "labelColor": labeledItems.length > 8
-                                              ? labelColors[sisabagi(
-                                                  labeledItems.length, 8)]
-                                              : labeledItems.length,
-                                          "listPesan": selectedItems,
-                                          "time": DateTime.now().toString()
-                                        });
+                                    onPressed(); // ini di atas, menandakan awal dari fungsi
+                                    await getNotesList();
+                                    setState(() {
+                                      selectedItems.sort((a, b) {
+                                        DateTime timeA =
+                                            DateTime.parse(a['pesanObj'] ?? '0');
+                                        DateTime timeB =
+                                            DateTime.parse(b['pesanObj'] ?? '0');
+                                        return timeA.compareTo(timeB);
                                       });
-
-                                      await saveLabeledItems();
-                                      await clearSelectedItems();
-
-                                      log('selecteditems: $selectedItems');
-                                      log('sukses melabel pesan: ${labeledItems}');
-                                      setState(() {
-                                        labeledItems.clear();
-                                      });
-
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              'Disimpan dengan label "$labelName"',
-                                          backgroundColor: Colors.green,
-                                          textColor: Colors.white);
-                                      Navigator.pop(context);
-                                    } else if (labelIndex.isNotEmpty &&
-                                        selectedItems.length <= 1) {
-                                      await getLabeledItems();
-                                      log('labelIndex: $labelIndex');
-
-                                      labelIndex.forEach((element) {
-                                        labeledItems
-                                            .asMap()
-                                            .forEach((index, element2) {
-                                          List listPesan =
-                                              element2['listPesan'];
-                                          log(listPesan.toString());
-
-                                          if (!labelIndex.contains(index)) {
-                                            element2['listPesan'].removeWhere(
-                                                (pesan) =>
-                                                    pesan['pesanObj'] ==
-                                                    selectedItems[0]
-                                                        ['pesanObj']);
-                                          } else if (element2['listPesan'].any(
-                                              (pesan) =>
-                                                  pesan['pesanObj'] ==
-                                                  selectedItems[0]
-                                                      ['pesanObj'])) {
-                                            // do nothing, pesan sudah ada di labeled item
-                                          } else {
-                                            element2['listPesan']
-                                                .add(selectedItems[0]);
-                                          }
-                                        });
-                                      });
-
-                                      await saveLabeledItems();
-                                      await clearSelectedItems();
-                                      setState(() {
-                                        labeledItems.clear();
-                                      });
-
-                                      Fluttertoast.showToast(
-                                          msg: 'Perubahan disimpan',
-                                          backgroundColor: Colors.green,
-                                          textColor: Colors.white);
-                                      Navigator.pop(context);
-                                    }
-                                    // menambahkan label yang tersedia
-                                    else if (labelIndex.isNotEmpty) {
-                                      await getLabeledItems();
-
-                                      // setiap label yang terpilih
-                                      for (var e in labelIndex) {
-                                        log('akan dilabel di index: $e');
-
-                                        // setiap item yang terpilih
-                                        for (var e2 in selectedItems) {
-                                          setState(() {
-                                            List listPesan =
-                                                labeledItems[e]["listPesan"];
-
-                                            int indexKeberadaan =
-                                                listPesan.indexWhere((e3) =>
-                                                    e3.containsValue(
-                                                        e2['pesanObj']));
-
-                                            // jika pesan belum ditambahkan ke label, maka tambahkan ke label
-                                            // jika sudah, tidak perlu
-                                            if (indexKeberadaan == -1) {
-                                              log('${listPesan.indexOf(e2)}');
-                                              listPesan.add(e2);
-                                            }
-                                            log('menemukan: ${listPesan.indexOf(e2)}');
-
-                                            log('$listPesan');
-                                          });
+                                    });
+                                    if (ex1.isNotEmpty) {
+                                      for (var element in ex1) {
+                                        int idx = noteList.indexWhere(
+                                            (element2) =>
+                                                element2['judul'] == element);
+                                        String konten = noteList[idx]['konten'];
+    
+                                        List listMsg = [];
+                                        log(selectedItems.toString());
+    
+                                        for (var element3 in selectedItems) {
+                                          String pesan = pesanArray[
+                                              pesanArray.indexWhere((element4) =>
+                                                  element4['time'] ==
+                                                  element3['pesanObj'])]['pesan'];
+                                          listMsg.add(pesan.replaceAll('*', ''));
                                         }
-                                      }
-                                      log('selecteditems: $selectedItems');
-                                      log('sukses melabel pesan: ${labeledItems}');
-
-                                      await saveLabeledItems();
-                                      await clearSelectedItems();
-                                      setState(() {
-                                        labeledItems.clear();
-                                      });
-
-                                      Fluttertoast.showToast(
-                                          msg:
-                                              'Disimpan di ${labelIndex.length} label',
-                                          backgroundColor: Colors.green,
-                                          textColor: Colors.white);
-                                      Navigator.pop(context);
-                                    }
-                                    // hapus pesan dari label
-                                    else if (labelIndex.isEmpty &&
-                                        selectedItems.length <= 1) {
-                                      await getLabeledItems();
-                                      // setiap elemen di labeledItems
-                                      var itemTime =
-                                          selectedItems[0]['pesanObj'];
-                                      setState(() {
-                                        labeledItems.forEach((element) {
-                                          List listPesan = element['listPesan'];
-                                          listPesan.removeWhere((element2) =>
-                                              element2['pesanObj'] == itemTime);
+                                        String selectedMsg =
+                                            listMsg.join('\n-----------------\n');
+    
+                                        String toAdd = konten != ''
+                                            ? [konten, selectedMsg]
+                                                .join('\n-----------------\n')
+                                            : selectedMsg;
+                                        setState(() {
+                                          noteList[idx]['konten'] = toAdd;
                                         });
-                                      });
-
-                                      await saveLabeledItems();
-                                      await clearSelectedItems();
-
-                                      setState(() {
-                                        labeledItems.clear();
-                                      });
-                                      Fluttertoast.showToast(
-                                          msg: 'Perubahan disimpan',
-                                          backgroundColor: Colors.green,
-                                          textColor: Colors.white);
-                                      Navigator.pop(context);
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: 'Label tidak boleh kosong',
-                                          textColor: Colors.black,
-                                          backgroundColor: Colors.yellow);
+                                      }
                                     }
+                                    await saveNoteList();
+                                    await clearSelectedItems();
+                                    setState(() {
+                                      noteList.clear();
+                                    });
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(10),
@@ -987,100 +541,563 @@ class ChatPageState extends State<ChatPage> {
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
+                                );
+                              });
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (ctx) {
+                                    return AlertDialog(
+                                      title: Text('Anda belum memiliki catatan'),
+                                      content: Text(
+                                          'Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.'),
+                                    );
+                                  });
+                            }
+                          }
+                        }
+                      }),
+                      tooltip: 'Tambah ke Catatan',
+                      icon: Icon(Icons.note_add_rounded, color: Colors.white)),
+              selectedItems.length != 0
+                  ? IconButton(
+                      onPressed: () async {
+                        String labelName = '';
+    
+                        await getLabeledItems();
+    
+                        await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            List<int> labelIndex =
+                                []; // label yang dipilih nanti indexnya dimasukkan ke sini
+                            bool disturbedCheck = false;
+    
+                            return StatefulBuilder(builder:
+                                (BuildContext context, StateSetter setState) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Label Pesan',
                                 ),
-                              ],
-                            );
-                          });
-                        },
-                      );
-                    },
-                    tooltip: 'Tambah ke Label',
-                    icon: Icon(
-                      Icons.new_label_rounded,
+                                contentPadding: EdgeInsets.all(0),
+                                content: SingleChildScrollView(
+                                  physics: ClampingScrollPhysics(),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: List.generate(
+                                            labeledItems.length, (index) {
+                                          String labelName =
+                                              labeledItems[index]['labelName'];
+                                          List listPesan =
+                                              labeledItems[index]['listPesan'];
+                                          // log(listPesan.toString(),
+                                          // name: labelName);
+                                          // log(selectedItems.toString()); // [{inx: 3, pesanObj: 2023-07-12 15:49:22.032284}, {inx: 2, pesanObj: 2023-07-12 15:49:21.548758}]
+    
+                                          List<bool> boolList = [];
+    
+                                          for (var pesan1 in listPesan) {
+                                            var pesanTime = pesan1['pesanObj'];
+                                            for (var item1 in selectedItems) {
+                                              var itemTime = item1['pesanObj'];
+                                              if (pesanTime == itemTime) {
+                                                // log('sudah ada, $itemTime',
+                                                //     name: labelName);
+                                                boolList.add(true);
+                                              } else {
+                                                // log('gaada, $itemTime',
+                                                //     name: labelName);
+                                                boolList.add(false);
+                                              }
+                                            }
+                                          }
+    
+                                          // jika checkAlltrue == true, maka tambah ke labelIndex
+                                          if (checkAllTrue(boolList) == true ||
+                                              checkAllTrue(boolList) == null &&
+                                                  disturbedCheck == false &&
+                                                  selectedItems.length <= 1) {
+                                            labelIndex.add(index);
+                                          }
+    
+                                          return ListTile(
+                                            leading: SizedBox(
+                                              width:
+                                                  20, // Atur lebar leading widget sesuai kebutuhan
+                                              child: Container(
+                                                alignment: Alignment.centerLeft,
+                                                child: Icon(
+                                                  Icons.label,
+                                                  color: labelColors[
+                                                      labeledItems[index]
+                                                          ['labelColor']],
+                                                ),
+                                              ),
+                                            ),
+                                            minLeadingWidth: 5,
+                                            title: Text(
+                                              labelName,
+                                              maxLines: 2,
+                                              softWrap: true,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            trailing: SizedBox(
+                                              width:
+                                                  20, // Lebar yang sesuai dengan kebutuhanmu
+                                              child: Checkbox(
+                                                tristate: true,
+                                                value: labelIndex.contains(index),
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    // log('$labeledItems');
+                                                    // log('$selectedItems');
+                                                    setState(() {
+                                                      disturbedCheck = true;
+                                                    });
+                                                    if (!labelIndex
+                                                        .contains(index)) {
+                                                      // log('add labelindex true');
+                                                      labelIndex.add(
+                                                          index); // Menambahkan indeks label ke dalam labelIndex jika checkbox diaktifkan
+                                                    } else {
+                                                      // log('add labelindex false');
+                                                      labelIndex.remove(
+                                                          index); // Menghapus indeks label dari labelIndex jika checkbox dinonaktifkan
+                                                    }
+                                                    // log('labelindex $labelIndex');
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: TextButton(
+                                          onPressed: () {
+                                            log('new label');
+                                            String labelName = '';
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text('Buat Label Baru'),
+                                                  content: TextField(
+                                                    onChanged: (value) {
+                                                      labelName = value;
+                                                    },
+                                                    decoration: InputDecoration(
+                                                        hintText:
+                                                            'Masukkan nama label',
+                                                        border: UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        255,
+                                                                        58,
+                                                                        86,
+                                                                        100))),
+                                                        focusedBorder:
+                                                            UnderlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Color
+                                                                        .fromARGB(
+                                                                            255,
+                                                                            58,
+                                                                            86,
+                                                                            100)))),
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                        setState(() {
+                                                          textLabelNameController
+                                                              .clear();
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.grey,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(5)),
+                                                        child: Text(
+                                                          'Batal',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        if (labelName
+                                                            .isNotEmpty) {
+                                                          await getLabeledItems();
+                                                          setState(() {
+                                                            labeledItems.add({
+                                                              "labelName":
+                                                                  labelName,
+                                                              "labelColor": labeledItems
+                                                                          .length >
+                                                                      8
+                                                                  ? sisabagi(
+                                                                      labeledItems
+                                                                          .length,
+                                                                      8)
+                                                                  : labeledItems
+                                                                      .length,
+                                                              "listPesan": [],
+                                                              "time":
+                                                                  DateTime.now()
+                                                                      .toString()
+                                                            });
+                                                          });
+                                                          await saveLabeledItems();
+                                                          await getLabeledItems();
+    
+                                                          log('sukses melabel pesan: ${labeledItems.last}');
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  'Disimpan dengan label "$labelName"',
+                                                              backgroundColor:
+                                                                  Colors.green,
+                                                              textColor:
+                                                                  Colors.white);
+                                                          Navigator.pop(context);
+                                                          setState(() {
+                                                            textLabelNameController
+                                                                .clear();
+                                                          });
+                                                        } else {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  'Nama label tidak boleh kosong',
+                                                              textColor:
+                                                                  Colors.black,
+                                                              backgroundColor:
+                                                                  Colors.yellow);
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        padding:
+                                                            EdgeInsets.all(10),
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.green,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(5)),
+                                                        child: Text(
+                                                          'Simpan',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                              child: Text('+ Label Baru',
+                                                  style: TextStyle(
+                                                      color: Colors.teal,
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius: BorderRadius.circular(5)),
+                                      child: Text(
+                                        'Batal',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      // menambahkan label dengan label baru
+                                      if (labelName.trim().isNotEmpty) {
+                                        log('klik new label, pesan dipilih: ${selectedItems.length}');
+                                        await getLabeledItems();
+                                        setState(() {
+                                          labeledItems.add({
+                                            "labelName": labelName,
+                                            "labelColor": labeledItems.length > 8
+                                                ? labelColors[sisabagi(
+                                                    labeledItems.length, 8)]
+                                                : labeledItems.length,
+                                            "listPesan": selectedItems,
+                                            "time": DateTime.now().toString()
+                                          });
+                                        });
+    
+                                        await saveLabeledItems();
+                                        await clearSelectedItems();
+    
+                                        log('selecteditems: $selectedItems');
+                                        log('sukses melabel pesan: ${labeledItems}');
+                                        setState(() {
+                                          labeledItems.clear();
+                                        });
+    
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                'Disimpan dengan label "$labelName"',
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white);
+                                        Navigator.pop(context);
+                                      } else if (labelIndex.isNotEmpty &&
+                                          selectedItems.length <= 1) {
+                                        await getLabeledItems();
+                                        log('labelIndex: $labelIndex');
+    
+                                        labelIndex.forEach((element) {
+                                          labeledItems
+                                              .asMap()
+                                              .forEach((index, element2) {
+                                            List listPesan =
+                                                element2['listPesan'];
+                                            log(listPesan.toString());
+    
+                                            if (!labelIndex.contains(index)) {
+                                              element2['listPesan'].removeWhere(
+                                                  (pesan) =>
+                                                      pesan['pesanObj'] ==
+                                                      selectedItems[0]
+                                                          ['pesanObj']);
+                                            } else if (element2['listPesan'].any(
+                                                (pesan) =>
+                                                    pesan['pesanObj'] ==
+                                                    selectedItems[0]
+                                                        ['pesanObj'])) {
+                                              // do nothing, pesan sudah ada di labeled item
+                                            } else {
+                                              element2['listPesan']
+                                                  .add(selectedItems[0]);
+                                            }
+                                          });
+                                        });
+    
+                                        await saveLabeledItems();
+                                        await clearSelectedItems();
+                                        setState(() {
+                                          labeledItems.clear();
+                                        });
+    
+                                        Fluttertoast.showToast(
+                                            msg: 'Perubahan disimpan',
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white);
+                                        Navigator.pop(context);
+                                      }
+                                      // menambahkan label yang tersedia
+                                      else if (labelIndex.isNotEmpty) {
+                                        await getLabeledItems();
+    
+                                        // setiap label yang terpilih
+                                        for (var e in labelIndex) {
+                                          log('akan dilabel di index: $e');
+    
+                                          // setiap item yang terpilih
+                                          for (var e2 in selectedItems) {
+                                            setState(() {
+                                              List listPesan =
+                                                  labeledItems[e]["listPesan"];
+    
+                                              int indexKeberadaan =
+                                                  listPesan.indexWhere((e3) =>
+                                                      e3.containsValue(
+                                                          e2['pesanObj']));
+    
+                                              // jika pesan belum ditambahkan ke label, maka tambahkan ke label
+                                              // jika sudah, tidak perlu
+                                              if (indexKeberadaan == -1) {
+                                                log('${listPesan.indexOf(e2)}');
+                                                listPesan.add(e2);
+                                              }
+                                              log('menemukan: ${listPesan.indexOf(e2)}');
+    
+                                              log('$listPesan');
+                                            });
+                                          }
+                                        }
+                                        log('selecteditems: $selectedItems');
+                                        log('sukses melabel pesan: ${labeledItems}');
+    
+                                        await saveLabeledItems();
+                                        await clearSelectedItems();
+                                        setState(() {
+                                          labeledItems.clear();
+                                        });
+    
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                'Disimpan di ${labelIndex.length} label',
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white);
+                                        Navigator.pop(context);
+                                      }
+                                      // hapus pesan dari label
+                                      else if (labelIndex.isEmpty &&
+                                          selectedItems.length <= 1) {
+                                        await getLabeledItems();
+                                        // setiap elemen di labeledItems
+                                        var itemTime =
+                                            selectedItems[0]['pesanObj'];
+                                        setState(() {
+                                          labeledItems.forEach((element) {
+                                            List listPesan = element['listPesan'];
+                                            listPesan.removeWhere((element2) =>
+                                                element2['pesanObj'] == itemTime);
+                                          });
+                                        });
+    
+                                        await saveLabeledItems();
+                                        await clearSelectedItems();
+    
+                                        setState(() {
+                                          labeledItems.clear();
+                                        });
+                                        Fluttertoast.showToast(
+                                            msg: 'Perubahan disimpan',
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white);
+                                        Navigator.pop(context);
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: 'Label tidak boleh kosong',
+                                            textColor: Colors.black,
+                                            backgroundColor: Colors.yellow);
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          borderRadius: BorderRadius.circular(5)),
+                                      child: Text(
+                                        'Simpan',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                          },
+                        );
+                      },
+                      tooltip: 'Tambah ke Label',
+                      icon: Icon(
+                        Icons.new_label_rounded,
+                        color: Colors.white,
+                      ))
+                  : IconButton(
+                      onPressed: () {
+                        log('START buka label page');
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => LabelPage()));
+                        log('DONE buka label page');
+                      },
+                      tooltip: 'Labels',
+                      icon: Icon(
+                        Icons.label,
+                        color: Colors.white,
+                      )),
+              selectedItems.length == 0
+                  ? PopupMenuButton(
                       color: Colors.white,
-                    ))
-                : IconButton(
-                    onPressed: () {
-                      log('START buka label page');
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => LabelPage()));
-                      log('DONE buka label page');
-                    },
-                    tooltip: 'Labels',
-                    icon: Icon(
-                      Icons.label,
-                      color: Colors.white,
-                    )),
-            selectedItems.length == 0
-                ? PopupMenuButton(
-                    color: Colors.white,
-                    tooltip: 'Menu',
-                    onSelected: (value) {
-                      print('klik di popup menu, pojok kanan atas');
-                      _onMenuItemSelected(value as int);
-                    },
-                    itemBuilder: (ctx) {
-                      return [
-                        if (!isPremium)
-                          ..._buildPopupMenuItem('Membership',
-                              FontAwesome5.crown, Options.subscription.index),
-                        ..._buildPopupMenuItem(
-                            'Catatan', Icons.note_alt, Options.note.index),
-                        ..._buildPopupMenuItem(
-                            'Labels', Icons.label, Options.labels.index),
-                        ..._buildPopupMenuItem('Pengaturan', Icons.settings,
-                            Options.settings.index),
-                        ..._buildPopupMenuItem('Bagikan Semua Pesan',
-                            Icons.share_rounded, Options.shareMsg.index),
-                        ..._buildPopupMenuItem('Expor Pesan',
-                            Icons.upload_file_rounded, Options.export.index),
-                        ..._buildPopupMenuItem('Impor Pesan',
-                            Icons.file_download_rounded, Options.import.index),
-                        ..._buildPopupMenuItem(
-                            'Bersihkan Pesan',
-                            Icons.cleaning_services_rounded,
-                            Options.clear.index),
-                        ..._buildPopupMenuItem('Tentang IslamBot',
-                            Icons.info_outline_rounded, Options.about.index),
-                        ..._buildPopupMenuItem('Keluar Aplikasi',
-                            Icons.exit_to_app_rounded, Options.exit.index),
-                      ];
-                    })
-                : IconButton(
-                    onPressed: () {
-                      clearSelectedItems();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.white,
+                      tooltip: 'Menu',
+                      onSelected: (value) {
+                        print('klik di popup menu, pojok kanan atas');
+                        _onMenuItemSelected(value as int);
+                      },
+                      itemBuilder: (ctx) {
+                        return [
+                          if (!isPremium)
+                            ..._buildPopupMenuItem('Membership',
+                                FontAwesome5.crown, Options.subscription.index),
+                          ..._buildPopupMenuItem(
+                              'Catatan', Icons.note_alt, Options.note.index),
+                          ..._buildPopupMenuItem(
+                              'Labels', Icons.label, Options.labels.index),
+                          ..._buildPopupMenuItem('Pengaturan', Icons.settings,
+                              Options.settings.index),
+                          ..._buildPopupMenuItem('Bagikan Semua Pesan',
+                              Icons.share_rounded, Options.shareMsg.index),
+                          ..._buildPopupMenuItem('Expor Pesan',
+                              Icons.upload_file_rounded, Options.export.index),
+                          ..._buildPopupMenuItem('Impor Pesan',
+                              Icons.file_download_rounded, Options.import.index),
+                          ..._buildPopupMenuItem(
+                              'Bersihkan Pesan',
+                              Icons.cleaning_services_rounded,
+                              Options.clear.index),
+                          ..._buildPopupMenuItem('Tentang IslamBot',
+                              Icons.info_outline_rounded, Options.about.index),
+                          ..._buildPopupMenuItem('Keluar Aplikasi',
+                              Icons.exit_to_app_rounded, Options.exit.index),
+                        ];
+                      })
+                  : IconButton(
+                      onPressed: () {
+                        clearSelectedItems();
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                      tooltip: 'Batal',
                     ),
-                    tooltip: 'Batal',
-                  ),
-          ]),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: buttonScrollBottom(),
-      body: Container(
-        // background
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("images/bg.jpg"),
-                repeat: ImageRepeat.repeatY)),
-        child: SafeArea(
-          child: Stack(
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  // List of messages
-                  buatListPesan(),
-
-                  // Input content
-                  buildInput(),
-                ],
-              ),
-
-              // Loading
-              buildLoading()
-            ],
+            ]),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: buttonScrollBottom(),
+        body: Container(
+          // background
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("images/bg.jpg"),
+                  repeat: ImageRepeat.repeatY)),
+          child: SafeArea(
+            child: Stack(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    // List of messages
+                    buatListPesan(),
+    
+                    // Input content
+                    buildInput(),
+                  ],
+                ),
+    
+                // Loading
+                buildLoading()
+              ],
+            ),
           ),
         ),
       ),
