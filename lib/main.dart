@@ -1,3 +1,4 @@
+import 'package:IslamBot/providers/locale_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -60,22 +61,30 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ],
-      child: MaterialApp(
-        title: AppConstants.appTitle,
-        theme: ThemeData(
-          fontFamily: "IslamBot",
-          primaryColor: ColorConstants.themeColor,
-          primarySwatch: MaterialColor(0xfff5a623, ColorConstants.swatchColor),
-        ),
-        supportedLocales: L10n.all,
-        localizationsDelegates: [
-          AppLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate
-        ],
-        home: SplashPage(),
-        debugShowCheckedModeBanner: false,
+      child: ChangeNotifierProvider(
+        create: (context) => LocaleProvider(),
+        builder: (context, child) {
+          final Lprovider = Provider.of<LocaleProvider>(context);
+          return MaterialApp(
+            title: AppConstants.appTitle,
+            theme: ThemeData(
+              fontFamily: "IslamBot",
+              primaryColor: ColorConstants.themeColor,
+              primarySwatch:
+                  MaterialColor(0xfff5a623, ColorConstants.swatchColor),
+            ),
+            locale: Lprovider.locale,
+            supportedLocales: L10n.all,
+            localizationsDelegates: [
+              AppLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate
+            ],
+            home: SplashPage(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
     );
   }

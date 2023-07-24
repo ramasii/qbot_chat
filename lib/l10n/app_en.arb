@@ -1,6 +1,3 @@
 {
-    "language": "English",
-    "@language":{
-        "description": "The current Language"
-    }
+    "language": "English"
 }

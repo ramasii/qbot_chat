@@ -1,3 +1,4 @@
+import 'package:IslamBot/utils/allpackages.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:developer';
@@ -26,6 +27,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 58, 86, 100),
           title: Text(
+            // AppLocalizations.of(context)!.language,
             'About Us',
             style: TextStyle(color: Colors.white),
           ),

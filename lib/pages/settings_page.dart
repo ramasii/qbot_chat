@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:IslamBot/qbotterminal.dart';
 import 'package:flutter/material.dart';
 import '../utils/allpackages.dart';
@@ -63,8 +65,8 @@ class _SettingsPageState extends State<SettingsPage> {
           padding: EdgeInsets.all(16),
           children: [
             subtitleSetting("Umum", bottom: 5),
-            TileSetting("Bahasa", Icons.language, selectedLanguage,
-                _showLanguageDialog),
+            TileSetting("Bahasa", Icons.language,
+                selectedLanguage, _showLanguageDialog),
             ListTile(
               leading: Icon(Icons.volume_up_rounded),
               title: Text('Auto Start TTS'),
@@ -102,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget previewFrame() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10),
           image: DecorationImage(
               image: AssetImage("images/bg.jpg"), fit: BoxFit.cover)),
       padding: EdgeInsets.all(20),
@@ -117,8 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   blurRadius: 2,
                   spreadRadius: 1)
             ]),
-      padding: EdgeInsets.all(10),
-
+        padding: EdgeInsets.all(10),
         child: BoldAsteris(
             text:
                 '**Al-Fatihah** (Pembukaan) surat ke 1 ayat **1** juz 1 halaman 1\n \nبِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ\n \nDengan nama Allah Yang Maha Pengasih, Maha Penyayang.'),
@@ -194,9 +195,30 @@ class _SettingsPageState extends State<SettingsPage> {
                 TextButton(
                   child: Text('OK'),
                   onPressed: () async {
+                    final Lprovider =
+                        Provider.of<LocaleProvider>(context, listen: false);
                     setState(() {
                       AppSettings.language = selectedLanguage;
+                      log(selectedLanguage);
+
+                      // set bahasa lokalisasi
+                      switch (selectedLanguage) {
+                        case 'Indonesia':
+                          Lprovider.setLocale(Locale('id'));
+                          break;
+                        case 'Malay':
+                          Lprovider.setLocale(Locale('ms'));
+                          break;
+                        case 'English':
+                          Lprovider.setLocale(Locale('en'));
+                          break;
+                        case 'Arab':
+                          Lprovider.setLocale(Locale('ar'));
+                          break;
+                        default:
+                      }
                     });
+
                     await AppSettings.saveSettings();
                     Navigator.of(context).pop();
                     refreshSettingPage();
