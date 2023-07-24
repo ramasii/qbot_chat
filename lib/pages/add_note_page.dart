@@ -96,27 +96,48 @@ class _AddNotePageState extends State<AddNotePage> {
                         });
                       },
                       icon: Icon(
-                        isEditMode ? Icons.close : Icons.edit,
+                        isEditMode ? Icons.cancel : Icons.edit,
                         color: Colors.white,
                       )),
-                  if(isEditMode == false)IconButton(
-                    tooltip: 'Salin Catatan',
-                      onPressed: () async {
-                        log('copy note');
-                        await Clipboard.setData(
-                                ClipboardData(text: '${widget.noteToEdit!['judul']}\n-----------------\n${widget.noteToEdit!['konten']}'));
-                      },
-                      icon: Icon(
-                        Icons.copy,
-                        color: Colors.white,
-                      )),
-                  if(isEditMode == false)IconButton(
-                    tooltip: 'Bagikan',
-                      onPressed: () async {
-                        log('share note');
-                        await Share.share('${widget.noteToEdit!['judul']}\n-----------------\n${widget.noteToEdit!['konten']}', subject: '${widget.noteToEdit!['judul']}');
-                      },
-                      icon: Icon(Icons.share, color: Colors.white,))
+                  // tombol save
+                  if (isEditMode)
+                    IconButton(
+                        tooltip: "Simpan",
+                        splashRadius: 25,
+                        onPressed: () async {
+                          log('save note (appbar)');
+                          await svFuncButton();
+                        },
+                        icon: Icon(
+                          Icons.save_rounded,
+                          color: Colors.white,
+                        )),
+                  if (isEditMode == false)
+                    IconButton(
+                        tooltip: 'Salin Catatan',
+                        onPressed: () async {
+                          log('copy note');
+                          await Clipboard.setData(ClipboardData(
+                              text:
+                                  '${widget.noteToEdit!['judul']}\n-----------------\n${widget.noteToEdit!['konten']}'));
+                        },
+                        icon: Icon(
+                          Icons.copy,
+                          color: Colors.white,
+                        )),
+                  if (isEditMode == false)
+                    IconButton(
+                        tooltip: 'Bagikan',
+                        onPressed: () async {
+                          log('share note');
+                          await Share.share(
+                              '${widget.noteToEdit!['judul']}\n-----------------\n${widget.noteToEdit!['konten']}',
+                              subject: '${widget.noteToEdit!['judul']}');
+                        },
+                        icon: Icon(
+                          Icons.share,
+                          color: Colors.white,
+                        ))
                 ]
               : [],
         ),
@@ -223,85 +244,7 @@ class _AddNotePageState extends State<AddNotePage> {
     return InkWell(
       onTap: () async {
         log('save note');
-        var a = DateTime.now().toString();
-        // tambah note baru
-        if ((titleController.text.trim().isNotEmpty ||
-                contentController.text.trim().isNotEmpty) &&
-            widget.noteToEdit == null) {
-          await getNotesList();
-          Map note = {
-            "judul": titleController.text.trim(),
-            "konten": contentController.text.trim(),
-            "timeAdd": a,
-            "timeEdited": a,
-            "color": colorIndex
-          };
-          setState(() {
-            noteList.add(note);
-          });
-          await saveNoteList();
-
-          titleController.clear();
-          contentController.clear();
-
-          Fluttertoast.showToast(
-              msg: 'Catatan disimpan',
-              backgroundColor: Colors.green,
-              textColor: Colors.white);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NotePage(),
-              ),
-              (route) => false);
-        }
-        // edit note
-        else if (titleController.text.trim().isNotEmpty &&
-            widget.noteToEdit != null) {
-          await getNotesList();
-          Map note = {
-            "judul": titleController.text.trim(),
-            "konten": contentController.text.trim(),
-            "timeEdited": DateTime.now().toString(),
-            "timeAdd": widget.noteToEdit!['timeAdd'],
-            "color": colorIndex,
-          };
-          // ambil index catatan yg diedit
-          var idxToEdit = noteList.indexWhere(
-              (element) => element['timeAdd'] == widget.noteToEdit!['timeAdd']);
-
-          // replace pada index tsb
-          setState(() {
-            noteList.replaceRange(idxToEdit, idxToEdit + 1, [note]);
-          });
-
-          // simpan
-          await saveNoteList();
-
-          /* titleController.clear();
-          contentController.clear(); */
-
-          Fluttertoast.showToast(
-              msg: 'Perubahan disimpan',
-              backgroundColor: Colors.green,
-              textColor: Colors.white);
-          setState(() {
-            isEditMode = false;
-          });
-          /* Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NotePage(),
-              ),
-              (route) => false); */
-        }
-        // jika judul kosong
-        else {
-          Fluttertoast.showToast(
-              msg: 'Judul tidak boleh kosong',
-              textColor: Colors.black,
-              backgroundColor: Colors.yellow);
-        }
+        await svFuncButton();
       },
       borderRadius: BorderRadius.circular(30),
       child: Tooltip(
@@ -317,6 +260,80 @@ class _AddNotePageState extends State<AddNotePage> {
         ),
       ),
     );
+  }
+
+  // fungsi button save note
+  svFuncButton() async {
+    var a = DateTime.now().toString();
+    // tambah note baru
+    if ((titleController.text.trim().isNotEmpty ||
+            contentController.text.trim().isNotEmpty) &&
+        widget.noteToEdit == null) {
+      await getNotesList();
+      Map note = {
+        "judul": titleController.text.trim(),
+        "konten": contentController.text.trim(),
+        "timeAdd": a,
+        "timeEdited": a,
+        "color": colorIndex
+      };
+      setState(() {
+        noteList.add(note);
+      });
+      await saveNoteList();
+
+      titleController.clear();
+      contentController.clear();
+
+      Fluttertoast.showToast(
+          msg: 'Catatan disimpan',
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NotePage(),
+          ),
+          (route) => false);
+    }
+    // edit note
+    else if (titleController.text.trim().isNotEmpty &&
+        widget.noteToEdit != null) {
+      await getNotesList();
+      Map note = {
+        "judul": titleController.text.trim(),
+        "konten": contentController.text.trim(),
+        "timeEdited": DateTime.now().toString(),
+        "timeAdd": widget.noteToEdit!['timeAdd'],
+        "color": colorIndex,
+      };
+      // ambil index catatan yg diedit
+      var idxToEdit = noteList.indexWhere(
+          (element) => element['timeAdd'] == widget.noteToEdit!['timeAdd']);
+
+      // replace pada index tsb
+      setState(() {
+        noteList.replaceRange(idxToEdit, idxToEdit + 1, [note]);
+      });
+
+      // simpan
+      await saveNoteList();
+
+      Fluttertoast.showToast(
+          msg: 'Perubahan disimpan',
+          backgroundColor: Colors.green,
+          textColor: Colors.white);
+      setState(() {
+        isEditMode = false;
+      });
+    }
+    // jika judul kosong
+    else {
+      Fluttertoast.showToast(
+          msg: 'Judul tidak boleh kosong',
+          textColor: Colors.black,
+          backgroundColor: Colors.yellow);
+    }
   }
 
   // fungsi save notes
