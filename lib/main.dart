@@ -1,19 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import './constants/app_constants.dart';
-import './providers/auth_provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants/color_constants.dart';
 import 'pages/pages.dart';
-import 'providers/providers.dart';
-import 'package:flutter/services.dart';
 import './utils/allpackages.dart';
+import './l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +67,13 @@ class MyApp extends StatelessWidget {
           primaryColor: ColorConstants.themeColor,
           primarySwatch: MaterialColor(0xfff5a623, ColorConstants.swatchColor),
         ),
+        supportedLocales: L10n.all,
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate
+        ],
         home: SplashPage(),
         debugShowCheckedModeBanner: false,
       ),
