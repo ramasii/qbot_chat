@@ -15,15 +15,15 @@ class _NotePageState extends State<NotePage> {
       []; // {"judul":"String", "konten":"String Multiline\n1\n2\n3 last", "timeAdd":"DateTime().now().toString", "color":0}
   List filteredNote = [];
   List colorList = [
-    Color.fromARGB(255, 244,237,178),
-    Color.fromARGB(255, 223,243,179),
-    Color.fromARGB(255, 192,242,177),
-    Color.fromARGB(255, 238,195,236),
-    Color.fromARGB(255, 183,228,244),
-    Color.fromARGB(255, 196,208,242),
-    Color.fromARGB(255, 186,243,220),
-    Color.fromARGB(255, 238,170,190),
-    Color.fromARGB(255, 241,241,241),
+    Color.fromARGB(255, 244, 237, 178),
+    Color.fromARGB(255, 223, 243, 179),
+    Color.fromARGB(255, 192, 242, 177),
+    Color.fromARGB(255, 238, 195, 236),
+    Color.fromARGB(255, 183, 228, 244),
+    Color.fromARGB(255, 196, 208, 242),
+    Color.fromARGB(255, 186, 243, 220),
+    Color.fromARGB(255, 238, 170, 190),
+    Color.fromARGB(255, 241, 241, 241),
   ];
 
   @override
@@ -69,7 +69,7 @@ class _NotePageState extends State<NotePage> {
                     child: TextField(
                       controller: searchController,
                       onChanged: (value) {
-                        onSearchTextChanged(value);
+                        onSearchTextChanged(searchController.text);
                       },
                       cursorColor: Colors.teal,
                       maxLines: 1,
@@ -80,6 +80,15 @@ class _NotePageState extends State<NotePage> {
                           size: 30,
                         ),
                         prefixIconColor: Color.fromARGB(255, 186, 186, 186),
+
+                        suffixIcon:  IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            searchController.clear();
+                            onSearchTextChanged(searchController.text);
+                          },
+                        ),
+                        suffixIconColor: Color.fromARGB(255, 186, 186, 186),
 
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -171,14 +180,27 @@ class _NotePageState extends State<NotePage> {
                                                               .ellipsis,
                                                         )
                                                       : Container(),
-                                                      Divider(color: Color.fromARGB(0, 0, 0, 0),),
-                                                  Text(filteredNote[index]
-                                                              ['timeAdd'] ==
-                                                          filteredNote[index]
-                                                              ['timeEdited']
-                                                      ? 'Ditambahkan ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}'
-                                                      : 'Diedit ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}',
-                                                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Color.fromARGB(255, 138, 138, 138)),)
+                                                  Divider(
+                                                    color: Color.fromARGB(
+                                                        0, 0, 0, 0),
+                                                  ),
+                                                  Text(
+                                                    filteredNote[index]
+                                                                ['timeAdd'] ==
+                                                            filteredNote[index]
+                                                                ['timeEdited']
+                                                        ? 'Ditambahkan ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}'
+                                                        : 'Diedit ${filteredNote[index]['timeEdited'].toString().replaceAll(RegExp(r'(?=\.).+'), '')}',
+                                                    style: TextStyle(
+                                                        fontSize: 11,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        color: Color.fromARGB(
+                                                            255,
+                                                            138,
+                                                            138,
+                                                            138)),
+                                                  )
                                                 ],
                                               ),
                                             ),
