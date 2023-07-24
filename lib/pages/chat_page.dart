@@ -217,26 +217,26 @@ class ChatPageState extends State<ChatPage> {
   List labeledItems = [];
   List noteList = [];
   List labelColors = [
-    Color.fromARGB(255, 240,153,137),
-    Color.fromARGB(255, 123,195,250),
-    Color.fromARGB(255, 247,214,81),
-    Color.fromARGB(255, 215,176,236),
-    Color.fromARGB(255, 119,200,181),
-    Color.fromARGB(255, 240,160,249),
-    Color.fromARGB(255, 160,249,255),
-    Color.fromARGB(255, 205,171,64),
-    Color.fromARGB(255, 112,124,201),
-    Color.fromARGB(255, 218,230,106),
-    Color.fromARGB(255, 95,206,221),
-    Color.fromARGB(255, 246,198,199),
-    Color.fromARGB(255, 247,214,81),
-    Color.fromARGB(255, 228,85,79),
-    Color.fromARGB(255, 71,159,235),
-    Color.fromARGB(255, 156,227,78),
-    Color.fromARGB(255, 243,178,63),
-    Color.fromARGB(255, 190,232,252),
-    Color.fromARGB(255, 158,166,249),
-    Color.fromARGB(255, 141,107,201),
+    Color.fromARGB(255, 240, 153, 137),
+    Color.fromARGB(255, 123, 195, 250),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 215, 176, 236),
+    Color.fromARGB(255, 119, 200, 181),
+    Color.fromARGB(255, 240, 160, 249),
+    Color.fromARGB(255, 160, 249, 255),
+    Color.fromARGB(255, 205, 171, 64),
+    Color.fromARGB(255, 112, 124, 201),
+    Color.fromARGB(255, 218, 230, 106),
+    Color.fromARGB(255, 95, 206, 221),
+    Color.fromARGB(255, 246, 198, 199),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 228, 85, 79),
+    Color.fromARGB(255, 71, 159, 235),
+    Color.fromARGB(255, 156, 227, 78),
+    Color.fromARGB(255, 243, 178, 63),
+    Color.fromARGB(255, 190, 232, 252),
+    Color.fromARGB(255, 158, 166, 249),
+    Color.fromARGB(255, 141, 107, 201),
   ];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
@@ -330,17 +330,18 @@ class ChatPageState extends State<ChatPage> {
     return WillPopScope(
       onWillPop: () async {
         if (currentBackPressTime == null ||
-              DateTime.now().difference(currentBackPressTime!) > Duration(seconds: 2)) {
-            // Menampilkan Toast "Tekan sekali lagi untuk keluar aplikasi."
-            Fluttertoast.showToast(
-              msg: "Tekan sekali lagi untuk keluar aplikasi.",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-            );
-            currentBackPressTime = DateTime.now();
-            return false; // Tidak menutup aplikasi
-          }
-          return true; // Menutup aplikasi
+            DateTime.now().difference(currentBackPressTime!) >
+                Duration(seconds: 2)) {
+          // Menampilkan Toast "Tekan sekali lagi untuk keluar aplikasi."
+          Fluttertoast.showToast(
+            msg: "Tekan sekali lagi untuk keluar aplikasi.",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+          );
+          currentBackPressTime = DateTime.now();
+          return false; // Tidak menutup aplikasi
+        }
+        return true; // Menutup aplikasi
       },
       child: Scaffold(
         appBar: AppBar(
@@ -369,7 +370,7 @@ class ChatPageState extends State<ChatPage> {
                       onPressed: (() async {
                         log('tambah note');
                         log(selectedItems.toString());
-    
+
                         // Tampilkan Dialog
                         int? selectedOption = await showDialog<int>(
                           context: context,
@@ -395,7 +396,7 @@ class ChatPageState extends State<ChatPage> {
                             );
                           },
                         );
-    
+
                         // Tangani pilihan yang dipilih
                         if (selectedOption != null) {
                           if (selectedOption == 0) {
@@ -405,22 +406,23 @@ class ChatPageState extends State<ChatPage> {
                               log(element.toString());
                               // ambil noteList
                               await getNotesList();
-    
+
                               // temukan index elemen di pesanArray
                               var idxFromPesanArr = pesanArray.indexWhere(
                                   (element2) =>
                                       element2['time'] == element['pesanObj']);
-    
+
                               // dapatkan pesan dari pesanArray[idx]
-                              String konten = pesanArray[idxFromPesanArr]['pesan']
+                              String konten = pesanArray[idxFromPesanArr]
+                                      ['pesan']
                                   .replaceAll('\*', '');
-    
+
                               var timeAdd = DateTime.now().toString();
-    
+
                               var color = noteList.length > 8
                                   ? sisabagi(noteList.length, 8)
                                   : noteList.length;
-    
+
                               var a = DateTime.now().toString();
                               // buat obj note
                               Map note = {
@@ -430,20 +432,20 @@ class ChatPageState extends State<ChatPage> {
                                 "timeEdited": a,
                                 "color": color
                               };
-    
+
                               // tambahkan note ke noteList
                               setState(() {
                                 noteList.add(note);
                               });
-    
+
                               // simpan
                               await saveNoteList();
-    
+
                               Fluttertoast.showToast(
                                   msg: 'Catatan baru ditambahkan',
                                   backgroundColor: Colors.green,
                                   textColor: Colors.white);
-    
+
                               // bersihkan noteList
                               setState(() {
                                 noteList.clear();
@@ -458,7 +460,7 @@ class ChatPageState extends State<ChatPage> {
                               noteList.sort((a, b) => a['judul']
                                   .toLowerCase()
                                   .compareTo(b['judul'].toLowerCase()));
-                              List<String> ex1 = [];
+                              List<String> ex1 = [noteList[0]['judul']];
                               SelectDialog.showModal<String>(context,
                                   label: "Tambah ke Catatan",
                                   searchBoxDecoration: InputDecoration(
@@ -471,19 +473,48 @@ class ChatPageState extends State<ChatPage> {
                                     ),
                                   ),
                                   multipleSelectedValues: ex1,
-                                  items: List.generate(noteList.length, (index) {
+                                  items:
+                                      List.generate(noteList.length, (index) {
                                     return "${noteList[index]['judul']}";
-                                  }), itemBuilder: (context, item, isSelected) {
+                                  }), 
+                                  itemBuilder: (context, item, isSelected) {
                                 return Container(
-                                  color: Color.fromARGB(isSelected ? 150 :0, 150, 222, 255),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  color: Color.fromARGB(
+                                      isSelected ? 150 : 0, 150, 222, 255),
+                                  padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                  child: Row(
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Text(item),
+                                      Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.grey,
+                                          radius: 10,
+                                        ),
+                                        CircleAvatar(
+                                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                                          radius: 7,
+                                        ),
+                                        if(isSelected)CircleAvatar(
+                                          backgroundColor: Colors.teal,
+                                          radius: 5,
+                                        ),
+                                      ],),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(10),
+                                              child: Text(item),
+                                            ),
+                                            Divider(
+                                              height: 0,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                      Divider(height: 0,)
                                     ],
                                   ),
                                 );
@@ -500,10 +531,10 @@ class ChatPageState extends State<ChatPage> {
                                     await getNotesList();
                                     setState(() {
                                       selectedItems.sort((a, b) {
-                                        DateTime timeA =
-                                            DateTime.parse(a['pesanObj'] ?? '0');
-                                        DateTime timeB =
-                                            DateTime.parse(b['pesanObj'] ?? '0');
+                                        DateTime timeA = DateTime.parse(
+                                            a['pesanObj'] ?? '0');
+                                        DateTime timeB = DateTime.parse(
+                                            b['pesanObj'] ?? '0');
                                         return timeA.compareTo(timeB);
                                       });
                                     });
@@ -513,20 +544,22 @@ class ChatPageState extends State<ChatPage> {
                                             (element2) =>
                                                 element2['judul'] == element);
                                         String konten = noteList[idx]['konten'];
-    
+
                                         List listMsg = [];
                                         log(selectedItems.toString());
-    
+
                                         for (var element3 in selectedItems) {
-                                          String pesan = pesanArray[
-                                              pesanArray.indexWhere((element4) =>
-                                                  element4['time'] ==
-                                                  element3['pesanObj'])]['pesan'];
-                                          listMsg.add(pesan.replaceAll('*', ''));
+                                          String pesan = pesanArray[pesanArray
+                                                  .indexWhere((element4) =>
+                                                      element4['time'] ==
+                                                      element3['pesanObj'])]
+                                              ['pesan'];
+                                          listMsg
+                                              .add(pesan.replaceAll('*', ''));
                                         }
-                                        String selectedMsg =
-                                            listMsg.join('\n-----------------\n');
-    
+                                        String selectedMsg = listMsg
+                                            .join('\n-----------------\n');
+
                                         String toAdd = konten != ''
                                             ? [konten, selectedMsg]
                                                 .join('\n-----------------\n')
@@ -559,7 +592,8 @@ class ChatPageState extends State<ChatPage> {
                                   context: context,
                                   builder: (ctx) {
                                     return AlertDialog(
-                                      title: Text('Anda belum memiliki catatan'),
+                                      title:
+                                          Text('Anda belum memiliki catatan'),
                                       content: Text(
                                           'Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.'),
                                     );
@@ -574,16 +608,16 @@ class ChatPageState extends State<ChatPage> {
                   ? IconButton(
                       onPressed: () async {
                         String labelName = '';
-    
+
                         await getLabeledItems();
-    
+
                         await showDialog(
                           context: context,
                           builder: (BuildContext context) {
                             List<int> labelIndex =
                                 []; // label yang dipilih nanti indexnya dimasukkan ke sini
                             bool disturbedCheck = false;
-    
+
                             return StatefulBuilder(builder:
                                 (BuildContext context, StateSetter setState) {
                               return AlertDialog(
@@ -594,7 +628,8 @@ class ChatPageState extends State<ChatPage> {
                                 content: SingleChildScrollView(
                                   physics: ClampingScrollPhysics(),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Column(
@@ -609,9 +644,9 @@ class ChatPageState extends State<ChatPage> {
                                           // log(listPesan.toString(),
                                           // name: labelName);
                                           // log(selectedItems.toString()); // [{inx: 3, pesanObj: 2023-07-12 15:49:22.032284}, {inx: 2, pesanObj: 2023-07-12 15:49:21.548758}]
-    
+
                                           List<bool> boolList = [];
-    
+
                                           for (var pesan1 in listPesan) {
                                             var pesanTime = pesan1['pesanObj'];
                                             for (var item1 in selectedItems) {
@@ -627,7 +662,7 @@ class ChatPageState extends State<ChatPage> {
                                               }
                                             }
                                           }
-    
+
                                           // jika checkAlltrue == true, maka tambah ke labelIndex
                                           if (checkAllTrue(boolList) == true ||
                                               checkAllTrue(boolList) == null &&
@@ -635,7 +670,7 @@ class ChatPageState extends State<ChatPage> {
                                                   selectedItems.length <= 1) {
                                             labelIndex.add(index);
                                           }
-    
+
                                           return ListTile(
                                             leading: SizedBox(
                                               width:
@@ -662,7 +697,8 @@ class ChatPageState extends State<ChatPage> {
                                                   20, // Lebar yang sesuai dengan kebutuhanmu
                                               child: Checkbox(
                                                 tristate: true,
-                                                value: labelIndex.contains(index),
+                                                value:
+                                                    labelIndex.contains(index),
                                                 onChanged: (value) {
                                                   setState(() {
                                                     // log('$labeledItems');
@@ -698,7 +734,8 @@ class ChatPageState extends State<ChatPage> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  title: Text('Buat Label Baru'),
+                                                  title:
+                                                      Text('Buat Label Baru'),
                                                   content: TextField(
                                                     onChanged: (value) {
                                                       labelName = value;
@@ -740,7 +777,8 @@ class ChatPageState extends State<ChatPage> {
                                                             color: Colors.grey,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(5)),
+                                                                    .circular(
+                                                                        5)),
                                                         child: Text(
                                                           'Batal',
                                                           style: TextStyle(
@@ -768,14 +806,14 @@ class ChatPageState extends State<ChatPage> {
                                                                   : labeledItems
                                                                       .length,
                                                               "listPesan": [],
-                                                              "time":
-                                                                  DateTime.now()
-                                                                      .toString()
+                                                              "time": DateTime
+                                                                      .now()
+                                                                  .toString()
                                                             });
                                                           });
                                                           await saveLabeledItems();
                                                           await getLabeledItems();
-    
+
                                                           log('sukses melabel pesan: ${labeledItems.last}');
                                                           Fluttertoast.showToast(
                                                               msg:
@@ -784,7 +822,8 @@ class ChatPageState extends State<ChatPage> {
                                                                   Colors.green,
                                                               textColor:
                                                                   Colors.white);
-                                                          Navigator.pop(context);
+                                                          Navigator.pop(
+                                                              context);
                                                           setState(() {
                                                             textLabelNameController
                                                                 .clear();
@@ -796,7 +835,8 @@ class ChatPageState extends State<ChatPage> {
                                                               textColor:
                                                                   Colors.black,
                                                               backgroundColor:
-                                                                  Colors.yellow);
+                                                                  Colors
+                                                                      .yellow);
                                                         }
                                                       },
                                                       child: Container(
@@ -806,7 +846,8 @@ class ChatPageState extends State<ChatPage> {
                                                             color: Colors.green,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(5)),
+                                                                    .circular(
+                                                                        5)),
                                                         child: Text(
                                                           'Simpan',
                                                           style: TextStyle(
@@ -840,7 +881,8 @@ class ChatPageState extends State<ChatPage> {
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                           color: Colors.grey,
-                                          borderRadius: BorderRadius.circular(5)),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
                                       child: Text(
                                         'Batal',
                                         style: TextStyle(color: Colors.white),
@@ -856,24 +898,25 @@ class ChatPageState extends State<ChatPage> {
                                         setState(() {
                                           labeledItems.add({
                                             "labelName": labelName,
-                                            "labelColor": labeledItems.length > 9
-                                                ? labelColors[sisabagi(
-                                                    labeledItems.length, 9)]
-                                                : labeledItems.length,
+                                            "labelColor":
+                                                labeledItems.length > 9
+                                                    ? labelColors[sisabagi(
+                                                        labeledItems.length, 9)]
+                                                    : labeledItems.length,
                                             "listPesan": selectedItems,
                                             "time": DateTime.now().toString()
                                           });
                                         });
-    
+
                                         await saveLabeledItems();
                                         await clearSelectedItems();
-    
+
                                         log('selecteditems: $selectedItems');
                                         log('sukses melabel pesan: ${labeledItems}');
                                         setState(() {
                                           labeledItems.clear();
                                         });
-    
+
                                         Fluttertoast.showToast(
                                             msg:
                                                 'Disimpan dengan label "$labelName"',
@@ -884,7 +927,7 @@ class ChatPageState extends State<ChatPage> {
                                           selectedItems.length <= 1) {
                                         await getLabeledItems();
                                         log('labelIndex: $labelIndex');
-    
+
                                         labelIndex.forEach((element) {
                                           labeledItems
                                               .asMap()
@@ -892,15 +935,15 @@ class ChatPageState extends State<ChatPage> {
                                             List listPesan =
                                                 element2['listPesan'];
                                             log(listPesan.toString());
-    
+
                                             if (!labelIndex.contains(index)) {
                                               element2['listPesan'].removeWhere(
                                                   (pesan) =>
                                                       pesan['pesanObj'] ==
                                                       selectedItems[0]
                                                           ['pesanObj']);
-                                            } else if (element2['listPesan'].any(
-                                                (pesan) =>
+                                            } else if (element2['listPesan']
+                                                .any((pesan) =>
                                                     pesan['pesanObj'] ==
                                                     selectedItems[0]
                                                         ['pesanObj'])) {
@@ -911,13 +954,13 @@ class ChatPageState extends State<ChatPage> {
                                             }
                                           });
                                         });
-    
+
                                         await saveLabeledItems();
                                         await clearSelectedItems();
                                         setState(() {
                                           labeledItems.clear();
                                         });
-    
+
                                         Fluttertoast.showToast(
                                             msg: 'Perubahan disimpan',
                                             backgroundColor: Colors.green,
@@ -927,22 +970,22 @@ class ChatPageState extends State<ChatPage> {
                                       // menambahkan label yang tersedia
                                       else if (labelIndex.isNotEmpty) {
                                         await getLabeledItems();
-    
+
                                         // setiap label yang terpilih
                                         for (var e in labelIndex) {
                                           log('akan dilabel di index: $e');
-    
+
                                           // setiap item yang terpilih
                                           for (var e2 in selectedItems) {
                                             setState(() {
                                               List listPesan =
                                                   labeledItems[e]["listPesan"];
-    
+
                                               int indexKeberadaan =
                                                   listPesan.indexWhere((e3) =>
                                                       e3.containsValue(
                                                           e2['pesanObj']));
-    
+
                                               // jika pesan belum ditambahkan ke label, maka tambahkan ke label
                                               // jika sudah, tidak perlu
                                               if (indexKeberadaan == -1) {
@@ -950,20 +993,20 @@ class ChatPageState extends State<ChatPage> {
                                                 listPesan.add(e2);
                                               }
                                               log('menemukan: ${listPesan.indexOf(e2)}');
-    
+
                                               log('$listPesan');
                                             });
                                           }
                                         }
                                         log('selecteditems: $selectedItems');
                                         log('sukses melabel pesan: ${labeledItems}');
-    
+
                                         await saveLabeledItems();
                                         await clearSelectedItems();
                                         setState(() {
                                           labeledItems.clear();
                                         });
-    
+
                                         Fluttertoast.showToast(
                                             msg:
                                                 'Disimpan di ${labelIndex.length} label',
@@ -980,15 +1023,17 @@ class ChatPageState extends State<ChatPage> {
                                             selectedItems[0]['pesanObj'];
                                         setState(() {
                                           labeledItems.forEach((element) {
-                                            List listPesan = element['listPesan'];
+                                            List listPesan =
+                                                element['listPesan'];
                                             listPesan.removeWhere((element2) =>
-                                                element2['pesanObj'] == itemTime);
+                                                element2['pesanObj'] ==
+                                                itemTime);
                                           });
                                         });
-    
+
                                         await saveLabeledItems();
                                         await clearSelectedItems();
-    
+
                                         setState(() {
                                           labeledItems.clear();
                                         });
@@ -1008,7 +1053,8 @@ class ChatPageState extends State<ChatPage> {
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                           color: Colors.green,
-                                          borderRadius: BorderRadius.circular(5)),
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
                                       child: Text(
                                         'Simpan',
                                         style: TextStyle(color: Colors.white),
@@ -1061,8 +1107,10 @@ class ChatPageState extends State<ChatPage> {
                               Icons.share_rounded, Options.shareMsg.index),
                           ..._buildPopupMenuItem('Expor Pesan',
                               Icons.upload_file_rounded, Options.export.index),
-                          ..._buildPopupMenuItem('Impor Pesan',
-                              Icons.file_download_rounded, Options.import.index),
+                          ..._buildPopupMenuItem(
+                              'Impor Pesan',
+                              Icons.file_download_rounded,
+                              Options.import.index),
                           ..._buildPopupMenuItem(
                               'Bersihkan Pesan',
                               Icons.cleaning_services_rounded,
@@ -1099,12 +1147,12 @@ class ChatPageState extends State<ChatPage> {
                   children: <Widget>[
                     // List of messages
                     buatListPesan(),
-    
+
                     // Input content
                     buildInput(),
                   ],
                 ),
-    
+
                 // Loading
                 buildLoading()
               ],

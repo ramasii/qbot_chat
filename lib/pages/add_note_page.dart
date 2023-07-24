@@ -256,8 +256,7 @@ class _AddNotePageState extends State<AddNotePage> {
               (route) => false);
         }
         // edit note
-        else if ((titleController.text.trim().isNotEmpty ||
-                contentController.text.trim().isNotEmpty) &&
+        else if (titleController.text.trim().isNotEmpty &&
             widget.noteToEdit != null) {
           await getNotesList();
           Map note = {
@@ -299,7 +298,7 @@ class _AddNotePageState extends State<AddNotePage> {
         // jika judul kosong
         else {
           Fluttertoast.showToast(
-              msg: 'Catatan tidak boleh kosong',
+              msg: 'Judul tidak boleh kosong',
               textColor: Colors.black,
               backgroundColor: Colors.yellow);
         }
