@@ -217,15 +217,26 @@ class ChatPageState extends State<ChatPage> {
   List labeledItems = [];
   List noteList = [];
   List labelColors = [
-    Color.fromARGB(255, 244, 237, 178),
-    Color.fromARGB(255, 241, 241, 241),
-    Color.fromARGB(255, 223, 243, 179),
-    Color.fromARGB(255, 192, 242, 177),
-    Color.fromARGB(255, 238, 195, 236),
-    Color.fromARGB(255, 183, 228, 244),
-    Color.fromARGB(255, 196, 208, 242),
-    Color.fromARGB(255, 186, 243, 220),
-    Color.fromARGB(255, 238, 170, 190),
+    Color.fromARGB(255, 240,153,137),
+    Color.fromARGB(255, 123,195,250),
+    Color.fromARGB(255, 247,214,81),
+    Color.fromARGB(255, 215,176,236),
+    Color.fromARGB(255, 119,200,181),
+    Color.fromARGB(255, 240,160,249),
+    Color.fromARGB(255, 160,249,255),
+    Color.fromARGB(255, 205,171,64),
+    Color.fromARGB(255, 112,124,201),
+    Color.fromARGB(255, 218,230,106),
+    Color.fromARGB(255, 95,206,221),
+    Color.fromARGB(255, 246,198,199),
+    Color.fromARGB(255, 247,214,81),
+    Color.fromARGB(255, 228,85,79),
+    Color.fromARGB(255, 71,159,235),
+    Color.fromARGB(255, 156,227,78),
+    Color.fromARGB(255, 243,178,63),
+    Color.fromARGB(255, 190,232,252),
+    Color.fromARGB(255, 158,166,249),
+    Color.fromARGB(255, 141,107,201),
   ];
   bool qbotSpeaking = false;
   bool isFirstRun = true;
@@ -749,11 +760,11 @@ class ChatPageState extends State<ChatPage> {
                                                                   labelName,
                                                               "labelColor": labeledItems
                                                                           .length >
-                                                                      8
+                                                                      9
                                                                   ? sisabagi(
                                                                       labeledItems
                                                                           .length,
-                                                                      8)
+                                                                      9)
                                                                   : labeledItems
                                                                       .length,
                                                               "listPesan": [],
@@ -845,9 +856,9 @@ class ChatPageState extends State<ChatPage> {
                                         setState(() {
                                           labeledItems.add({
                                             "labelName": labelName,
-                                            "labelColor": labeledItems.length > 8
+                                            "labelColor": labeledItems.length > 9
                                                 ? labelColors[sisabagi(
-                                                    labeledItems.length, 8)]
+                                                    labeledItems.length, 9)]
                                                 : labeledItems.length,
                                             "listPesan": selectedItems,
                                             "time": DateTime.now().toString()
