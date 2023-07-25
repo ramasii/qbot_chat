@@ -78,7 +78,7 @@ class _LabelPageState extends State<LabelPage> {
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 58, 86, 100),
             title: Text(
-              'Labels',
+              'Label',
               style: TextStyle(color: Colors.white),
             ),
             leading: IconButton(
@@ -363,7 +363,7 @@ class _LabelPageState extends State<LabelPage> {
                                       style: TextStyle(fontSize: 18),
                                     ),
                                     Text(
-                                      '${labeledItems[index]['listPesan'].length} messages',
+                                      '${labeledItems[index]['listPesan'].length} pesan',
                                       style: TextStyle(color: Colors.grey),
                                     ),
                                     Divider(
