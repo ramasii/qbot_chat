@@ -243,7 +243,7 @@ class _AddNotePageState extends State<AddNotePage> {
               else
                 Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: BoldAsteris(text: contentController.text)),
+                    child: BoldAsteris(text: contentController.text, useReadMore: false,)),
             ],
           ),
         ),

@@ -3,8 +3,9 @@ import '../utils/allpackages.dart';
 
 class BoldAsteris extends StatefulWidget {
   final String text;
+  bool useReadMore;
 
-  BoldAsteris({required this.text});
+  BoldAsteris({required this.text, this.useReadMore = true});
 
   @override
   _BoldAsterisState createState() => _BoldAsterisState();
@@ -23,7 +24,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
     super.initState();
 
     // pisah teks
-    if (widget.text.length > 396 && isExpanded == false) {
+    if (widget.text.length > 396 && isExpanded == false && widget.useReadMore == true) {
       bagian1 = widget.text
           .substring(0, 396)
           .replaceAll(RegExp(r'.{4}$'), "..."); // diakhiri titik-titik (...)
@@ -46,7 +47,10 @@ class _BoldAsterisState extends State<BoldAsteris> {
     // List untuk ditampilkan di akhir, jangan lupa digabung dengan myReadmore()
     List<Widget> listRichText = List<Widget>.generate(arabs.length, (index) {
       // ubah font arab
-      if (arabicRegex.hasMatch(arabs[index]) && index > 0 && index < arabs.length-1) { // diberi index > 0 untuk antisipasi
+      if (arabicRegex.hasMatch(arabs[index]) &&
+          index > 0 &&
+          index < arabs.length - 1) {
+        // diberi index > 0 untuk antisipasi
         return RichText(
             // textAlign: TextAlign.end, // alignment
             textDirection: TextDirection.rtl, // direction
@@ -116,7 +120,6 @@ class _BoldAsterisState extends State<BoldAsteris> {
                     fontFamily: "IslamBot"),
               ),
               onTap: () {
-                print('object');
                 setState(() {
                   isExpanded = true;
                   bagian1 = widget.text;
@@ -127,7 +130,7 @@ class _BoldAsterisState extends State<BoldAsteris> {
     }
 
     // listRichtext + myReadmore, digabung dengan readmore
-    listRichText.add(myReadmore());
+     listRichText.add(myReadmore());
 
     // return Column -> RichText & readmore widget
     return Column(
