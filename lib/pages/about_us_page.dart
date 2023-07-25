@@ -66,13 +66,13 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Version Name: $versionCode',
+                    child: Text('Kode Versi: $versionCode',
                         textAlign: TextAlign.left),
                   ),
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Version Name: $versionName',
+                    child: Text('Nama Versi: $versionName',
                         textAlign: TextAlign.left),
                   ),
                   Divider(),
