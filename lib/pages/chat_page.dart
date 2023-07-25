@@ -373,22 +373,6 @@ class ChatPageState extends State<ChatPage> {
 
                         // Tampilkan Dialog opsi
                         int? selectedOption = await showDialog<int>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            int a;
-                            return AlertDialog(
-                              title: Text('Tambah ke Catatan'),
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(10, 16, 10, 16),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  InkWell(
-                                    onTap: () async {
-                                      // Tampilkan Dialog Konfirmasi
-                                      bool? isConfirmed =
-                                          await showDialog<bool>(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
@@ -399,7 +383,7 @@ class ChatPageState extends State<ChatPage> {
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.pop(context,
-                                                      false); // Tidak Konfirmasi (Nilai false)
+                                                      0); // Tidak Konfirmasi (0)
                                                 },
                                                 child: Container(
                                                   padding: EdgeInsets.all(10),
@@ -418,7 +402,7 @@ class ChatPageState extends State<ChatPage> {
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.pop(context,
-                                                      true); // Konfirmasi (Nilai true)
+                                                      1); // Konfirmasi (Nilai true)
                                                 },
                                                 child: Container(
                                                   padding: EdgeInsets.all(10),
@@ -438,103 +422,6 @@ class ChatPageState extends State<ChatPage> {
                                           );
                                         },
                                       );
-
-                                      if (isConfirmed == true) {
-                                        // Jika pengguna mengkonfirmasi, lakukan sesuatu di sini (misalnya tambahkan pesan ke catatan yang sudah ada)
-                                        Navigator.pop(context,
-                                            0); // Nilai yang dikembalikan saat opsi dipilih
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text('• Catatan Baru'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () async {
-                                      // Tampilkan Dialog Konfirmasi
-                                      bool? isConfirmed =
-                                          await showDialog<bool>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Tambah ke Catatan'),
-                                            content: Text(
-                                                'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context,
-                                                      false); // Tidak Konfirmasi (Nilai false)
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.grey,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    'Tidak',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context,
-                                                      true); // Konfirmasi (Nilai true)
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    'Ya',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-
-                                      if (isConfirmed == true) {
-                                        // Jika pengguna mengkonfirmasi, lakukan sesuatu di sini (misalnya tambahkan pesan ke catatan yang sudah ada)
-                                        Navigator.pop(context,
-                                            1); // Nilai yang dikembalikan saat opsi dipilih
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                                '• Catatan yang Sudah Ada'),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-
                         // Tangani pilihan yang dipilih
                         if (selectedOption != null) {
                           if (selectedOption == 0) {
