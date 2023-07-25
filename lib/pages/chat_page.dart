@@ -378,7 +378,7 @@ class ChatPageState extends State<ChatPage> {
                                           return AlertDialog(
                                             title: Text('Tambah ke Catatan'),
                                             content: Text(
-                                                'Tambahkan pesan yang dipilih sebagai catatan baru?'),
+                                                'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
@@ -585,11 +585,11 @@ class ChatPageState extends State<ChatPage> {
                                               .add(pesan.replaceAll('*', ''));
                                         }
                                         String selectedMsg = listMsg
-                                            .join('\n-----------------\n');
+                                            .join('\n \n----------------------------------\n');
 
                                         String toAdd = konten != ''
                                             ? [konten, selectedMsg]
-                                                .join('\n-----------------\n')
+                                                .join('\n \n----------------------------------\n')
                                             : selectedMsg;
                                         setState(() {
                                           noteList[idx]['konten'] = toAdd;
