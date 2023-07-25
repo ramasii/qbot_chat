@@ -1137,7 +1137,7 @@ class ChatPageState extends State<ChatPage> {
                           ..._buildPopupMenuItem('Ekspor Semua Pesan',
                               Icons.upload_file_rounded, Options.export.index),
                           ..._buildPopupMenuItem(
-                              'Import Pesan',
+                              'Impor Pesan',
                               Icons.file_download_rounded,
                               Options.import.index),
                           ..._buildPopupMenuItem(
