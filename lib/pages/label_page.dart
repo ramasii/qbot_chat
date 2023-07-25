@@ -17,26 +17,26 @@ class _LabelPageState extends State<LabelPage> {
   late List labeledItems = [];
   List selectedLabel = [];
   List labelColors = [
-    Color.fromARGB(255, 240,153,137),
-    Color.fromARGB(255, 123,195,250),
-    Color.fromARGB(255, 247,214,81),
-    Color.fromARGB(255, 215,176,236),
-    Color.fromARGB(255, 119,200,181),
-    Color.fromARGB(255, 240,160,249),
-    Color.fromARGB(255, 160,249,255),
-    Color.fromARGB(255, 205,171,64),
-    Color.fromARGB(255, 112,124,201),
-    Color.fromARGB(255, 218,230,106),
-    Color.fromARGB(255, 95,206,221),
-    Color.fromARGB(255, 246,198,199),
-    Color.fromARGB(255, 247,214,81),
-    Color.fromARGB(255, 228,85,79),
-    Color.fromARGB(255, 71,159,235),
-    Color.fromARGB(255, 156,227,78),
-    Color.fromARGB(255, 243,178,63),
-    Color.fromARGB(255, 190,232,252),
-    Color.fromARGB(255, 158,166,249),
-    Color.fromARGB(255, 141,107,201),
+    Color.fromARGB(255, 240, 153, 137),
+    Color.fromARGB(255, 123, 195, 250),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 215, 176, 236),
+    Color.fromARGB(255, 119, 200, 181),
+    Color.fromARGB(255, 240, 160, 249),
+    Color.fromARGB(255, 160, 249, 255),
+    Color.fromARGB(255, 205, 171, 64),
+    Color.fromARGB(255, 112, 124, 201),
+    Color.fromARGB(255, 218, 230, 106),
+    Color.fromARGB(255, 95, 206, 221),
+    Color.fromARGB(255, 246, 198, 199),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 228, 85, 79),
+    Color.fromARGB(255, 71, 159, 235),
+    Color.fromARGB(255, 156, 227, 78),
+    Color.fromARGB(255, 243, 178, 63),
+    Color.fromARGB(255, 190, 232, 252),
+    Color.fromARGB(255, 158, 166, 249),
+    Color.fromARGB(255, 141, 107, 201),
   ];
 
   @override
@@ -141,7 +141,8 @@ class _LabelPageState extends State<LabelPage> {
                                   selectedLabel.sort();
                                   setState(() {
                                     for (var e in selectedLabel) {
-                                      labeledItems.removeWhere((element) => element['time'] == e);
+                                      labeledItems.removeWhere(
+                                          (element) => element['time'] == e);
                                     }
                                   });
 
@@ -214,7 +215,7 @@ class _LabelPageState extends State<LabelPage> {
                                           ? sisabagi(labeledItems.length, 9)
                                           : labeledItems.length,
                                       "listPesan": [],
-                                                            "time":DateTime.now().toString()
+                                      "time": DateTime.now().toString()
                                     });
                                   });
                                   await saveLabeledItems();
@@ -251,23 +252,26 @@ class _LabelPageState extends State<LabelPage> {
                   },
                   radius: 30,
                   borderRadius: BorderRadius.circular(30),
-                  child: CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.green[400],
-                    child: Icon(
-                      Icons.add_rounded,
-                      color: Colors.white,
+                  child: Tooltip(
+                    message: 'Tambah Catatan',
+                    child: CircleAvatar(
+                      backgroundColor: Colors.teal,
+                      radius: 30,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                     ),
                   ),
                 )
               : Container(),
           body: labeledItems.length != 0
               ? Column(
-                children: [
-                  ListView.builder(
+                  children: [
+                    ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-
                         return InkWell(
                           onLongPress: () {
                             // jika tidak sedang memilih pesan, maka pesan akan terpilih
@@ -293,14 +297,17 @@ class _LabelPageState extends State<LabelPage> {
                               );
                             } else {
                               // jika index sudah ada di selectedItem, hapus dari list
-                              if (selectedLabel.contains(labeledItems[index]['time'])) {
+                              if (selectedLabel
+                                  .contains(labeledItems[index]['time'])) {
                                 setState(() {
-                                  selectedLabel.remove(labeledItems[index]['time']);
+                                  selectedLabel
+                                      .remove(labeledItems[index]['time']);
                                 });
                                 log('index $index removed from labeledItems');
                               } else {
                                 setState(() {
-                                  selectedLabel.add(labeledItems[index]['time']);
+                                  selectedLabel
+                                      .add(labeledItems[index]['time']);
                                 });
                                 log('add index ${index}');
                               }
@@ -322,7 +329,8 @@ class _LabelPageState extends State<LabelPage> {
                                     ),
                                   ),
                                   // centang saat dipilih
-                                  selectedLabel.contains(labeledItems[index]['time'])
+                                  selectedLabel
+                                          .contains(labeledItems[index]['time'])
                                       ? Container(
                                           padding: EdgeInsets.all(8),
                                           child: Stack(
@@ -367,19 +375,18 @@ class _LabelPageState extends State<LabelPage> {
                             ],
                           ),
                         );
-                        
                       },
                       itemCount: labeledItems.length,
                     ),
-                  Container(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  )
-                ],
-              )
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Text(
+                        'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    )
+                  ],
+                )
               : Center(
                   child: Container(
                     margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -406,7 +413,9 @@ class _LabelPageState extends State<LabelPage> {
     if (a != null) {
       setState(() {
         labeledItems = jsonDecode(a);
-        labeledItems.sort((a, b) => a['labelName'].toLowerCase().compareTo(b['labelName'].toLowerCase()));
+        labeledItems.sort((a, b) => a['labelName']
+            .toLowerCase()
+            .compareTo(b['labelName'].toLowerCase()));
       });
       log('labeledItems ditemukan, length:${labeledItems.length}',
           name: 'getLabeledItems');
