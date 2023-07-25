@@ -23,6 +23,29 @@ class _DetailLabelState extends State<DetailLabel> {
   List selectedMsg = [];
   late List labeledItems = [];
   var _popupMenuItemIndex = 0;
+  List labelColors = [
+    Color.fromARGB(255, 240, 153, 137),
+    Color.fromARGB(255, 123, 195, 250),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 215, 176, 236),
+    Color.fromARGB(255, 119, 200, 181),
+    Color.fromARGB(255, 240, 160, 249),
+    Color.fromARGB(255, 160, 249, 255),
+    Color.fromARGB(255, 205, 171, 64),
+    Color.fromARGB(255, 112, 124, 201),
+    Color.fromARGB(255, 218, 230, 106),
+    Color.fromARGB(255, 95, 206, 221),
+    Color.fromARGB(255, 246, 198, 199),
+    Color.fromARGB(255, 247, 214, 81),
+    Color.fromARGB(255, 228, 85, 79),
+    Color.fromARGB(255, 71, 159, 235),
+    Color.fromARGB(255, 156, 227, 78),
+    Color.fromARGB(255, 243, 178, 63),
+    Color.fromARGB(255, 190, 232, 252),
+    Color.fromARGB(255, 158, 166, 249),
+    Color.fromARGB(255, 141, 107, 201),
+  ];
+  int newLabelColor = 0;
 
   @override
   void initState() {
@@ -643,6 +666,9 @@ class _DetailLabelState extends State<DetailLabel> {
       await getLabeledItems();
 
       String newLabelName = widget.labelData['labelName'];
+      setState(() {
+        newLabelColor = widget.labelData['labelColor'];
+      });
 
       // Membuat dialog untuk mengedit nama label
       await showDialog(
@@ -650,16 +676,65 @@ class _DetailLabelState extends State<DetailLabel> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Edit Nama Label'),
-            content: TextFormField(
-              initialValue: widget.labelData['labelName'],
-              cursorColor: Colors.teal,
-              decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.teal))),
-              autofocus: true,
-              onChanged: (value) {
-                newLabelName = value.trim();
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  initialValue: widget.labelData['labelName'],
+                  cursorColor: Colors.teal,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.teal))),
+                  autofocus: true,
+                  onChanged: (value) {
+                    newLabelName = value.trim();
+                  },
+                ),
+                StatefulBuilder(
+  builder: (BuildContext context, StateSetter setState) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: Row(
+          children: List.generate(
+            labelColors.length,
+            (index) => InkWell(
+              onTap: () {
+                setState(() {
+                  newLabelColor = index;
+                });
+                log('$newLabelColor -- $index');
               },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: labelColors[index],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  if (newLabelColor == index)
+                    Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 30,
+                    )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  },
+)
+
+              ],
             ),
             actions: [
               TextButton(
@@ -676,20 +751,23 @@ class _DetailLabelState extends State<DetailLabel> {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   // jika field terisi
                   if (newLabelName.trim().isNotEmpty) {
-                    if (newLabelName != widget.labelData['labelName']) {
+                    // if (newLabelName != widget.labelData['labelName']) {
                       setState(() {
                         // Mengubah nama label pada labeledItems
                         labeledItems[widget.indexLabel]['labelName'] =
                             newLabelName;
+                        // mengubah index warna pada labeledItems
+                        labeledItems[widget.indexLabel]['labelColor'] =
+                            newLabelColor;
                         // ngubah judul scaffold
                         widget.labelData['labelName'] = newLabelName;
                         // Menyimpan labeledItems
-                        saveLabeledItems();
+                        
                       });
-                    }
+                    // }
                     Navigator.pop(context);
                   }
                   // jika field kosong
@@ -699,6 +777,7 @@ class _DetailLabelState extends State<DetailLabel> {
                         textColor: Colors.black,
                         backgroundColor: Colors.yellow);
                   }
+                  await saveLabeledItems();
                 },
                 child: Container(
                   padding: EdgeInsets.all(10),
