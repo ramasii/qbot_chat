@@ -334,7 +334,7 @@ class ChatPageState extends State<ChatPage> {
                 Duration(seconds: 2)) {
           // Menampilkan Toast "Tekan sekali lagi untuk keluar aplikasi."
           Fluttertoast.showToast(
-            msg: "Tekan sekali lagi untuk keluar aplikasi.",
+            msg: "Tekan sekali lagi untuk keluar aplikasi IslamBot.",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
           );
