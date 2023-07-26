@@ -253,13 +253,8 @@ class _DetailLabelState extends State<DetailLabel> {
                         children: List.generate(
                           widget.labelData['listPesan'].length,
                           (index2) {
-                            List sortedPesan =
-                                List.from(widget.labelData['listPesan']);
-                            sortedPesan.sort((a, b) {
-                              DateTime timeA = DateTime.parse(a['pesanObj']);
-                              DateTime timeB = DateTime.parse(b['pesanObj']);
-                              return timeA.compareTo(timeB);
-                            });
+                            List listPesan = widget.labelData['listPesan'];
+                            List sortedPesan = listPesan.reversed.toList();
 
                             String msgTime = sortedPesan[index2]['pesanObj'];
                             Map pesanObj = {};
@@ -691,49 +686,48 @@ class _DetailLabelState extends State<DetailLabel> {
                   },
                 ),
                 StatefulBuilder(
-  builder: (BuildContext context, StateSetter setState) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Row(
-          children: List.generate(
-            labelColors.length,
-            (index) => InkWell(
-              onTap: () {
-                setState(() {
-                  newLabelColor = index;
-                });
-                log('$newLabelColor -- $index');
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: labelColors[index],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  if (newLabelColor == index)
-                    Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 30,
-                    )
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  },
-)
-
+                  builder: (BuildContext context, StateSetter setState) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                        child: Row(
+                          children: List.generate(
+                            labelColors.length,
+                            (index) => InkWell(
+                              onTap: () {
+                                setState(() {
+                                  newLabelColor = index;
+                                });
+                                log('$newLabelColor -- $index');
+                              },
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: labelColors[index],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  if (newLabelColor == index)
+                                    Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                      size: 30,
+                                    )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                )
               ],
             ),
             actions: [
@@ -755,18 +749,17 @@ class _DetailLabelState extends State<DetailLabel> {
                   // jika field terisi
                   if (newLabelName.trim().isNotEmpty) {
                     // if (newLabelName != widget.labelData['labelName']) {
-                      setState(() {
-                        // Mengubah nama label pada labeledItems
-                        labeledItems[widget.indexLabel]['labelName'] =
-                            newLabelName;
-                        // mengubah index warna pada labeledItems
-                        labeledItems[widget.indexLabel]['labelColor'] =
-                            newLabelColor;
-                        // ngubah judul scaffold
-                        widget.labelData['labelName'] = newLabelName;
-                        // Menyimpan labeledItems
-                        
-                      });
+                    setState(() {
+                      // Mengubah nama label pada labeledItems
+                      labeledItems[widget.indexLabel]['labelName'] =
+                          newLabelName;
+                      // mengubah index warna pada labeledItems
+                      labeledItems[widget.indexLabel]['labelColor'] =
+                          newLabelColor;
+                      // ngubah judul scaffold
+                      widget.labelData['labelName'] = newLabelName;
+                      // Menyimpan labeledItems
+                    });
                     // }
                     Navigator.pop(context);
                   }
