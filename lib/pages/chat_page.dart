@@ -373,55 +373,49 @@ class ChatPageState extends State<ChatPage> {
 
                         // Tampilkan Dialog opsi
                         int? selectedOption = await showDialog<int>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Tambah ke Catatan'),
-                                            content: Text(
-                                                'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context,
-                                                      0); // Tidak Konfirmasi (0)
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.grey,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    'Tidak',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context,
-                                                      1); // Konfirmasi (Nilai true)
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(10),
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.green,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5)),
-                                                  child: Text(
-                                                    'Ya',
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Tambah ke Catatan'),
+                              content: Text(
+                                  'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                        context, 0); // Tidak Konfirmasi (0)
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Text(
+                                      'Tidak',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(
+                                        context, 1); // Konfirmasi (Nilai true)
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Text(
+                                      'Ya',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                         // Tangani pilihan yang dipilih
                         if (selectedOption != null) {
                           if (selectedOption == 0) {
@@ -485,7 +479,7 @@ class ChatPageState extends State<ChatPage> {
                               noteList.sort((a, b) => a['judul']
                                   .toLowerCase()
                                   .compareTo(b['judul'].toLowerCase()));
-                              List<String> ex1 = [noteList[0]['judul']];
+                              List<String> ex1 = [];
                               SelectDialog.showModal<String>(context,
                                   label: "Tambah ke Catatan",
                                   searchBoxDecoration: InputDecoration(
@@ -511,19 +505,35 @@ class ChatPageState extends State<ChatPage> {
                                       Stack(
                                         alignment: Alignment.center,
                                         children: [
-                                          CircleAvatar(
-                                            backgroundColor: Colors.grey,
-                                            radius: 10,
+                                          Container(
+                                            height: 22,
+                                            width: 22,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey,
+                                                borderRadius:
+                                                    BorderRadius.circular(4)),
                                           ),
-                                          CircleAvatar(
-                                            backgroundColor: Color.fromARGB(
-                                                255, 255, 255, 255),
-                                            radius: 7,
+                                          Container(
+                                            height: 16,
+                                            width: 16,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(2)),
                                           ),
                                           if (isSelected)
-                                            CircleAvatar(
-                                              backgroundColor: Colors.teal,
-                                              radius: 5,
+                                            Container(
+                                              height: 13,
+                                              width: 13,
+                                              decoration: BoxDecoration(
+                                                  color: Colors.teal,
+                                                  borderRadius:
+                                                      BorderRadius.circular(2)),
+                                              child: Icon(
+                                                Icons.check,
+                                                color: Colors.white,
+                                                size: 13,
+                                              ),
                                             ),
                                         ],
                                       ),
@@ -584,12 +594,12 @@ class ChatPageState extends State<ChatPage> {
                                           listMsg
                                               .add(pesan.replaceAll('*', ''));
                                         }
-                                        String selectedMsg = listMsg
-                                            .join('\n \n----------------------------------\n');
+                                        String selectedMsg = listMsg.join(
+                                            '\n \n----------------------------------\n');
 
                                         String toAdd = konten != ''
-                                            ? [konten, selectedMsg]
-                                                .join('\n \n----------------------------------\n')
+                                            ? [konten, selectedMsg].join(
+                                                '\n \n----------------------------------\n')
                                             : selectedMsg;
                                         setState(() {
                                           noteList[idx]['konten'] = toAdd;
@@ -597,12 +607,17 @@ class ChatPageState extends State<ChatPage> {
                                               DateTime.now().toString();
                                         });
                                       }
+                                    } else {
+                                      Fluttertoast.showToast(
+                                            msg: 'Tidak ada catatan dipilih',
+                                            textColor: Colors.black,
+                                            backgroundColor: Colors.yellow);
                                     }
-                                    await saveNoteList();
-                                    await clearSelectedItems();
-                                    setState(() {
-                                      noteList.clear();
-                                    });
+                                      await saveNoteList();
+                                      await clearSelectedItems();
+                                      setState(() {
+                                        noteList.clear();
+                                      });
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(10),
