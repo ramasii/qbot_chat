@@ -95,7 +95,7 @@ class _NotePageState extends State<NotePage> {
                         focusedBorder: InputBorder.none,
 
                         floatingLabelAlignment: FloatingLabelAlignment.start,
-                        hintText: "Pencarian",
+                        hintText: "Pencarian...",
 
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 186, 186, 186),
@@ -190,8 +190,8 @@ class _NotePageState extends State<NotePage> {
                                                                 ['timeAdd'] ==
                                                             filteredNote[index]
                                                                 ['timeEdited']
-                                                        ? 'Ditambahkan ${DateFormat('dd-MMM-yyyy').format(DateTime.parse(filteredNote[index]['timeEdited']))}'
-                                                        : 'Diedit ${DateFormat('dd-MMM-yyyy').format(DateTime.parse(filteredNote[index]['timeEdited']))}',
+                                                        ? 'Ditambahkan ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}'
+                                                        : 'Diedit ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}',
                                                     style: TextStyle(
                                                         fontSize: 11,
                                                         fontStyle:
