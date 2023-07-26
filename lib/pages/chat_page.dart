@@ -609,15 +609,15 @@ class ChatPageState extends State<ChatPage> {
                                       }
                                     } else {
                                       Fluttertoast.showToast(
-                                            msg: 'Tidak ada catatan dipilih',
-                                            textColor: Colors.black,
-                                            backgroundColor: Colors.yellow);
+                                          msg: 'Tidak ada catatan dipilih',
+                                          textColor: Colors.black,
+                                          backgroundColor: Colors.yellow);
                                     }
-                                      await saveNoteList();
-                                      await clearSelectedItems();
-                                      setState(() {
-                                        noteList.clear();
-                                      });
+                                    await saveNoteList();
+                                    await clearSelectedItems();
+                                    setState(() {
+                                      noteList.clear();
+                                    });
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(10),
@@ -1128,6 +1128,32 @@ class ChatPageState extends State<ChatPage> {
                         Icons.label,
                         color: Colors.white,
                       )),
+              if (selectedItems.isNotEmpty)
+                IconButton(
+                    onPressed: () async {
+                      log('copy selected');
+
+                      List listMsg = [];
+                      for (var element3 in selectedItems) {
+                        String pesan = pesanArray[pesanArray.indexWhere(
+                                (element4) =>
+                                    element4['time'] == element3['pesanObj'])]
+                            ['pesan'];
+                        listMsg.add(pesan.replaceAll('*', ''));
+                      }
+                      await Clipboard.setData(
+                                ClipboardData(text: listMsg.join('\n-----------------\n')));
+                      Fluttertoast.showToast(
+                                  msg: 'Pesan disalin',
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white);
+
+                      clearSelectedItems();
+                    },
+                    icon: Icon(
+                      Icons.copy,
+                      color: Colors.white,
+                    )),
               selectedItems.length == 0
                   ? PopupMenuButton(
                       color: Colors.white,
