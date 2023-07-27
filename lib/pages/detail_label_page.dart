@@ -105,7 +105,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                       color: Colors.grey,
                                       borderRadius: BorderRadius.circular(5)),
                                   child: Text(
-                                    'Batal',
+                                    AppLocalizations.of(context)!.cancel,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -120,7 +120,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                       color: Colors.red,
                                       borderRadius: BorderRadius.circular(5)),
                                   child: Text(
-                                    'Hapus',
+                                    AppLocalizations.of(context)!.delete,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -161,7 +161,7 @@ class _DetailLabelState extends State<DetailLabel> {
                         },
                       );
                     },
-                    tooltip: "Hapus",
+                    tooltip: AppLocalizations.of(context)!.delete,
                     icon: Icon(
                       Icons.delete,
                       color: Colors.white,
@@ -208,7 +208,7 @@ class _DetailLabelState extends State<DetailLabel> {
                       await Share.share(joinedListMsgToShare,
                           subject: widget.labelData['labelName']);
                     },
-                    tooltip: 'Bagikan',
+                    tooltip: AppLocalizations.of(context)!.share,
                     icon: Icon(
                       Icons.share_rounded,
                       color: Colors.white,
@@ -222,7 +222,9 @@ class _DetailLabelState extends State<DetailLabel> {
                       _onMenuItemSelected(value as int);
                     },
                     itemBuilder: (ctx) => [
-                          _buildPopupMenuItem('Bagikan', Icons.share_rounded,
+                          _buildPopupMenuItem(
+                              AppLocalizations.of(context)!.share,
+                              Icons.share_rounded,
                               LabeledOptions.share.index),
                           _buildPopupMenuItem('Salin Pesan', Icons.copy_rounded,
                               LabeledOptions.copy.index),
@@ -230,10 +232,14 @@ class _DetailLabelState extends State<DetailLabel> {
                               'Ekspor Pesan',
                               Icons.file_upload_rounded,
                               LabeledOptions.export.index),
-                          _buildPopupMenuItem('Edit Label', Icons.edit_rounded,
+                          _buildPopupMenuItem(
+                              AppLocalizations.of(context)!.editLabel,
+                              Icons.edit_rounded,
                               LabeledOptions.edit.index),
-                          _buildPopupMenuItem('Hapus Label',
-                              Icons.delete_rounded, LabeledOptions.delete.index)
+                          _buildPopupMenuItem(
+                              AppLocalizations.of(context)!.dltLbl,
+                              Icons.delete_rounded,
+                              LabeledOptions.delete.index)
                         ])
             ],
           ),
@@ -242,7 +248,7 @@ class _DetailLabelState extends State<DetailLabel> {
               child: widget.labelData['listPesan'].isEmpty
                   ? Center(
                       child: Text(
-                        'Anda belum menambahkan pesan untuk label ini',
+                        AppLocalizations.of(context)!.labelEmpty,
                         style: TextStyle(color: Colors.grey),
                         textAlign: TextAlign.center,
                       ),
@@ -386,7 +392,9 @@ class _DetailLabelState extends State<DetailLabel> {
                                                                         BorderRadius.circular(
                                                                             5)),
                                                                 child: Text(
-                                                                  'Batal',
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .cancel,
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .white),
@@ -411,7 +419,9 @@ class _DetailLabelState extends State<DetailLabel> {
                                                                         BorderRadius.circular(
                                                                             5)),
                                                                 child: Text(
-                                                                  'Hapus',
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .delete,
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .white),
@@ -594,7 +604,7 @@ class _DetailLabelState extends State<DetailLabel> {
         await copyMsg(listMsgToCopy, '\n-----------------\n');
       } else {
         Fluttertoast.showToast(
-            msg: 'Label ini tidak memiliki pesan',
+            msg: AppLocalizations.of(context)!.thisLblEmpty,
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       }
@@ -670,7 +680,7 @@ class _DetailLabelState extends State<DetailLabel> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Edit Nama Label'),
+            title: Text(AppLocalizations.of(context)!.editLblName),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -739,7 +749,7 @@ class _DetailLabelState extends State<DetailLabel> {
                       color: Colors.grey,
                       borderRadius: BorderRadius.circular(5)),
                   child: Text(
-                    'Batal',
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -766,7 +776,7 @@ class _DetailLabelState extends State<DetailLabel> {
                   // jika field kosong
                   else {
                     Fluttertoast.showToast(
-                        msg: 'Nama label tidak boleh kosong',
+                        msg: AppLocalizations.of(context)!.labelNameDontEmpty,
                         textColor: Colors.black,
                         backgroundColor: Colors.yellow);
                   }
@@ -778,7 +788,7 @@ class _DetailLabelState extends State<DetailLabel> {
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(5)),
                   child: Text(
-                    'Simpan',
+                    AppLocalizations.of(context)!.save,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -797,8 +807,7 @@ class _DetailLabelState extends State<DetailLabel> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Hapus label ini?'),
-            content: Text(
-                'Label yang dihapus tidak bisa dikembalikan, namun pesan tidak akan terhapus.'),
+            content: Text(AppLocalizations.of(context)!.dltLblConfrm),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -809,7 +818,7 @@ class _DetailLabelState extends State<DetailLabel> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    'Batal',
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -836,7 +845,7 @@ class _DetailLabelState extends State<DetailLabel> {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    'Hapus',
+                    AppLocalizations.of(context)!.delete,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -908,7 +917,7 @@ class _DetailLabelState extends State<DetailLabel> {
         ClipboardData(text: listMsgToCopy.join("\n-----------------\n")));
 
     Fluttertoast.showToast(
-        msg: 'Pesan disalin',
+        msg: AppLocalizations.of(context)!.msgCopied,
         backgroundColor: Colors.green,
         textColor: Colors.white);
 

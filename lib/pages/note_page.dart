@@ -44,7 +44,8 @@ class _NotePageState extends State<NotePage> {
       },
       child: Scaffold(
           appBar: AppBar(
-            title: Text('Catatan', style: TextStyle(color: Colors.white)),
+            title: Text(AppLocalizations.of(context)!.note,
+                style: TextStyle(color: Colors.white)),
             elevation: 0,
             backgroundColor: Color.fromARGB(255, 58, 86, 100),
             leading: IconButton(
@@ -82,7 +83,7 @@ class _NotePageState extends State<NotePage> {
                         ),
                         prefixIconColor: Color.fromARGB(255, 186, 186, 186),
 
-                        suffixIcon:  IconButton(
+                        suffixIcon: IconButton(
                           icon: Icon(Icons.clear),
                           onPressed: () {
                             searchController.clear();
@@ -95,7 +96,7 @@ class _NotePageState extends State<NotePage> {
                         focusedBorder: InputBorder.none,
 
                         floatingLabelAlignment: FloatingLabelAlignment.start,
-                        hintText: "Pencarian...",
+                        hintText: AppLocalizations.of(context)!.searchHint,
 
                         hintStyle: TextStyle(
                             color: Color.fromARGB(255, 186, 186, 186),
@@ -190,8 +191,8 @@ class _NotePageState extends State<NotePage> {
                                                                 ['timeAdd'] ==
                                                             filteredNote[index]
                                                                 ['timeEdited']
-                                                        ? 'Ditambahkan ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}'
-                                                        : 'Diedit ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}',
+                                                        ? '${AppLocalizations.of(context)!.added} ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}'
+                                                        : '${AppLocalizations.of(context)!.edited} ${DateFormat('dd-MMM-yyyy HH:mm').format(DateTime.parse(filteredNote[index]['timeEdited']))}',
                                                     style: TextStyle(
                                                         fontSize: 11,
                                                         fontStyle:
@@ -207,7 +208,9 @@ class _NotePageState extends State<NotePage> {
                                             ),
                                           ),
                                           IconButton(
-                                              tooltip: 'Hapus',
+                                              tooltip:
+                                                  AppLocalizations.of(context)!
+                                                      .delete,
                                               splashRadius: 25,
                                               onPressed: () async {
                                                 // temukan indexnya
@@ -240,7 +243,9 @@ class _NotePageState extends State<NotePage> {
                                                                         .circular(
                                                                             5)),
                                                             child: Text(
-                                                              'Batal',
+                                                              AppLocalizations.of(
+                                                                      context)!
+                                                                  .cancel,
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white),
@@ -265,7 +270,9 @@ class _NotePageState extends State<NotePage> {
                                                                         .circular(
                                                                             5)),
                                                             child: Text(
-                                                              'Hapus',
+                                                              AppLocalizations.of(
+                                                                      context)!
+                                                                  .delete,
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white),
@@ -395,7 +402,7 @@ class AddNoteButton extends StatelessWidget {
       },
       borderRadius: BorderRadius.circular(30),
       child: Tooltip(
-        message: 'Tambah Catatan',
+        message: AppLocalizations.of(context)!.addNote,
         child: CircleAvatar(
           backgroundColor: Colors.teal,
           radius: 30,

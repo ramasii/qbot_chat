@@ -334,7 +334,7 @@ class ChatPageState extends State<ChatPage> {
                 Duration(seconds: 2)) {
           // Menampilkan Toast "Tekan sekali lagi untuk keluar aplikasi."
           Fluttertoast.showToast(
-            msg: "Tekan sekali lagi untuk keluar aplikasi IslamBot.",
+            msg: AppLocalizations.of(context)!.exitConfrm,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
           );
@@ -360,7 +360,7 @@ class ChatPageState extends State<ChatPage> {
                           MaterialPageRoute(builder: (context) => NotePage()),
                         );
                       },
-                      tooltip: 'Catatan',
+                      tooltip: AppLocalizations.of(context)!.note,
                       icon: Icon(
                         Icons.note_alt,
                         color: Colors.white,
@@ -391,7 +391,7 @@ class ChatPageState extends State<ChatPage> {
                                         color: Colors.grey,
                                         borderRadius: BorderRadius.circular(5)),
                                     child: Text(
-                                      'Tidak',
+                                      AppLocalizations.of(context)!.no,
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -407,7 +407,7 @@ class ChatPageState extends State<ChatPage> {
                                         color: Colors.green,
                                         borderRadius: BorderRadius.circular(5)),
                                     child: Text(
-                                      'Ya',
+                                      AppLocalizations.of(context)!.yes,
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -625,7 +625,7 @@ class ChatPageState extends State<ChatPage> {
                                         color: Colors.green,
                                         borderRadius: BorderRadius.circular(5)),
                                     child: Text(
-                                      'Simpan',
+                                      AppLocalizations.of(context)!.save,
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),
@@ -778,32 +778,33 @@ class ChatPageState extends State<ChatPage> {
                                               context: context,
                                               builder: (BuildContext context) {
                                                 return AlertDialog(
-                                                  title:
-                                                      Text('Buat Label Baru'),
+                                                  title: Text(
+                                                      AppLocalizations.of(
+                                                              context)!
+                                                          .addNewLabel),
                                                   content: TextField(
                                                     onChanged: (value) {
                                                       labelName = value;
                                                     },
                                                     decoration: InputDecoration(
                                                         hintText:
-                                                            'Masukkan nama label',
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .newLabelHint,
                                                         border: UnderlineInputBorder(
                                                             borderSide: BorderSide(
-                                                                color: Color
-                                                                    .fromARGB(
-                                                                        255,
-                                                                        58,
-                                                                        86,
-                                                                        100))),
-                                                        focusedBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Color
-                                                                        .fromARGB(
-                                                                            255,
-                                                                            58,
-                                                                            86,
-                                                                            100)))),
+                                                                color: Color.fromARGB(
+                                                                    255,
+                                                                    58,
+                                                                    86,
+                                                                    100))),
+                                                        focusedBorder: UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Color.fromARGB(
+                                                                    255,
+                                                                    58,
+                                                                    86,
+                                                                    100)))),
                                                   ),
                                                   actions: [
                                                     TextButton(
@@ -824,7 +825,9 @@ class ChatPageState extends State<ChatPage> {
                                                                     .circular(
                                                                         5)),
                                                         child: Text(
-                                                          'Batal',
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .cancel,
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.white),
@@ -874,8 +877,10 @@ class ChatPageState extends State<ChatPage> {
                                                           });
                                                         } else {
                                                           Fluttertoast.showToast(
-                                                              msg:
-                                                                  'Nama label tidak boleh kosong',
+                                                              msg: AppLocalizations
+                                                                      .of(
+                                                                          context)!
+                                                                  .labelNameDontEmpty,
                                                               textColor:
                                                                   Colors.black,
                                                               backgroundColor:
@@ -893,7 +898,9 @@ class ChatPageState extends State<ChatPage> {
                                                                     .circular(
                                                                         5)),
                                                         child: Text(
-                                                          'Simpan',
+                                                          AppLocalizations.of(
+                                                                  context)!
+                                                              .save,
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.white),
@@ -906,7 +913,8 @@ class ChatPageState extends State<ChatPage> {
                                             );
                                           },
                                           child: Container(
-                                              child: Text('+ Label Baru',
+                                              child: Text(
+                                                  '+ ${AppLocalizations.of(context)!.addLabel}',
                                                   style: TextStyle(
                                                       color: Colors.teal,
                                                       fontWeight:
@@ -928,7 +936,7 @@ class ChatPageState extends State<ChatPage> {
                                           borderRadius:
                                               BorderRadius.circular(5)),
                                       child: Text(
-                                        'Batal',
+                                        AppLocalizations.of(context)!.cancel,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -1100,7 +1108,7 @@ class ChatPageState extends State<ChatPage> {
                                           borderRadius:
                                               BorderRadius.circular(5)),
                                       child: Text(
-                                        'Simpan',
+                                        AppLocalizations.of(context)!.save,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
@@ -1123,7 +1131,7 @@ class ChatPageState extends State<ChatPage> {
                             MaterialPageRoute(builder: (_) => LabelPage()));
                         log('DONE buka label page');
                       },
-                      tooltip: 'Labels',
+                      tooltip: AppLocalizations.of(context)!.labels,
                       icon: Icon(
                         Icons.label,
                         color: Colors.white,
@@ -1141,12 +1149,12 @@ class ChatPageState extends State<ChatPage> {
                             ['pesan'];
                         listMsg.add(pesan.replaceAll('*', ''));
                       }
-                      await Clipboard.setData(
-                                ClipboardData(text: listMsg.join('\n-----------------\n')));
+                      await Clipboard.setData(ClipboardData(
+                          text: listMsg.join('\n-----------------\n')));
                       Fluttertoast.showToast(
-                                  msg: 'Pesan disalin',
-                                  backgroundColor: Colors.green,
-                                  textColor: Colors.white);
+                          msg: AppLocalizations.of(context)!.msgCopied,
+                          backgroundColor: Colors.green,
+                          textColor: Colors.white);
 
                       clearSelectedItems();
                     },
@@ -1157,7 +1165,7 @@ class ChatPageState extends State<ChatPage> {
               selectedItems.length == 0
                   ? PopupMenuButton(
                       color: Colors.white,
-                      tooltip: 'Menu',
+                      tooltip: AppLocalizations.of(context)!.menu,
                       onSelected: (value) {
                         print('klik di popup menu, pojok kanan atas');
                         _onMenuItemSelected(value as int);
@@ -1165,30 +1173,46 @@ class ChatPageState extends State<ChatPage> {
                       itemBuilder: (ctx) {
                         return [
                           if (!isPremium)
-                            ..._buildPopupMenuItem('Upgrade ke Premium',
-                                FontAwesome5.crown, Options.subscription.index),
+                            ..._buildPopupMenuItem(
+                                AppLocalizations.of(context)!.upToPremium,
+                                FontAwesome5.crown,
+                                Options.subscription.index),
                           ..._buildPopupMenuItem(
-                              'Catatan', Icons.note_alt, Options.note.index),
+                              AppLocalizations.of(context)!.note,
+                              Icons.note_alt,
+                              Options.note.index),
                           ..._buildPopupMenuItem(
-                              'Label', Icons.label, Options.labels.index),
-                          ..._buildPopupMenuItem('Pengaturan', Icons.settings,
+                              AppLocalizations.of(context)!.labels,
+                              Icons.label,
+                              Options.labels.index),
+                          ..._buildPopupMenuItem(
+                              AppLocalizations.of(context)!.setting,
+                              Icons.settings,
                               Options.settings.index),
-                          ..._buildPopupMenuItem('Bagikan Semua Pesan',
-                              Icons.share_rounded, Options.shareMsg.index),
-                          ..._buildPopupMenuItem('Ekspor Semua Pesan',
-                              Icons.upload_file_rounded, Options.export.index),
                           ..._buildPopupMenuItem(
-                              'Impor Pesan',
+                              AppLocalizations.of(context)!.shareAllMsg,
+                              Icons.share_rounded,
+                              Options.shareMsg.index),
+                          ..._buildPopupMenuItem(
+                              AppLocalizations.of(context)!.exportAllMsg,
+                              Icons.upload_file_rounded,
+                              Options.export.index),
+                          ..._buildPopupMenuItem(
+                              AppLocalizations.of(context)!.importMsg,
                               Icons.file_download_rounded,
                               Options.import.index),
                           ..._buildPopupMenuItem(
-                              'Hapus Semua Pesan',
+                              AppLocalizations.of(context)!.deleteAllMsg,
                               Icons.cleaning_services_rounded,
                               Options.clear.index),
-                          ..._buildPopupMenuItem('Tentang IslamBot',
-                              Icons.info_outline_rounded, Options.about.index),
-                          ..._buildPopupMenuItem('Keluar Aplikasi',
-                              Icons.exit_to_app_rounded, Options.exit.index),
+                          ..._buildPopupMenuItem(
+                              AppLocalizations.of(context)!.aboutIslamBot,
+                              Icons.info_outline_rounded,
+                              Options.about.index),
+                          ..._buildPopupMenuItem(
+                              AppLocalizations.of(context)!.exitApp,
+                              Icons.exit_to_app_rounded,
+                              Options.exit.index),
                         ];
                       })
                   : IconButton(
@@ -1199,7 +1223,7 @@ class ChatPageState extends State<ChatPage> {
                         Icons.close,
                         color: Colors.white,
                       ),
-                      tooltip: 'Batal',
+                      tooltip: AppLocalizations.of(context)!.cancel,
                     ),
             ]),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -1331,8 +1355,8 @@ class ChatPageState extends State<ChatPage> {
                         decoration: InputDecoration.collapsed(
                           floatingLabelAlignment: FloatingLabelAlignment.start,
                           hintText: loadingOcr
-                              ? "Proses scanning..."
-                              : "Coba \"Albaqarah 127\"",
+                              ? AppLocalizations.of(context)!.scanningHint
+                              : AppLocalizations.of(context)!.textMsgHint,
                           hintStyle: TextStyle(
                               color: ColorConstants.greyColor,
                               fontFamily: "IslamBot",
@@ -1433,7 +1457,8 @@ class ChatPageState extends State<ChatPage> {
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                            pesanSnackbar('Berhenti mendengarkan',
+                            pesanSnackbar(
+                                AppLocalizations.of(context)!.stopListening,
                                 warna: Colors.teal[600]));
                         setState(() {
                           listening = false;
@@ -1997,7 +2022,7 @@ class ChatPageState extends State<ChatPage> {
                       return AlertDialog(
                         title: Text('Hapus pesan ini?'),
                         content:
-                            Text('Pesan yang dihapus tidak bisa dikembalikan.'),
+                            Text(AppLocalizations.of(context)!.dltMsgConfrm),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(false),
@@ -2008,7 +2033,7 @@ class ChatPageState extends State<ChatPage> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                'Batal',
+                                AppLocalizations.of(context)!.cancel,
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -2022,7 +2047,7 @@ class ChatPageState extends State<ChatPage> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
-                                'Hapus',
+                                AppLocalizations.of(context)!.delete,
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -2353,8 +2378,8 @@ class ChatPageState extends State<ChatPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Hapus semua pesan?'),
-            content: Text('Pesan yang dihapus tidak bisa dikembalikan.'),
+            title: Text(AppLocalizations.of(context)!.willDltAllMsg),
+            content: Text(AppLocalizations.of(context)!.dltMsgConfrm),
             actions: [
               TextButton(
                 child: Container(
@@ -2363,7 +2388,7 @@ class ChatPageState extends State<ChatPage> {
                       color: Colors.grey,
                       borderRadius: BorderRadius.circular(5)),
                   child: Text(
-                    'Batal',
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -2378,7 +2403,7 @@ class ChatPageState extends State<ChatPage> {
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(5)),
                   child: Text(
-                    'Hapus',
+                    AppLocalizations.of(context)!.delete,
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -2445,7 +2470,7 @@ class ChatPageState extends State<ChatPage> {
         await Share.share(listMsg.join('\n-----------------\n'));
       } else {
         Fluttertoast.showToast(
-            msg: 'Anda belum memiliki pesan',
+            msg: AppLocalizations.of(context)!.dontHvMsg,
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       }
@@ -2458,7 +2483,7 @@ class ChatPageState extends State<ChatPage> {
       // jika pesan kosong
       if (pesanArray.isEmpty) {
         Fluttertoast.showToast(
-            msg: 'Anda belum memiliki pesan',
+            msg: AppLocalizations.of(context)!.dontHvMsg,
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       }

@@ -78,7 +78,7 @@ class _LabelPageState extends State<LabelPage> {
           appBar: AppBar(
             backgroundColor: Color.fromARGB(255, 58, 86, 100),
             title: Text(
-              'Label',
+              AppLocalizations.of(context)!.labels,
               style: TextStyle(color: Colors.white),
             ),
             leading: IconButton(
@@ -105,9 +105,9 @@ class _LabelPageState extends State<LabelPage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Hapus label ini?'),
+                            title: Text(AppLocalizations.of(context)!.dltThisLbl),
                             content: Text(
-                                'Label yang dihapus tidak bisa dikembalikan.'),
+                                AppLocalizations.of(context)!.dltLblConfrm),
                             actions: [
                               TextButton(
                                 child: Container(
@@ -116,7 +116,7 @@ class _LabelPageState extends State<LabelPage> {
                                       color: Colors.grey,
                                       borderRadius: BorderRadius.circular(5)),
                                   child: Text(
-                                    'Batal',
+                                    AppLocalizations.of(context)!.cancel,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -131,7 +131,7 @@ class _LabelPageState extends State<LabelPage> {
                                       color: Colors.red,
                                       borderRadius: BorderRadius.circular(5)),
                                   child: Text(
-                                    'Hapus',
+                                    AppLocalizations.of(context)!.delete,
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -178,7 +178,8 @@ class _LabelPageState extends State<LabelPage> {
                               labelName = value;
                             },
                             decoration: InputDecoration(
-                                hintText: 'Masukkan nama label',
+                                hintText:
+                                    AppLocalizations.of(context)!.newLabelHint,
                                 border: UnderlineInputBorder(
                                     borderSide: BorderSide(
                                         color:
@@ -199,7 +200,7 @@ class _LabelPageState extends State<LabelPage> {
                                     color: Colors.grey,
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(
-                                  'Batal',
+                                  AppLocalizations.of(context)!.cancel,
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -229,7 +230,8 @@ class _LabelPageState extends State<LabelPage> {
                                   Navigator.pop(context);
                                 } else {
                                   Fluttertoast.showToast(
-                                      msg: 'Nama label tidak boleh kosong',
+                                      msg: AppLocalizations.of(context)!
+                                          .labelNameDontEmpty,
                                       textColor: Colors.black,
                                       backgroundColor: Colors.yellow);
                                 }
@@ -240,7 +242,7 @@ class _LabelPageState extends State<LabelPage> {
                                     color: Colors.green,
                                     borderRadius: BorderRadius.circular(5)),
                                 child: Text(
-                                  'Simpan',
+                                  AppLocalizations.of(context)!.save,
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
@@ -253,7 +255,7 @@ class _LabelPageState extends State<LabelPage> {
                   radius: 30,
                   borderRadius: BorderRadius.circular(30),
                   child: Tooltip(
-                    message: 'Tambah Catatan',
+                    message: AppLocalizations.of(context)!.addLabel,
                     child: CircleAvatar(
                       backgroundColor: Colors.teal,
                       radius: 30,
@@ -381,7 +383,7 @@ class _LabelPageState extends State<LabelPage> {
                     Container(
                       padding: EdgeInsets.all(10),
                       child: Text(
-                        'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
+                        AppLocalizations.of(context)!.labelInfo,
                         style: TextStyle(color: Colors.grey),
                       ),
                     )
@@ -391,7 +393,7 @@ class _LabelPageState extends State<LabelPage> {
                   child: Container(
                     margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
                     child: Text(
-                      'Gunakan label untuk memilah pesan. Tekan dan tahan di pesan untuk memberi label.',
+                      AppLocalizations.of(context)!.labelInfo,
                       style: TextStyle(color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),

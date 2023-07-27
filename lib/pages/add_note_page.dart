@@ -70,7 +70,8 @@ class _AddNotePageState extends State<AddNotePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Catatan', style: TextStyle(color: Colors.white)),
+          title: Text(AppLocalizations.of(context)!.note,
+              style: TextStyle(color: Colors.white)),
           backgroundColor: Color.fromARGB(255, 58, 86, 100),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -86,7 +87,9 @@ class _AddNotePageState extends State<AddNotePage> {
               ? [
                   IconButton(
                       splashRadius: 25,
-                      tooltip: isEditMode ? "Batal" : "Edit",
+                      tooltip: isEditMode
+                          ? AppLocalizations.of(context)!.cancel
+                          : AppLocalizations.of(context)!.edit,
                       onPressed: () {
                         log('modeEdit');
                         setState(() {
@@ -108,7 +111,7 @@ class _AddNotePageState extends State<AddNotePage> {
                   // tombol save
                   if (isEditMode)
                     IconButton(
-                        tooltip: "Simpan",
+                        tooltip: AppLocalizations.of(context)!.save,
                         splashRadius: 25,
                         onPressed: () async {
                           log('save note (appbar)');
@@ -120,7 +123,7 @@ class _AddNotePageState extends State<AddNotePage> {
                         )),
                   if (isEditMode == false)
                     IconButton(
-                        tooltip: 'Salin Catatan',
+                        tooltip: AppLocalizations.of(context)!.copyNote,
                         onPressed: () async {
                           log('copy note');
                           await Clipboard.setData(ClipboardData(
@@ -133,7 +136,7 @@ class _AddNotePageState extends State<AddNotePage> {
                         )),
                   if (isEditMode == false)
                     IconButton(
-                        tooltip: 'Bagikan',
+                        tooltip: AppLocalizations.of(context)!.share,
                         onPressed: () async {
                           log('share note');
                           await Share.share(
@@ -204,7 +207,7 @@ class _AddNotePageState extends State<AddNotePage> {
                       null, // kalo mau edit/view berarti 'true', kalo nambah berarti 'false'.
                   decoration: InputDecoration.collapsed(
                     floatingLabelAlignment: FloatingLabelAlignment.start,
-                    hintText: "Judul",
+                    hintText: AppLocalizations.of(context)!.titleHint,
                     hintStyle: TextStyle(
                         color: Color.fromARGB(255, 143, 143, 143),
                         fontWeight: FontWeight.bold), // Warna teks hint
@@ -230,20 +233,24 @@ class _AddNotePageState extends State<AddNotePage> {
                     autofocus: false, // supaya keyboard tidak muncul otomatis
                     decoration: InputDecoration.collapsed(
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      hintText: "Masukkan catatan...",
+                      hintText: AppLocalizations.of(context)!.titleHint,
                       hintStyle: TextStyle(
                           color: Color.fromARGB(
                               255, 143, 143, 143)), // Warna teks hint
                     ),
                     style: TextStyle(
                         color: Color.fromARGB(255, 0, 0, 0),
-                        fontSize: AppSettings.regularTextSize), // Warna teks yang diketik
+                        fontSize: AppSettings
+                            .regularTextSize), // Warna teks yang diketik
                   ),
                 )
               else
                 Padding(
                     padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: BoldAsteris(text: contentController.text, useReadMore: false,)),
+                    child: BoldAsteris(
+                      text: contentController.text,
+                      useReadMore: false,
+                    )),
             ],
           ),
         ),
@@ -259,7 +266,7 @@ class _AddNotePageState extends State<AddNotePage> {
       },
       borderRadius: BorderRadius.circular(30),
       child: Tooltip(
-        message: 'Simpan',
+        message: AppLocalizations.of(context)!.save,
         child: CircleAvatar(
           backgroundColor: Colors.teal,
           radius: 30,
@@ -297,7 +304,7 @@ class _AddNotePageState extends State<AddNotePage> {
       contentController.clear();
 
       Fluttertoast.showToast(
-          msg: 'Catatan disimpan',
+          msg: AppLocalizations.of(context)!.noteSaved,
           backgroundColor: Colors.green,
           textColor: Colors.white);
       Navigator.pushAndRemoveUntil(
@@ -341,7 +348,7 @@ class _AddNotePageState extends State<AddNotePage> {
     // jika judul kosong
     else {
       Fluttertoast.showToast(
-          msg: 'Judul tidak boleh kosong',
+          msg: AppLocalizations.of(context)!.titleDontEmpty,
           textColor: Colors.black,
           backgroundColor: Colors.yellow);
     }

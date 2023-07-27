@@ -59,27 +59,27 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                   Padding(
                     padding: EdgeInsets.only(top: 30),
                     child: Text(
-                      "Terima kasih telah menggunakan IslamBot, sebuah chatbot berbasis Artificial Intelligence (AI) yang siap menjawab berbagai pertanyaan terkait Islam mulai Al-Quran, Hadits, Fiqih, Sirah, berbagai keputusan ulama dan sebagainya.\n \nJika Anda menemukan masalah di aplikasi IslamBot, silahkan hubungi kami dengan memberikan informasi kode dan nama versi IslamBot yang Anda gunakan.\n",
+                      AppLocalizations.of(context)!.aboutUsContent,
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Kode Versi: $versionCode',
+                    child: Text('${AppLocalizations.of(context)!.verCode}: $versionCode',
                         textAlign: TextAlign.left),
                   ),
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Nama Versi: $versionName',
+                    child: Text('${AppLocalizations.of(context)!.verName}: $versionName',
                         textAlign: TextAlign.left),
                   ),
                   Divider(),
                   Padding(
                     padding: EdgeInsets.all(8),
                     child: Text(
-                      'Terhubung Dengan Kami',
+                      AppLocalizations.of(context)!.connectWithUs,
                       style: TextStyle(
                           color: Color.fromARGB(255, 73, 73, 73),
                           fontWeight: FontWeight.bold),
@@ -123,7 +123,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     ),
                     trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey,),
                     minLeadingWidth: 10,
-                    title: Text('Website IslamBot'),
+                    title: Text(AppLocalizations.of(context)!.islambotWeb),
                   ),
                   Divider(
                     height: 1,
@@ -145,7 +145,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     ),
                     trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey,),
                     minLeadingWidth: 10,
-                    title: Text('Ikuti Kami di Instagram'),
+                    title: Text(AppLocalizations.of(context)!.instagramFoll),
                   ),
                   Divider(
                     height: 1,
@@ -166,7 +166,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     ),
                     trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey,),
                     minLeadingWidth: 10,
-                    title: Text('Ikuti Kami di Facebook'),
+                    title: Text(AppLocalizations.of(context)!.facebookFoll),
                   ),
                   Divider(
                     height: 1,
@@ -188,7 +188,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     ),
                     trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey,),
                     minLeadingWidth: 10,
-                    title: Text('Beri Rating di Google Play'),
+                    title: Text(AppLocalizations.of(context)!.gPlayRate),
                   ),
                   Divider(
                     height: 1,

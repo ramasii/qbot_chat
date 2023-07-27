@@ -41,7 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 58, 86, 100),
           title: Text(
-            'Pengaturan',
+            AppLocalizations.of(context)!.setting,
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -64,12 +64,12 @@ class _SettingsPageState extends State<SettingsPage> {
         body: ListView(
           padding: EdgeInsets.all(16),
           children: [
-            subtitleSetting("Umum", bottom: 5),
-            TileSetting("Bahasa", Icons.language,
+            subtitleSetting(AppLocalizations.of(context)!.common, bottom: 5),
+            TileSetting(AppLocalizations.of(context)!.languageA, Icons.language,
                 selectedLanguage, _showLanguageDialog),
             ListTile(
               leading: Icon(Icons.volume_up_rounded),
-              title: Text('Auto Start TTS'),
+              title: Text(AppLocalizations.of(context)!.autoTTS),
               trailing: Switch(
                 value: AppSettings.enableTTS,
                 onChanged: (value) async {
@@ -80,20 +80,21 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
             ),
-            subtitleSetting("Font", top: 5, bottom: 5),
+            subtitleSetting(AppLocalizations.of(context)!.font,
+                top: 5, bottom: 5),
             TileSetting(
-                "Ukuran Font Latin",
+                AppLocalizations.of(context)!.regularFontSize,
                 Icons.text_fields_rounded,
                 AppSettings.regularTextSize.toInt().toString(),
                 _showRegularTextSizeDialog),
             TileSetting(
-                "Ukuran Font Arab",
+                AppLocalizations.of(context)!.arabFontSize,
                 Icons.text_fields_rounded,
                 AppSettings.arabicTextSize.toInt().toString(),
                 _showArabicTextSizeDialog),
             TileSetting("Font Arab", Icons.format_align_left_rounded,
                 AppSettings.arabicFont, _showArabicFontDialog),
-            subtitleSetting('Preview'),
+            subtitleSetting(AppLocalizations.of(context)!.preview),
             previewFrame(),
           ],
         ),
@@ -122,7 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
         padding: EdgeInsets.all(10),
         child: BoldAsteris(
             text:
-                '**Al-Fatihah** (Pembukaan) surat ke 1 ayat **1** juz 1 halaman 1\n \nبِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ\n \nDengan nama Allah Yang Maha Pengasih, Maha Penyayang.'),
+                AppLocalizations.of(context)!.previewContent),
       ),
     );
   }
@@ -163,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: Text('Pilih Bahasa'),
+              title: Text(AppLocalizations.of(context)!.slctLang),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -189,11 +190,33 @@ class _SettingsPageState extends State<SettingsPage> {
                       print('set ke $selectedLanguage, $value');
                     },
                   ),
+                  RadioListTile<String>(
+                    title: Text('English'),
+                    value: 'English',
+                    groupValue: selectedLanguage,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                      print('set ke $selectedLanguage, $value');
+                    },
+                  ),
+                  RadioListTile<String>(
+                    title: Text('Arab'),
+                    value: 'Arab',
+                    groupValue: selectedLanguage,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedLanguage = value!;
+                      });
+                      print('set ke $selectedLanguage, $value');
+                    },
+                  ),
                 ],
               ),
               actions: [
                 TextButton(
-                  child: Text('OK'),
+                  child: tombol(AppLocalizations.of(context)!.ok),
                   onPressed: () async {
                     final Lprovider =
                         Provider.of<LocaleProvider>(context, listen: false);
@@ -206,7 +229,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         case 'Indonesia':
                           Lprovider.setLocale(Locale('id'));
                           break;
-                        case 'Malay':
+                        case 'Malaysia':
                           Lprovider.setLocale(Locale('ms'));
                           break;
                         case 'English':
@@ -239,7 +262,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('Pilih Font Arab'),
+            title: Text(AppLocalizations.of(context)!.slctarabFont),
             content: DropdownButton<String>(
               value: AppSettings.arabicFont,
               onChanged: (String? value) {
@@ -262,7 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             actions: [
               TextButton(
-                child: tombol('OK'),
+                child: tombol(AppLocalizations.of(context)!.ok),
                 onPressed: () async {
                   setState(() {
                     AppSettings.arabicFont = AppSettings.arabicFont;
@@ -293,7 +316,7 @@ class _SettingsPageState extends State<SettingsPage> {
         return StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
           return AlertDialog(
-            title: Text('Pilih Ukuran Font Latin'),
+            title: Text(AppLocalizations.of(context)!.slctRglrFontSize),
             content: DropdownButton<int>(
               value: selectedTextSize,
               onChanged: (int? value) {
@@ -310,7 +333,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             actions: [
               TextButton(
-                child: tombol('OK'),
+                child: tombol(AppLocalizations.of(context)!.ok),
                 onPressed: () async {
                   setState(() {
                     AppSettings.regularTextSize = selectedTextSize.toDouble();
@@ -341,7 +364,7 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, StateSetter setState) {
           return AlertDialog(
-            title: Text('Pilih Ukuran Font Arab'),
+            title: Text(AppLocalizations.of(context)!.slctArabFontSize),
             content: DropdownButton<int>(
               value: selectedTextSize,
               onChanged: (int? value) {
@@ -358,7 +381,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             actions: [
               TextButton(
-                child: tombol('OK'),
+                child: tombol(AppLocalizations.of(context)!.ok),
                 onPressed: () async {
                   setState(() {
                     AppSettings.arabicTextSize = selectedTextSize.toDouble();
