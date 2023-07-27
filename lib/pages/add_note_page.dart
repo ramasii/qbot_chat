@@ -85,7 +85,7 @@ class _AddNotePageState extends State<AddNotePage> {
           ),
           actions: widget.noteToEdit != null
               ? [
-                  IconButton(
+                  if(isEditMode == false)IconButton(
                       splashRadius: 25,
                       tooltip: isEditMode
                           ? AppLocalizations.of(context)!.cancel
