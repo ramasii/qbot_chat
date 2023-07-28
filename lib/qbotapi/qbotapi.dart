@@ -2,14 +2,14 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<http.Response> fetchData(inputUser) {
+Future<http.Response> fetchData(inputUser, bahasa, tipe) {
   return http.get(Uri.parse(
-      'http://15.235.156.254:5111/api/v1/bots/islambot/input?input=$inputUser&client=islambot&apikey=uxwMtiFW63oPC0QD'));
+      'http://15.235.156.254:5111/api/v1/bots/islambot/input?input=$inputUser&client=islambot&apikey=uxwMtiFW63oPC0QD&language=$bahasa&tipe=$tipe'));
 }
 
-toAPI(inputUser) async {
+toAPI(inputUser, bahasa, tipe) async {
   print('----------------------- fetching to API');
-  var response = await fetchData(inputUser);
+  var response = await fetchData(inputUser, bahasa, tipe);
   if (response.statusCode == 200) {
     var jsonResponse = json.decode(response.body);
     print('Response status: ${response.statusCode}');

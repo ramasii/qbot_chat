@@ -43,6 +43,7 @@ class ChatPageState extends State<ChatPage> {
   int _limit = 20;
   int _limitIncrement = 20;
   String groupChatId = "";
+  String tipe = AppSettings.language != "Arab" ? "Q" : "ق";
 
   File? imageFile;
   bool isLoading = false;
@@ -485,9 +486,11 @@ class ChatPageState extends State<ChatPage> {
                                   .compareTo(b['judul'].toLowerCase()));
                               List<String> ex1 = [];
                               SelectDialog.showModal<String>(context,
-                                  label: AppLocalizations.of(context)!.addToNote,
+                                  label:
+                                      AppLocalizations.of(context)!.addToNote,
                                   searchBoxDecoration: InputDecoration(
-                                    hintText: AppLocalizations.of(context)!.searchHint,
+                                    hintText: AppLocalizations.of(context)!
+                                        .searchHint,
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Colors.teal,
@@ -613,7 +616,8 @@ class ChatPageState extends State<ChatPage> {
                                       }
                                     } else {
                                       Fluttertoast.showToast(
-                                          msg: AppLocalizations.of(context)!.noNoteSelected,
+                                          msg: AppLocalizations.of(context)!
+                                              .noNoteSelected,
                                           textColor: Colors.black,
                                           backgroundColor: Colors.yellow);
                                     }
@@ -640,9 +644,11 @@ class ChatPageState extends State<ChatPage> {
                                   context: context,
                                   builder: (ctx) {
                                     return AlertDialog(
-                                      title:
-                                          Text(AppLocalizations.of(ctx)!.noteEmptyInfo),
-                                      content: Text(AppLocalizations.of(context)!.noteEmptyMsg),
+                                      title: Text(AppLocalizations.of(ctx)!
+                                          .noteEmptyInfo),
+                                      content: Text(
+                                          AppLocalizations.of(context)!
+                                              .noteEmptyMsg),
                                     );
                                   });
                             }
@@ -866,8 +872,10 @@ class ChatPageState extends State<ChatPage> {
 
                                                           log('sukses melabel pesan: ${labeledItems.last}');
                                                           Fluttertoast.showToast(
-                                                              msg:
-                                                                  AppLocalizations.of(context)!.successAddToLabel,
+                                                              msg: AppLocalizations
+                                                                      .of(
+                                                                          context)!
+                                                                  .successAddToLabel,
                                                               backgroundColor:
                                                                   Colors.green,
                                                               textColor:
@@ -973,8 +981,8 @@ class ChatPageState extends State<ChatPage> {
                                         });
 
                                         Fluttertoast.showToast(
-                                            msg:
-                                                AppLocalizations.of(context)!.successAddToLabel,
+                                            msg: AppLocalizations.of(context)!
+                                                .successAddToLabel,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1017,7 +1025,8 @@ class ChatPageState extends State<ChatPage> {
                                         });
 
                                         Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!.changeSaved,
+                                            msg: AppLocalizations.of(context)!
+                                                .changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1063,8 +1072,8 @@ class ChatPageState extends State<ChatPage> {
                                         });
 
                                         Fluttertoast.showToast(
-                                            msg:
-                                                AppLocalizations.of(context)!.changeSaved,
+                                            msg: AppLocalizations.of(context)!
+                                                .changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1093,13 +1102,15 @@ class ChatPageState extends State<ChatPage> {
                                           labeledItems.clear();
                                         });
                                         Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!.changeSaved,
+                                            msg: AppLocalizations.of(context)!
+                                                .changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
                                       } else {
                                         Fluttertoast.showToast(
-                                            msg: AppLocalizations.of(context)!.labelDontEmpty,
+                                            msg: AppLocalizations.of(context)!
+                                                .labelDontEmpty,
                                             textColor: Colors.black,
                                             backgroundColor: Colors.yellow);
                                       }
@@ -1320,11 +1331,79 @@ class ChatPageState extends State<ChatPage> {
                       margin: EdgeInsets.symmetric(horizontal: 1),
                       child: InkWell(
                         onTap: () {
-                          openCamera();
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SimpleDialog(
+                                title: Text('Pilih Tipe Pencarian'),
+                                children: [
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.q;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.quran),
+                                  ),
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.h;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.hadits),
+                                  ),
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.f;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.fiqih),
+                                  ),
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.s;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.sirah),
+                                  ),
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.i;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.ijmaUlama),
+                                  ),
+                                  SimpleDialogOption(
+                                    onPressed: () {
+                                      setState(() {
+                                        tipe = AppLocalizations.of(context)!.o;
+                                      });
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(AppLocalizations.of(context)!.other),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
                         },
-                        child: Icon(
-                          Icons.camera_alt_rounded,
-                          color: Colors.grey,
+                        child: Text(
+                          tipe,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 25,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -1419,7 +1498,7 @@ class ChatPageState extends State<ChatPage> {
                         /* log(toUnicode(newTeks));
                         log(newTeks);
                         log('${utf8.encode(newTeks)}'); */
-                        await islamBot('Text', newTeks);
+                        await islamBot('Text', newTeks, tipe);
 
                         // Scroll ke bawah
                         _autoScrollController.animateTo(
@@ -1849,7 +1928,7 @@ class ChatPageState extends State<ChatPage> {
                             _autoScrollController.jumpTo(
                                 _autoScrollController.position.minScrollExtent);
                             await islamBot('Menu',
-                                'Cari $teksToSend:${pesanItem['pageNow'] + 1}');
+                                'Cari $teksToSend:${pesanItem['pageNow'] + 1}', tipe);
 
                             // scroll ke bawah
                             _autoScrollController.animateTo(
@@ -1871,7 +1950,7 @@ class ChatPageState extends State<ChatPage> {
                             _autoScrollController.jumpTo(
                                 _autoScrollController.position.minScrollExtent);
                             await islamBot('Menu',
-                                pesanItem['menu']['actions'][index]['action']);
+                                pesanItem['menu']['actions'][index]['action'], tipe);
 
                             // scroll ke bawah
                             _autoScrollController.animateTo(
@@ -2195,10 +2274,10 @@ class ChatPageState extends State<ChatPage> {
   }
 
   // fungsi IslamBot balas pesan
-  islamBot(String MenuOrText, String teks) async {
+  islamBot(String MenuOrText, String teks, String tipePesan) async {
     bool isShare =
         teks.contains(RegExp(r'^(share|bagi(kan|))', caseSensitive: false));
-    Map resQBot = await toAPI(teks);
+    Map resQBot = await toAPI(teks, AppSettings.language, tipePesan);
     String jawabQBot = resQBot['answer'];
     String intent = resQBot['intent'];
 
@@ -2596,7 +2675,7 @@ class ChatPageState extends State<ChatPage> {
           behavior: SnackBarBehavior.floating,
           content: Text(
               // 'File berhasil diekspor di memori internal/Documents/$filename.csv'),
-          '${AppLocalizations.of(context)!.fileExportOnIntrnl}/Documents/$filename.csv'),
+              '${AppLocalizations.of(context)!.fileExportOnIntrnl}/Documents/$filename.csv'),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,

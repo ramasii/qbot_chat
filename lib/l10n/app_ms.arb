@@ -89,5 +89,18 @@
 "noteEmptyMsg": "Anda boleh memilih catatan baru atau menambah catatan dari ikon Nota di bahagian atas skrin.",
 "willDltThisNote": "Padam catatan ini?",
 "dltNoteConfrm": "Catatan yang dipadam tidak boleh dikembalikan.",
-"addToLabel": "Tambah ke Label"
+"addToLabel": "Tambah ke Label",
+"chooseSearchTipe": "Pilih Jenis Pencarian",
+"quran": "Quran",
+"hadits": "Hadis",
+"fiqih": "Fiqh",
+"sirah": "Sirah",
+"ijmaUlama": "Konsensus Ulama",
+"other": "Lain-lain",
+"q": "Q",
+"h": "H",
+"f": "F",
+"s": "S",
+"i": "K",
+"o": "O"
 }

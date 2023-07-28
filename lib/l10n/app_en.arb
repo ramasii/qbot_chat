@@ -89,5 +89,18 @@
 "noteEmptyMsg": "You can select a new note or add a note from the Note icon at the top of the screen.",
 "willDltThisNote": "Delete this note?",
 "dltNoteConfrm": "Deleted notes cannot be recovered.",
-"addToLabel": "Add to Label"
+"addToLabel": "Add to Label",
+"chooseSearchTipe": "Choose Search Type",
+"quran": "Quran",
+"hadits": "Hadith",
+"fiqih": "Fiqh",
+"sirah": "Seerah",
+"ijmaUlama": "Consensus of Scholars",
+"other": "Other",
+"q": "Q",
+"h": "H",
+"f": "F",
+"s": "S",
+"i": "C",
+"o": "O"
 }

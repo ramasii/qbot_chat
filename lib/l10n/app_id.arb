@@ -89,5 +89,18 @@
   "noteEmptyMsg": "Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.",
   "willDltThisNote": "Hapus Catatan ini?",
   "dltNoteConfrm": "Catatan yang dihapus tidak bisa dikembalikan.",
-  "addToLabel": "Tambah ke Label"  
+  "addToLabel": "Tambah ke Label",
+  "chooseSearchTipe": "Pilih Tipe Pencarian",
+  "quran": "Quran",
+  "hadits": "Hadits",
+  "fiqih": "Fiqih",
+  "sirah": "Sirah",
+  "ijmaUlama": "Ijma Ulama",
+  "other": "Lainnya",
+  "q": "Q",
+  "h": "H",
+  "f": "F",
+  "s": "S",
+  "i": "I",
+  "o": "L"
 }
