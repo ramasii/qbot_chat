@@ -71,5 +71,14 @@
   "instagramFoll": "Ikuti Kami di Instagram",
   "facebookFoll": "Ikuti Kami di Facebook",
   "gPlayRate": "Beri Rating di Google Play",
-  "exitConfrm": "Tekan sekali lagi untuk keluar dari aplikasi IslamBot."
+  "exitConfrm": "Tekan sekali lagi untuk keluar dari aplikasi IslamBot.",
+  "labelMsg": "Label Pesan",
+  "savedOnInternal": "Disimpan di memori dalaman",
+  "fileExportOnIntrnl": "Fail berjaya dieksport ke dalam memori dalaman",
+  "addToNote": "Tambah ke Nota",
+  "addToNoteInfo": "Tambahkan pesanan terpilih ke dalam nota yang sedia ada?",
+  "copyMsg": "Salin Pesanan",
+  "exportMsg": "Ekspor Pesanan",
+  "arabFont": "Fon Arab",
+  "canAddMsgAgain": "Anda boleh menambah pesanan ini sekali lagi selagi pesanan ini masih wujud."
 }

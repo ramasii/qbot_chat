@@ -171,7 +171,7 @@ class _LabelPageState extends State<LabelPage> {
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Buat Label Baru'),
+                          title: Text(AppLocalizations.of(context)!.addNewLabel),
                           content: TextField(
                             controller: newLabelController,
                             onChanged: (value) {

@@ -28,7 +28,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
           backgroundColor: Color.fromARGB(255, 58, 86, 100),
           title: Text(
             // AppLocalizations.of(context)!.language,
-            'About Us',
+            AppLocalizations.of(context)!.aboutIslamBot,
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -102,7 +102,7 @@ class _AboutUsScreenState extends State<AboutUsScreen> {
                     ),
                     trailing: Icon(Icons.chevron_right_rounded, color: Colors.grey,),
                     minLeadingWidth: 10,
-                    title: Text('Hubungi Kami'),
+                    title: Text(AppLocalizations.of(context)!.contactUs),
                   ),
                   Divider(
                     height: 1,

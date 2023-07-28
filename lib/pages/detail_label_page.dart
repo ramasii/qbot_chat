@@ -94,9 +94,10 @@ class _DetailLabelState extends State<DetailLabel> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Hapus pesan ini?'),
+                            title: Text(AppLocalizations.of(context)!.willDltThisMsg),
                             content: Text(
-                                'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
+                                // 'Anda dapat menambahkan pesan ini lagi selama pesan masih ada.'),
+                                AppLocalizations.of(context)!.canAddMsgAgain),
                             actions: [
                               TextButton(
                                 child: Container(
@@ -184,7 +185,8 @@ class _DetailLabelState extends State<DetailLabel> {
 
                       await copyMsg(listMsgToCopy, '\n-----------------\n');
                     },
-                    tooltip: "Salin pesan",
+                    // tooltip: "Salin pesan",
+                    tooltip: AppLocalizations.of(context)!.copyMsg,
                     icon: Icon(
                       Icons.copy_rounded,
                       color: Colors.white,
@@ -226,10 +228,12 @@ class _DetailLabelState extends State<DetailLabel> {
                               AppLocalizations.of(context)!.share,
                               Icons.share_rounded,
                               LabeledOptions.share.index),
-                          _buildPopupMenuItem('Salin Pesan', Icons.copy_rounded,
+                          // _buildPopupMenuItem('Salin Pesan', Icons.copy_rounded,
+                          _buildPopupMenuItem(AppLocalizations.of(context)!.copyMsg, Icons.copy_rounded,
                               LabeledOptions.copy.index),
                           _buildPopupMenuItem(
-                              'Ekspor Pesan',
+                              // 'Ekspor Pesan',
+                              AppLocalizations.of(context)!.exportMsg,
                               Icons.file_upload_rounded,
                               LabeledOptions.export.index),
                           _buildPopupMenuItem(
@@ -806,7 +810,7 @@ class _DetailLabelState extends State<DetailLabel> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Hapus label ini?'),
+            title: Text(AppLocalizations.of(context)!.dltThisLbl),
             content: Text(AppLocalizations.of(context)!.dltLblConfrm),
             actions: [
               TextButton(
@@ -899,7 +903,8 @@ class _DetailLabelState extends State<DetailLabel> {
       await file.writeAsBytes(excel.encode()!);
       Fluttertoast.showToast(
           msg:
-              "Disimpan di memori internal/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx",
+              // "Disimpan di memori internal/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx",
+          "${AppLocalizations.of(context)!.savedOnInternal}/Documents/IslamBot/IslamBot-Excel-$tgl.xlsx",
           backgroundColor: Colors.green,
           textColor: Colors.white);
     } else {

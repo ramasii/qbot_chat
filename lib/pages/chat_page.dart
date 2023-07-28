@@ -265,6 +265,7 @@ class ChatPageState extends State<ChatPage> {
     saveArray();
     checkPremium();
     AppSettings.loadSettings();
+    setBahasa();
     checkFirstRun();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
@@ -376,9 +377,12 @@ class ChatPageState extends State<ChatPage> {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: Text('Tambah ke Catatan'),
+                              // title: Text('Tambah ke Catatan'),
+                              title:
+                                  Text(AppLocalizations.of(context)!.addToNote),
                               content: Text(
-                                  'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
+                                  // 'Tambahkan pesan yang dipilih ke catatan yang sudah ada?'),
+                                  AppLocalizations.of(context)!.addToNoteInfo),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -666,8 +670,8 @@ class ChatPageState extends State<ChatPage> {
                                 (BuildContext context, StateSetter setState) {
                               return AlertDialog(
                                 title: Text(
-                                  'Label Pesan',
-                                ),
+                                    // 'Label Pesan',
+                                    AppLocalizations.of(context)!.labelMsg),
                                 contentPadding: EdgeInsets.all(0),
                                 content: SingleChildScrollView(
                                   physics: ClampingScrollPhysics(),
@@ -1430,7 +1434,7 @@ class ChatPageState extends State<ChatPage> {
                     // ini pakai speech-to-text
                     else {
                       ScaffoldMessenger.of(context).showSnackBar(pesanSnackbar(
-                          'Mulai mendengarkan...',
+                          AppLocalizations.of(context)!.startListening,
                           warna: Colors.teal[600]));
                       setState(() {
                         listening = true;
@@ -2020,7 +2024,8 @@ class ChatPageState extends State<ChatPage> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Hapus pesan ini?'),
+                        title:
+                            Text(AppLocalizations.of(context)!.willDltThisMsg),
                         content:
                             Text(AppLocalizations.of(context)!.dltMsgConfrm),
                         actions: [
@@ -2592,6 +2597,7 @@ class ChatPageState extends State<ChatPage> {
           behavior: SnackBarBehavior.floating,
           content: Text(
               'File berhasil diekspor di memori internal/Documents/$filename.csv'),
+          // '${AppLocalizations.of(context)!.fileExportOnIntrnl}/Documents/$filename.csv'),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,
@@ -2824,6 +2830,30 @@ class ChatPageState extends State<ChatPage> {
 
     await prefs.setString('labeledItems', jsonEncode(labeledItems));
     log('saved labeledItems');
+  }
+
+  // fungsi set bahasa
+  setBahasa() async {
+    final prefs = await SharedPreferences.getInstance();
+    final Lprovider = Provider.of<LocaleProvider>(context, listen: false);
+    final bahasa = await prefs.getString('AppSettings.language') ?? 'Indonesia';
+
+    // set bahasa lokalisasi
+    switch (bahasa) {
+      case 'Indonesia':
+        Lprovider.setLocale(Locale('id'));
+        break;
+      case 'Malaysia':
+        Lprovider.setLocale(Locale('ms'));
+        break;
+      case 'English':
+        Lprovider.setLocale(Locale('en'));
+        break;
+      case 'Arab':
+        Lprovider.setLocale(Locale('ar'));
+        break;
+      default:
+    }
   }
 
   // fungsi get labeleditems
