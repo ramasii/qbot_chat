@@ -465,7 +465,7 @@ class ChatPageState extends State<ChatPage> {
                               await saveNoteList();
 
                               Fluttertoast.showToast(
-                                  msg: 'Catatan baru ditambahkan',
+                                  msg: AppLocalizations.of(context)!.noteAdded,
                                   backgroundColor: Colors.green,
                                   textColor: Colors.white);
 
@@ -485,9 +485,9 @@ class ChatPageState extends State<ChatPage> {
                                   .compareTo(b['judul'].toLowerCase()));
                               List<String> ex1 = [];
                               SelectDialog.showModal<String>(context,
-                                  label: "Tambah ke Catatan",
+                                  label: AppLocalizations.of(context)!.addToNote,
                                   searchBoxDecoration: InputDecoration(
-                                    hintText: 'Cari catatan...',
+                                    hintText: AppLocalizations.of(context)!.searchHint,
                                     focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color: Colors.teal,
@@ -613,7 +613,7 @@ class ChatPageState extends State<ChatPage> {
                                       }
                                     } else {
                                       Fluttertoast.showToast(
-                                          msg: 'Tidak ada catatan dipilih',
+                                          msg: AppLocalizations.of(context)!.noNoteSelected,
                                           textColor: Colors.black,
                                           backgroundColor: Colors.yellow);
                                     }
@@ -641,16 +641,15 @@ class ChatPageState extends State<ChatPage> {
                                   builder: (ctx) {
                                     return AlertDialog(
                                       title:
-                                          Text('Anda belum memiliki catatan'),
-                                      content: Text(
-                                          'Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.'),
+                                          Text(AppLocalizations.of(ctx)!.noteEmptyInfo),
+                                      content: Text(AppLocalizations.of(context)!.noteEmptyMsg),
                                     );
                                   });
                             }
                           }
                         }
                       }),
-                      tooltip: 'Tambah ke Catatan',
+                      tooltip: AppLocalizations.of(context)!.addToNote,
                       icon: Icon(Icons.note_add_rounded, color: Colors.white)),
               selectedItems.length != 0
                   ? IconButton(
@@ -868,7 +867,7 @@ class ChatPageState extends State<ChatPage> {
                                                           log('sukses melabel pesan: ${labeledItems.last}');
                                                           Fluttertoast.showToast(
                                                               msg:
-                                                                  'Disimpan dengan label "$labelName"',
+                                                                  AppLocalizations.of(context)!.successAddToLabel,
                                                               backgroundColor:
                                                                   Colors.green,
                                                               textColor:
@@ -975,7 +974,7 @@ class ChatPageState extends State<ChatPage> {
 
                                         Fluttertoast.showToast(
                                             msg:
-                                                'Disimpan dengan label "$labelName"',
+                                                AppLocalizations.of(context)!.successAddToLabel,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1018,7 +1017,7 @@ class ChatPageState extends State<ChatPage> {
                                         });
 
                                         Fluttertoast.showToast(
-                                            msg: 'Perubahan disimpan',
+                                            msg: AppLocalizations.of(context)!.changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1065,7 +1064,7 @@ class ChatPageState extends State<ChatPage> {
 
                                         Fluttertoast.showToast(
                                             msg:
-                                                'Disimpan di ${labelIndex.length} label',
+                                                AppLocalizations.of(context)!.changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
@@ -1094,13 +1093,13 @@ class ChatPageState extends State<ChatPage> {
                                           labeledItems.clear();
                                         });
                                         Fluttertoast.showToast(
-                                            msg: 'Perubahan disimpan',
+                                            msg: AppLocalizations.of(context)!.changeSaved,
                                             backgroundColor: Colors.green,
                                             textColor: Colors.white);
                                         Navigator.pop(context);
                                       } else {
                                         Fluttertoast.showToast(
-                                            msg: 'Label tidak boleh kosong',
+                                            msg: AppLocalizations.of(context)!.labelDontEmpty,
                                             textColor: Colors.black,
                                             backgroundColor: Colors.yellow);
                                       }
@@ -1123,7 +1122,7 @@ class ChatPageState extends State<ChatPage> {
                           },
                         );
                       },
-                      tooltip: 'Tambah ke Label',
+                      tooltip: AppLocalizations.of(context)!.addToLabel,
                       icon: Icon(
                         Icons.new_label_rounded,
                         color: Colors.white,
@@ -2596,8 +2595,8 @@ class ChatPageState extends State<ChatPage> {
         SnackBar(
           behavior: SnackBarBehavior.floating,
           content: Text(
-              'File berhasil diekspor di memori internal/Documents/$filename.csv'),
-          // '${AppLocalizations.of(context)!.fileExportOnIntrnl}/Documents/$filename.csv'),
+              // 'File berhasil diekspor di memori internal/Documents/$filename.csv'),
+          '${AppLocalizations.of(context)!.fileExportOnIntrnl}/Documents/$filename.csv'),
           backgroundColor: Colors.green,
           showCloseIcon: true,
           closeIconColor: Colors.white,

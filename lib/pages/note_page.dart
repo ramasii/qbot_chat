@@ -225,10 +225,9 @@ class _NotePageState extends State<NotePage> {
                                                   builder:
                                                       (BuildContext context) {
                                                     return AlertDialog(
-                                                      title: Text(
-                                                          'Hapus Catatan ini?'),
+                                                      title: Text(AppLocalizations.of(context)!.willDltThisNote),
                                                       content: Text(
-                                                          'Catatan yang dihapus tidak bisa dikembalikan.'),
+                                                          AppLocalizations.of(context)!.dltNoteConfrm),
                                                       actions: [
                                                         TextButton(
                                                           child: Container(
@@ -313,7 +312,7 @@ class _NotePageState extends State<NotePage> {
                           child: Padding(
                             padding: EdgeInsets.all(15),
                             child: Text(
-                              'Anda belum menambahkan catatan',
+                              AppLocalizations.of(context)!.noteEmptyInfo,
                               style: TextStyle(color: Colors.grey),
                             ),
                           ),

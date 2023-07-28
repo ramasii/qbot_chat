@@ -338,7 +338,7 @@ class _AddNotePageState extends State<AddNotePage> {
       await saveNoteList();
 
       Fluttertoast.showToast(
-          msg: 'Perubahan disimpan',
+          msg: AppLocalizations.of(context)!.changeSaved,
           backgroundColor: Colors.green,
           textColor: Colors.white);
       setState(() {

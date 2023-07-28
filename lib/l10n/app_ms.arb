@@ -80,5 +80,14 @@
   "copyMsg": "Salin Pesanan",
   "exportMsg": "Ekspor Pesanan",
   "arabFont": "Fon Arab",
-  "canAddMsgAgain": "Anda boleh menambah pesanan ini sekali lagi selagi pesanan ini masih wujud."
+  "canAddMsgAgain": "Anda boleh menambah pesanan ini sekali lagi selagi pesanan ini masih wujud.",
+  "successAddToLabel": "Berjaya menambah label pada pesan",
+  "changeSaved": "Perubahan disimpan",
+  "labelDontEmpty": "Label tidak boleh kosong",
+"noteAdded": "Catatan baru ditambahkan",
+"noNoteSelected": "Tiada catatan dipilih",
+"noteEmptyMsg": "Anda boleh memilih catatan baru atau menambah catatan dari ikon Nota di bahagian atas skrin.",
+"willDltThisNote": "Padam catatan ini?",
+"dltNoteConfrm": "Catatan yang dipadam tidak boleh dikembalikan.",
+"addToLabel": "Tambah ke Label"
 }

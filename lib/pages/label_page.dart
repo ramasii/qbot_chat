@@ -224,7 +224,7 @@ class _LabelPageState extends State<LabelPage> {
 
                                   log('sukses melabel pesan: ${labeledItems.last}');
                                   Fluttertoast.showToast(
-                                      msg: 'Disimpan dengan label "$labelName"',
+                                      msg: AppLocalizations.of(context)!.successAddToLabel,
                                       backgroundColor: Colors.green,
                                       textColor: Colors.white);
                                   Navigator.pop(context);

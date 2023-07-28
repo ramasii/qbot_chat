@@ -80,5 +80,14 @@
   "copyMsg": "Copy Message",
   "exportMsg": "Export Message",
   "arabFont": "Arabic Font",
-  "canAddMsgAgain": "You can add this message again as long as the message still exists."
+  "canAddMsgAgain": "You can add this message again as long as the message still exists.",
+  "successAddToLabel": "Message successfully labeled",
+  "changeSaved": "Changes saved",
+  "labelDontEmpty": "Label cannot be empty",
+"noteAdded": "New note added",
+"noNoteSelected": "No note selected",
+"noteEmptyMsg": "You can select a new note or add a note from the Note icon at the top of the screen.",
+"willDltThisNote": "Delete this note?",
+"dltNoteConfrm": "Deleted notes cannot be recovered.",
+"addToLabel": "Add to Label"
 }

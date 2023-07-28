@@ -622,7 +622,7 @@ class _DetailLabelState extends State<DetailLabel> {
 
       if (listPesan.isEmpty) {
         Fluttertoast.showToast(
-            msg: 'Label ini tidak memilik pesan',
+            msg: AppLocalizations.of(context)!.thisLblEmpty,
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       } else {
@@ -660,7 +660,7 @@ class _DetailLabelState extends State<DetailLabel> {
       });
       if (widget.labelData.isEmpty || listMsgForExcel.isEmpty) {
         Fluttertoast.showToast(
-            msg: 'Label ini tidak memilik pesan',
+            msg: AppLocalizations.of(context)!.thisLblEmpty,
             textColor: Colors.black,
             backgroundColor: Colors.yellow);
       } else {

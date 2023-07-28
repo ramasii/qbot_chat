@@ -80,5 +80,14 @@
   "copyMsg": "Salin Pesan", 
   "exportMsg": "Ekspor Pesan",
   "arabFont": "Font Arab",
-  "canAddMsgAgain": "Anda dapat menambahkan pesan ini lagi selama pesan masih ada."
+  "canAddMsgAgain": "Anda dapat menambahkan pesan ini lagi selama pesan masih ada.",
+  "successAddToLabel": "Pesan berhasil diberi label",
+  "changeSaved": "Perubahan disimpan",
+  "labelDontEmpty": "Label tidak boleh kosong",
+  "noteAdded": "Catatan baru ditambahkan",
+  "noNoteSelected": "Tidak ada catatan dipilih",
+  "noteEmptyMsg": "Anda dapat memilih catatan baru atau menambahkan catatan di ikon Note bagian atas layar.",
+  "willDltThisNote": "Hapus Catatan ini?",
+  "dltNoteConfrm": "Catatan yang dihapus tidak bisa dikembalikan.",
+  "addToLabel": "Tambah ke Label"  
 }
