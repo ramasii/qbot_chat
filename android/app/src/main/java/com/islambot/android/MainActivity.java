@@ -1,4 +1,4 @@
-package com.islambot.android;
+package id.ac.assalaam.islambot;
 
 import io.flutter.embedding.android.FlutterActivity;
 

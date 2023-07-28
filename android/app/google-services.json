@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "128774640548",
-    "project_id": "islambot-1e08a",
-    "storage_bucket": "islambot-1e08a.appspot.com"
+    "project_number": "435353966550",
+    "project_id": "assalaam-islambot",
+    "storage_bucket": "assalaam-islambot.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:128774640548:android:b176c5b03b560df8306731",
+        "mobilesdk_app_id": "1:435353966550:android:a5deae394406263c0b3677",
         "android_client_info": {
-          "package_name": "com.islambot.android"
+          "package_name": "id.ac.assalaam.islambot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "128774640548-gmrrr310ki14dqpe4gqp0dv6b88f4ijq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.islambot.android",
-            "certificate_hash": "68d1e342084f8874f20f0c8c4848bddc57a5af53"
-          }
-        },
-        {
-          "client_id": "128774640548-6gtpinrgdfp19tnlqc50hv40162ohca0.apps.googleusercontent.com",
+          "client_id": "435353966550-paa2ig9qc75bb4ko7h62prnnjedg9fkl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBCne7K7QPVtqmrTjVM2XhZf7CoTSVUJeo"
+          "current_key": "AIzaSyCJfwGXHl7rddJvjvxMHUmSTsW6DApHMSQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "128774640548-6gtpinrgdfp19tnlqc50hv40162ohca0.apps.googleusercontent.com",
+              "client_id": "435353966550-paa2ig9qc75bb4ko7h62prnnjedg9fkl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
