@@ -244,6 +244,8 @@ class ChatPageState extends State<ChatPage> {
   late Map<String, GlobalKey> _itemKeys = {};
   DateTime? currentBackPressTime;
 
+  static BannerAd? _banner;
+
   late ChatProvider chatProvider;
   late AuthProvider authProvider;
 
@@ -264,14 +266,32 @@ class ChatPageState extends State<ChatPage> {
 
     getArray('pesanArray', objKey: widget.messageStamp);
     saveArray();
-    checkPremium();
     AppSettings.loadSettings();
     setBahasa();
     checkFirstRun();
+    checkPremium();
+    _createBannerAd();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
     readLocal();
     super.initState();
+  }
+
+  static void _createBannerAd() {
+    _banner = BannerAd(
+        size: AdSize.banner,
+        adUnitId: "ca-app-pub-3735601409388956/1662607782",
+        listener: BannerAdListener(
+          onAdLoaded: (ad) => log('ad loaded'),
+          onAdFailedToLoad: (ad, error) {
+            ad.dispose();
+            log('ad failed to load');
+          },
+          onAdOpened: (ad) => log('ad opened'),
+          onAdClosed: (ad) => log('ad closed'),
+        ),
+        request: const AdRequest())
+      ..load();
   }
 
   pushPesanArray(String pesan, Map menu,
@@ -352,6 +372,8 @@ class ChatPageState extends State<ChatPage> {
               this.widget.arguments.peerNickname,
               style: TextStyle(color: Colors.white),
             ),
+            leading: Container(),
+            leadingWidth: 0,
             actions: [
               selectedItems.length == 0
                   ? IconButton(
@@ -1253,6 +1275,13 @@ class ChatPageState extends State<ChatPage> {
               children: <Widget>[
                 Column(
                   children: <Widget>[
+                    // ad | iklan | admob
+                    if (_banner != null && isPremium == false)
+                      Container(
+                        height: 52,
+                        child: AdWidget(ad: _banner!),
+                      ),
+
                     // List of messages
                     buatListPesan(),
 
@@ -1344,7 +1373,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.quran),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.quran),
                                   ),
                                   SimpleDialogOption(
                                     onPressed: () {
@@ -1353,7 +1383,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.hadits),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.hadits),
                                   ),
                                   SimpleDialogOption(
                                     onPressed: () {
@@ -1362,7 +1393,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.fiqih),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.fiqih),
                                   ),
                                   SimpleDialogOption(
                                     onPressed: () {
@@ -1371,7 +1403,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.sirah),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.sirah),
                                   ),
                                   SimpleDialogOption(
                                     onPressed: () {
@@ -1380,7 +1413,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.ijmaUlama),
+                                    child: Text(AppLocalizations.of(context)!
+                                        .ijmaUlama),
                                   ),
                                   SimpleDialogOption(
                                     onPressed: () {
@@ -1389,7 +1423,8 @@ class ChatPageState extends State<ChatPage> {
                                       });
                                       Navigator.pop(context);
                                     },
-                                    child: Text(AppLocalizations.of(context)!.other),
+                                    child: Text(
+                                        AppLocalizations.of(context)!.other),
                                   ),
                                 ],
                               );
@@ -1512,7 +1547,8 @@ class ChatPageState extends State<ChatPage> {
                     // ini pakai speech-to-text
                     else {
                       ScaffoldMessenger.of(context).showSnackBar(pesanSnackbar(
-                          AppLocalizations.of(context)!.startListening,
+                          AppLocalizations.of(context)!
+                              .startListening, // info start listening dari kamus multibahasa
                           warna: Colors.teal[600]));
                       setState(() {
                         listening = true;
@@ -1824,7 +1860,7 @@ class ChatPageState extends State<ChatPage> {
         ),
       ),
 
-      // DIALOG ISLAMBOT MENU
+      // DIALOG ISLAMBOT MENU | menu dialog | dialog menu
       onTap: () {
         showDialog(
           context: context,
@@ -1841,7 +1877,7 @@ class ChatPageState extends State<ChatPage> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Menu IslamBot',
+                        'Menu IslamBot', // ubah ke kamus multibahasa
                         textAlign: TextAlign.left,
                         style: TextStyle(color: Colors.white),
                       ))),
@@ -1927,8 +1963,10 @@ class ChatPageState extends State<ChatPage> {
                             Navigator.of(context).pop();
                             _autoScrollController.jumpTo(
                                 _autoScrollController.position.minScrollExtent);
-                            await islamBot('Menu',
-                                'Cari $teksToSend:${pesanItem['pageNow'] + 1}', tipe);
+                            await islamBot(
+                                'Menu',
+                                'Cari $teksToSend:${pesanItem['pageNow'] + 1}',
+                                tipe);
 
                             // scroll ke bawah
                             _autoScrollController.animateTo(
@@ -1949,8 +1987,10 @@ class ChatPageState extends State<ChatPage> {
                             Navigator.of(context).pop();
                             _autoScrollController.jumpTo(
                                 _autoScrollController.position.minScrollExtent);
-                            await islamBot('Menu',
-                                pesanItem['menu']['actions'][index]['action'], tipe);
+                            await islamBot(
+                                'Menu',
+                                pesanItem['menu']['actions'][index]['action'],
+                                tipe);
 
                             // scroll ke bawah
                             _autoScrollController.animateTo(
@@ -2425,29 +2465,6 @@ class ChatPageState extends State<ChatPage> {
         PopupMenuDivider(height: 2),
     ];
   }
-  /* PopupMenuItem _buildPopupMenuItem(
-      String title, IconData iconData, int position) {
-    return PopupMenuItem(
-      value: position,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(
-            children: [
-              Icon(
-                iconData,
-                color: Colors.teal,
-              ),
-              Container(
-                width: 10,
-              ),
-              Text(position.toString()),
-            ],
-          ),
-        ],
-      ),
-    );
-  } */
 
   // fungsi jika select di popup menu
   _onMenuItemSelected(int value) async {
@@ -2518,6 +2535,7 @@ class ChatPageState extends State<ChatPage> {
         MaterialPageRoute(
             builder: (context) => SubscriptionScreen(
                   checkSubs: true,
+                  fromChat: true,
                 )),
       );
     }
@@ -2615,7 +2633,7 @@ class ChatPageState extends State<ChatPage> {
     // settings
     else if (value == Options.settings.index) {
       print('START open SETTINGS page');
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => SettingsPage()),
       );
@@ -2841,12 +2859,14 @@ class ChatPageState extends State<ChatPage> {
         setState(() {
           isPremium = false;
         });
+        await prefs.setBool('isPremium', false);
       }
     } else {
       // Jika isPremium adalah null atau false, set isPremium menjadi false
       setState(() {
         isPremium = false;
       });
+      await prefs.setBool('isPremium', false);
     }
 
     // Simpan kembali status isPremium setelah diperbarui (optional, tergantung kebutuhan)

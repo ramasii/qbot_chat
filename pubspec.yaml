@@ -36,6 +36,7 @@ dependencies:
   fluttericon: ^2.0.0
   url_launcher: ^6.1.11
   select_dialog: any
+  google_mobile_ads: any
 
 
 dev_dependencies:

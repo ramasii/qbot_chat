@@ -18,6 +18,8 @@ void main() async {
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await AppSettings.loadSettings();
+  // inisialisasi ad
+  MobileAds.instance.initialize();
   // meminta izin akses penyimpanan
   SystemChannels.platform
       .invokeMethod('SystemNavigator.requestStoragePermissions');

@@ -5,8 +5,9 @@ import 'pages.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   bool checkSubs;
+  bool fromChat;
 
-  SubscriptionScreen({this.checkSubs = false});
+  SubscriptionScreen({this.checkSubs = false, this.fromChat = false});
 
   @override
   _SubscriptionScreenState createState() => _SubscriptionScreenState();
@@ -24,83 +25,132 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 58, 86, 100),
-          title: Text(
-            'Berlangganan',
-            style: TextStyle(color: Colors.white),
+    return WillPopScope(
+      onWillPop: () async {
+        if (widget.fromChat == true) {
+          Navigator.pop(context);
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                arguments: ChatPageArguments(
+                  peerId: '111',
+                  peerAvatar: 'images/app_icon.png',
+                  peerNickname: 'IslamBot',
+                ),
+              ),
+            ),
+          );
+        }
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  if (widget.fromChat == true) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          arguments: ChatPageArguments(
+                            peerId: '111',
+                            peerAvatar: 'images/app_icon.png',
+                            peerNickname: 'IslamBot',
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                }),
+            backgroundColor: Color.fromARGB(255, 58, 86, 100),
+            title: Text(
+              'Berlangganan',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ),
-        body: Center(
-          child: Container(
-            child: Column(
-              children: [
-                Expanded(
-                    child: InkWell(
-                  onTap: () async {
-                    log('klik premium', name: 'subscriptionPage');
-                    setState(() {
-                      isStatusLoading = true;
-                    });
-                    await updateMemberStatus('Premium'); // update member status
-                    setState(() {
-                      isStatusLoading = false;
-                    });
-                    log('DONE start premium', name: 'subscriptionPage');
-                  },
-                  child: ProductCard(Colors.yellow, 'PREMIUM', 'Rp99.000/bulan',
-                      '+ Qur\'an\n+ Hadist\n+ Fitur Lengkap\n+ Tanpa Iklan\n+ 1 Bulan',
-                      judulSize: 25),
-                )),
-                Expanded(
-                  child: InkWell(
+          body: Center(
+            child: Container(
+              child: Column(
+                children: [
+                  // /premium
+                  Expanded(
+                      child: InkWell(
                     onTap: () async {
-                      log('klik trial', name: 'subscriptionPage');
+                      log('klik premium', name: 'subscriptionPage');
                       setState(() {
                         isStatusLoading = true;
                       });
-                      await updateMemberStatus('Trial');
+                      await updateMemberStatus(
+                          'Premium'); // update member status
                       setState(() {
                         isStatusLoading = false;
                       });
-                      log('DONE start trial', name: 'subscriptionPage');
+                      log('DONE start premium', name: 'subscriptionPage');
                     },
                     child: ProductCard(
-                        Color.fromARGB(255, 118, 234, 122),
-                        'TRIAL',
-                        'Rp0/Minggu',
-                        '+ Qur\'an Chat\n+ Fitur Lengkap\n+ Tanpa Iklan\n- 1 Minggu',
+                        Colors.yellow,
+                        'PREMIUM',
+                        'Rp99.000/bulan',
+                        '+ Qur\'an\n+ Hadist\n+ Fitur Lengkap\n+ Tanpa Iklan\n+ 1 Bulan',
                         judulSize: 25),
-                  ),
-                ),
-                Expanded(
-                  child: InkWell(
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                arguments: ChatPageArguments(
-                                  peerId: '111',
-                                  peerAvatar: 'images/app_icon.png',
-                                  peerNickname: 'IslamBot',
-                                ),
-                              ),
-                            ),
-                            (route) => false);
+                  )),
+                  // trial
+                  Expanded(
+                    child: InkWell(
+                      onTap: () async {
+                        log('klik trial', name: 'subscriptionPage');
+                        setState(() {
+                          isStatusLoading = true;
+                        });
+                        await updateMemberStatus('Trial');
+                        setState(() {
+                          isStatusLoading = false;
+                        });
+                        log('DONE start trial', name: 'subscriptionPage');
                       },
                       child: ProductCard(
-                          Color.fromARGB(255, 209, 209, 209),
-                          'FREE',
-                          'Rp0/Lifetime',
-                          '+ Qur\'an chat\n+ Lifetime\n- Iklan\n- Fitur Terbatas',
-                          judulSize: 25)),
-                )
-              ],
+                          Color.fromARGB(255, 118, 234, 122),
+                          'TRIAL',
+                          'Rp0/Minggu',
+                          '+ Qur\'an Chat\n+ Fitur Lengkap\n+ Tanpa Iklan\n- 1 Minggu',
+                          judulSize: 25),
+                    ),
+                  ),
+                  // free
+                  Expanded(
+                    child: InkWell(
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  arguments: ChatPageArguments(
+                                    peerId: '111',
+                                    peerAvatar: 'images/app_icon.png',
+                                    peerNickname: 'IslamBot',
+                                  ),
+                                ),
+                              ),
+                              (route) => false);
+                        },
+                        child: ProductCard(
+                            Color.fromARGB(255, 209, 209, 209),
+                            'FREE',
+                            'Rp0/Lifetime',
+                            '+ Qur\'an chat\n+ Lifetime\n- Iklan\n- Fitur Terbatas',
+                            judulSize: 25)),
+                  )
+                ],
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 
   Card ProductCard(Color warna, String judul, String subjudul, String deskripsi,
@@ -257,11 +307,13 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         setState(() {
           alreadyMembership = false;
         });
+        await prefs.setBool('isPremium', false);
       }
     } else {
       setState(() {
         alreadyMembership = false;
       });
+      await prefs.setBool('isPremium', false);
     }
   }
 

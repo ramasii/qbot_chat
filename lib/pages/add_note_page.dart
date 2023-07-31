@@ -233,7 +233,7 @@ class _AddNotePageState extends State<AddNotePage> {
                     autofocus: false, // supaya keyboard tidak muncul otomatis
                     decoration: InputDecoration.collapsed(
                       floatingLabelAlignment: FloatingLabelAlignment.start,
-                      hintText: AppLocalizations.of(context)!.titleHint,
+                      hintText: AppLocalizations.of(context)!.noteContentHint,
                       hintStyle: TextStyle(
                           color: Color.fromARGB(
                               255, 143, 143, 143)), // Warna teks hint

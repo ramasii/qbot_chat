@@ -16,7 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
+    super.initState;
   }
 
   @override
@@ -64,7 +64,9 @@ class _SettingsPageState extends State<SettingsPage> {
         body: ListView(
           padding: EdgeInsets.all(16),
           children: [
+            // kategori
             subtitleSetting(AppLocalizations.of(context)!.common, bottom: 5),
+            //nama setting
             TileSetting(AppLocalizations.of(context)!.languageA, Icons.language,
                 selectedLanguage, _showLanguageDialog),
             ListTile(
@@ -93,8 +95,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 AppSettings.arabicTextSize.toInt().toString(),
                 _showArabicTextSizeDialog),
             // TileSetting("Font Arab", Icons.format_align_left_rounded,
-            TileSetting(AppLocalizations.of(context)!.arabFont, Icons.format_align_left_rounded,
-                AppSettings.arabicFont, _showArabicFontDialog),
+            TileSetting(
+                AppLocalizations.of(context)!.arabFont,
+                Icons.format_align_left_rounded,
+                AppSettings.arabicFont,
+                _showArabicFontDialog),
             subtitleSetting(AppLocalizations.of(context)!.preview),
             previewFrame(),
           ],
@@ -122,9 +127,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   spreadRadius: 1)
             ]),
         padding: EdgeInsets.all(10),
-        child: BoldAsteris(
-            text:
-                AppLocalizations.of(context)!.previewContent),
+        child: BoldAsteris(text: AppLocalizations.of(context)!.previewContent),
       ),
     );
   }

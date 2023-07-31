@@ -26,3 +26,4 @@ export 'package:fluttericon/font_awesome5_icons.dart';
 export 'package:select_dialog/select_dialog.dart';
 export 'package:flutter_gen/gen_l10n/app_localizations.dart';
 export '../providers/locale_provider.dart';
+export 'package:google_mobile_ads/google_mobile_ads.dart';
