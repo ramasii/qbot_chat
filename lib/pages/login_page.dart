@@ -48,11 +48,16 @@ class LoginPageState extends State<LoginPage> {
                   authProvider.handleSignIn().then((isSuccess) {
                     if (isSuccess) {
                       Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SubscriptionScreen()
-                        ),
-                      );
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  arguments: ChatPageArguments(
+                                    peerId: '111',
+                                    peerAvatar: 'images/app_icon.png',
+                                    peerNickname: 'IslamBot',
+                                  ),
+                                ),
+                              ),);
                     }
                   }).catchError((error, stackTrace) {
                     Fluttertoast.showToast(msg: error.toString());

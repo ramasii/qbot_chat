@@ -31,4 +31,4 @@ class AppSettings {
 }
 
 // subcription
-bool isPremium = false;
+// bool isPremium = false;

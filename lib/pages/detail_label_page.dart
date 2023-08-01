@@ -309,7 +309,7 @@ class _DetailLabelState extends State<DetailLabel> {
                                       log('tap pesan index  ke-$index2, time: ${msgTime}');
                                       // jika sedang tidak memilih pesan
                                       if (selectedMsg.isEmpty) {
-                                        Navigator.pushAndRemoveUntil(
+                                        Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => ChatPage(
@@ -322,8 +322,6 @@ class _DetailLabelState extends State<DetailLabel> {
                                               ),
                                             ),
                                           ),
-                                          (route) =>
-                                              false, // Menghapus semua halaman di atasnya dalam stack halaman
                                         );
                                       } else {
                                         // jika sudah dipilih, maka un-select

@@ -58,7 +58,7 @@ class _LabelPageState extends State<LabelPage> {
             selectedLabel.clear();
           });
         } else {
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatPage(
@@ -68,8 +68,7 @@ class _LabelPageState extends State<LabelPage> {
                     peerNickname: 'IslamBot',
                   ),
                 ),
-              ),
-              (route) => false);
+              ),);
         }
 
         return false;
@@ -84,7 +83,7 @@ class _LabelPageState extends State<LabelPage> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               color: Colors.white,
-              onPressed: () => Navigator.pushAndRemoveUntil(
+              onPressed: () => Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder: (context) => ChatPage(
@@ -94,8 +93,7 @@ class _LabelPageState extends State<LabelPage> {
                         peerNickname: 'IslamBot',
                       ),
                     ),
-                  ),
-                  (route) => false),
+                  ),),
             ),
             actions: [
               if (selectedLabel.isNotEmpty)

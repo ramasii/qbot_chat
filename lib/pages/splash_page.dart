@@ -27,10 +27,16 @@ class SplashPageState extends State<SplashPage> {
     bool isLoggedIn = await authProvider.isLoggedIn();
     if (isLoggedIn) {
       Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => 
-        SubscriptionScreen()),
-      );
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatPage(
+              arguments: ChatPageArguments(
+                peerId: '111',
+                peerAvatar: 'images/app_icon.png',
+                peerNickname: 'IslamBot',
+              ),
+            ),
+          ));
       return;
     }
     Navigator.pushReplacement(

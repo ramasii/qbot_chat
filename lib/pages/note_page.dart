@@ -38,8 +38,8 @@ class _NotePageState extends State<NotePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pushAndRemoveUntil(
-            context, ChatPageRoute(), (route) => false);
+        Navigator.pushReplacement(
+            context, ChatPageRoute());
         return false;
       },
       child: Scaffold(
@@ -51,8 +51,8 @@ class _NotePageState extends State<NotePage> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               color: Colors.white,
-              onPressed: () => Navigator.pushAndRemoveUntil(
-                  context, ChatPageRoute(), (route) => false),
+              onPressed: () => Navigator.pushReplacement(
+                  context, ChatPageRoute()),
             ),
           ),
           floatingActionButton: AddNoteButton(), // widget custom

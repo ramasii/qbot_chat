@@ -264,6 +264,9 @@ class ChatPageState extends State<ChatPage> {
         });
       });
 
+    // inisialisasi ad
+    MobileAds.instance.initialize();
+
     getArray('pesanArray', objKey: widget.messageStamp);
     saveArray();
     AppSettings.loadSettings();
@@ -286,6 +289,7 @@ class ChatPageState extends State<ChatPage> {
           onAdFailedToLoad: (ad, error) {
             ad.dispose();
             log('ad failed to load');
+            _banner = null;
           },
           onAdOpened: (ad) => log('ad opened'),
           onAdClosed: (ad) => log('ad closed'),
@@ -1276,10 +1280,16 @@ class ChatPageState extends State<ChatPage> {
                 Column(
                   children: <Widget>[
                     // ad | iklan | admob
-                    if (_banner != null && isPremium == false)
+                    if (isPremium != true)
                       Container(
                         height: 52,
-                        child: AdWidget(ad: _banner!),
+                        decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 58, 86, 100)),
+                        child: _banner == null
+                            ? Center(
+                                child: Text('Ads here', style: TextStyle(color: Colors.grey),),
+                              )
+                            : AdWidget(ad: _banner!),
                       ),
 
                     // List of messages
@@ -2838,7 +2848,7 @@ class ChatPageState extends State<ChatPage> {
   void checkPremium() async {
     log('check premium');
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    var isPremium = prefs.getBool('isPremium') ?? false;
+    isPremium = prefs.getBool('isPremium') ?? false;
     var premiumEnd = prefs.getString('PremiumEnd');
 
     if (isPremium && premiumEnd != null) {
